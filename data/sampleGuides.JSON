@@ -1,0 +1,238 @@
+[
+    {
+        "id": "g001",
+        "title": "Choking",
+        "category": "dog",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Stay calm and restrain your dog gently to prevent biting.",
+                "imageURL": "assets/images/guides/dog-choking-1.png"
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Open the dog's mouth carefully and look for the foreign object.",
+                "imageURL": "assets/images/guides/dog-choking-2.png"
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "If visible, try to remove the object with tweezers. Do not push it further in.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "If the object cannot be removed, perform the Heimlich maneuver by placing your fist below the rib cage and pushing upward firmly.",
+                "imageURL": "assets/images/guides/dog-choking-4.png"
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Seek immediate veterinary attention even if the object is removed.",
+                "imageURL": ""
+            }
+        ],
+        "videos": [
+            {
+                "title": "How to Help a Choking Dog",
+                "url": "https://www.youtube.com/watch?v=example1"
+            }
+        ]
+    },
+    {
+        "id": "g002",
+        "title": "Bleeding & Wound Care",
+        "category": "dog",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Apply direct pressure to the wound using a clean cloth or gauze.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Maintain pressure for at least 5 minutes without lifting the cloth.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "If bleeding soaks through, add more gauze on top without removing the first layer.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "Once bleeding slows, gently clean the wound with saline solution.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Transport your dog to the vet for further treatment.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    },
+    {
+        "id": "g003",
+        "title": "Heatstroke",
+        "category": "dog",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Move your dog to a cool, shaded area immediately.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Apply cool (not cold) water to the body, focusing on the neck, armpits, and groin.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "Place wet towels on the dog and use a fan if available.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "Offer small amounts of cool water to drink. Do not force water.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Transport to a veterinary clinic as heatstroke can cause organ damage.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    },
+    {
+        "id": "g004",
+        "title": "Choking",
+        "category": "cat",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Wrap the cat in a towel to restrain safely, leaving the head exposed.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Gently open the mouth and check for visible foreign objects.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "If you can see the object, carefully remove it with tweezers or small pliers.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "If the cat is unconscious, hold it upside down by the hips and gently shake to dislodge the object.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Visit the vet immediately, even if the object has been removed.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    },
+    {
+        "id": "g005",
+        "title": "Poisoning",
+        "category": "cat",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Identify the toxic substance if possible and note the amount ingested.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Do NOT induce vomiting unless specifically instructed by a vet.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "Collect a sample of the substance or its packaging for the vet.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "Call your veterinarian or animal poison control immediately.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Transport your cat to the vet as quickly as possible.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    },
+    {
+        "id": "g006",
+        "title": "GI Stasis",
+        "category": "rabbit",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Check if your rabbit has stopped eating, drinking, or producing droppings.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Gently massage the rabbit's abdomen in circular motions to encourage gut movement.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "Offer fresh hay and water. Try syringe-feeding water if the rabbit refuses to drink.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "Keep the rabbit warm and encourage gentle movement or exercise.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Seek veterinary care urgently. GI stasis can be fatal within 24 hours.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    },
+    {
+        "id": "g007",
+        "title": "Wet Tail",
+        "category": "hamster",
+        "steps": [
+            {
+                "stepNumber": 1,
+                "instruction": "Isolate the hamster from other hamsters to prevent spreading.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 2,
+                "instruction": "Keep the hamster warm and in a quiet, stress-free environment.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 3,
+                "instruction": "Offer fresh water using a syringe dropper to prevent dehydration.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 4,
+                "instruction": "Clean the cage thoroughly and replace all bedding.",
+                "imageURL": ""
+            },
+            {
+                "stepNumber": 5,
+                "instruction": "Visit a vet immediately. Wet tail is a serious condition that requires antibiotics.",
+                "imageURL": ""
+            }
+        ],
+        "videos": []
+    }
+]

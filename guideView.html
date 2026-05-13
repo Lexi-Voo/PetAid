@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide - PetAid</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+            </svg>
+            PetAid
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#">Clinics</a></li>
+            <li><a href="firstAid.html" class="active">First Aid</a></li>
+            <li><a href="#">Forum</a></li>
+            <li><a href="#">Quizzes</a></li>
+        </ul>
+        <div class="navbar-auth">
+            <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
+            <button class="btn btn-login" id="loginBtn">Login</button>
+            <button class="btn btn-primary" id="registerBtn">Register</button>
+            <button class="btn btn-outline admin-only" id="logoutBtn">Logout (Admin)</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Guide Header -->
+        <div class="guide-header">
+            
+            <h1 class="guide-detail-title" id="guideTitle">Loading...</h1>
+            <p class="guide-detail-category" id="guideCategory"></p>
+
+            <!-- Admin: Edit guide title/category, Delete entire guide -->
+            <div class="guide-detail-actions admin-only">
+                <button class="btn btn-outline btn-sm" onclick="openEditGuideModal()">
+                    Edit Guide
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="openDeleteGuideModal()">
+                    Delete Guide
+                </button>
+            </div>
+        </div>
+
+        <!-- Steps Section -->
+        <section class="steps-section">
+            <div class="steps-section-header">
+                <h2 class="section-title">Steps</h2>
+                <button class="btn btn-primary btn-sm admin-only" onclick="openAddStepModal()">
+                    + Add Step
+                </button>
+            </div>
+            <div id="stepsList">
+                <!-- Steps rendered by JS -->
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section class="videos-section">
+            <div class="videos-section-header">
+                <h2 class="section-title">Videos</h2>
+                <button class="btn btn-primary btn-sm admin-only" onclick="openAddVideoModal()">
+                    + Add Video
+                </button>
+            </div>
+            <div id="videosList">
+                <!-- Videos rendered by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+                </svg>
+            </div>
+            <span class="footer-org">Sarawak Veterinary Association</span>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-disclaimer">
+                &copy; 2024 Sarawak Veterinary Association. Disclaimer: Information provided is for informational purposes and does not replace professional medical advice.
+            </p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Medical Disclaimer</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Edit Guide Modal -->
+    <div class="modal-overlay" id="editGuideModal">
+        <div class="modal">
+            <h3 class="modal-title">Edit Guide</h3>
+            <div class="form-group">
+                <label for="editGuideTitle">Guide Title</label>
+                <input type="text" id="editGuideTitle">
+            </div>
+            <div class="form-group">
+                <label for="editGuideCategory">Category</label>
+                <select id="editGuideCategory">
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="rabbit">Rabbit</option>
+                    <option value="hamster">Hamster</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeEditGuideModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditGuide()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Step Modal -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal">
+            <h3 class="modal-title" id="stepModalTitle">Add Step</h3>
+            <div class="form-group">
+                <label for="stepInstruction">Instruction</label>
+                <textarea id="stepInstruction" placeholder="Describe the step clearly..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="stepImageURL">Image URL (optional)</label>
+                <input type="text" id="stepImageURL" placeholder="assets/images/guides/example.png">
+            </div>
+            <input type="hidden" id="editingStepNumber">
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeStepModal()">Cancel</button>
+                <button class="btn btn-primary" id="stepModalSave" onclick="saveStep()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Video Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal">
+            <h3 class="modal-title" id="videoModalTitle">Add Video</h3>
+            <div class="form-group">
+                <label for="videoTitle">Video Title</label>
+                <input type="text" id="videoTitle" placeholder="e.g. How to Handle Choking">
+            </div>
+            <div class="form-group">
+                <label for="videoURL">Video URL</label>
+                <input type="text" id="videoURL" placeholder="https://youtube.com/...">
+            </div>
+            <input type="hidden" id="editingVideoTitle">
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeVideoModal()">Cancel</button>
+                <button class="btn btn-primary" id="videoModalSave" onclick="saveVideo()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    
+
+    <!-- Scripts -->
+    <script src="classes/Step.js"></script>
+    <script src="classes/Video.js"></script>
+    <script src="classes/FirstAidGuide.js"></script>
+    <script src="classes/User.js"></script>
+    <script src="classes/Admin.js"></script>
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/Confirmation.js"></script>
+    <script src="utils/DeleteConfirm.js"></script>
+    <script src="guideView.js"></script>
+
+</body>
+</html>
