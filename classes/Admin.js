@@ -29,6 +29,12 @@ class Admin extends User {
                 return guideToEdit;
 
             case "delete":
+                const guideToDelete = guides.find(
+                    g => g.getId() === data.id
+                );
+                if (guideToDelete){
+                    guideToDelete.deleteGuide();
+                }
                 guides = guides.filter(
                     g => g.getId() !== data.id
                 );
