@@ -1,0 +1,32 @@
+[
+  {
+    "id": "center",
+    "name": "Map Center",
+    "latitude": 1.5575585937055665,
+    "longitude": 110.3425426087814
+  },
+  {
+    "id": "nw",
+    "name": "Northwest Corner",
+    "latitude": 1.6423989330919126,
+    "longitude": 110.12498090143737
+  },
+  {
+    "id": "ne",
+    "name": "Northeast Corner",
+    "latitude": 1.6423989330919126,
+    "longitude": 110.56010431612543
+  },
+  {
+    "id": "sw",
+    "name": "Southwest Corner",
+    "latitude": 1.4727182543192203,
+    "longitude": 110.12498090143737
+  },
+  {
+    "id": "se",
+    "name": "Southeast Corner",
+    "latitude": 1.4727182543192203,
+    "longitude": 110.56010431612543
+  }
+]

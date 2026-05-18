@@ -173,6 +173,11 @@ a {
     font-size: 0.82rem;
 }
 
+.btn-lg {
+    padding: 10px 22px;
+    font-size: 1rem;
+}
+
 .btn-icon {
     padding: 6px 10px;
     background: none;
