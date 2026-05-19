@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clinics Map - PetAid</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/leaflet.css">
+	<style>
+		/* Small layout tweaks for the map page */
+		#map{height:70vh; border:1px solid var(--border-card); border-radius:8px}
+		.controls{display:flex;align-items:center;gap:12px;padding:8px 0;margin-bottom:12px}
+		.controls .form-group select{min-width:260px;max-width:440px}
+		.page-subtitle{margin-bottom:12px}
+
+		/* Clinic modal override: make it a right-side panel (so map remains clickable).
+		   On small screens it becomes a centered modal with backdrop. */
+		#clinicModalOverlay {
+			position:fixed;
+			top:0; right:0; bottom:0; left:auto;
+			width:420px; height:100%;
+			background:transparent;
+			display:none;
+			z-index:1600;
+		}
+		#clinicModalOverlay.active { display:flex; align-items:flex-start; justify-content:flex-end; padding:20px; }
+		#clinicModalOverlay .modal { width:380px; max-width:100%; max-height: calc(100vh - 40px); overflow:auto; border-radius:10px; box-shadow: var(--shadow-lg); }
+		@media (max-width: 640px) {
+			/* On phones the overlay becomes full-screen with backdrop */
+			#clinicModalOverlay { left:0; width:100%; background-color: rgba(0,0,0,0.4); }
+			#clinicModalOverlay.active { justify-content:center; padding:12px; align-items:center; }
+			#clinicModalOverlay .modal { width:100%; max-width:440px; }
+		}
+	</style>
+</head>
+<body>
+	<!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+            </svg>
+            PetAid
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#">Clinics</a></li>
+            <li><a href="firstAid.html" class="active">First Aid</a></li>
+            <li><a href="#">Forum</a></li>
+            <li><a href="#">Quizzes</a></li>
+            <li><a href="Map.html">Maps</a></li>
+        </ul>
+        <div class="navbar-auth">
+            <!-- For testing: toggle admin mode -->
+            <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
+            <button class="btn btn-login" id="loginBtn">Login</button>
+            <button class="btn btn-primary" id="registerBtn">Register</button>
+            <!-- Shown when admin is logged in -->
+            <button class="btn btn-outline admin-only" id="logoutBtn">Logout (Admin)</button>
+        </div>
+    </nav>
+
+	<main class="main-content">
+		<h1 class="page-title">Clinics Map</h1>
+		<p class="page-subtitle">Select Association Office closes to you</p>
+
+		<div class="controls">
+			<div class="form-group" style="margin:0">
+				<label for="presetSelect">Search location:</label>
+				<select id="presetSelect"><option value="">-- Select --</option></select>
+			</div>
+			<button id="showAddForm" style="margin-left: 0px; margin-top: 26px;" class="btn btn-primary btn-lg">Add Clinic</button>
+		</div>
+
+		<div id="map"></div>
+	</main>
+
+	<!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+                </svg>
+            </div>
+            <span class="footer-org">Sarawak Veterinary Association</span>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-disclaimer">
+                &copy; 2026 Sarawak Veterinary Association. Disclaimer: Information provided is for informational purposes and does not replace professional medical advice.
+            </p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Medical Disclaimer</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+	</footer>
+
+	<!-- Clinic add modal (styled with site classes) -->
+	<div id="clinicModalOverlay" class="modal-overlay" aria-hidden="true">
+		<div class="modal" role="dialog" aria-modal="true" aria-labelledby="clinicModalTitle">
+			<div class="modal-title" id="clinicModalTitle">Add Clinic</div>
+			<div class="modal-body">
+				<div class="form-group"><label for="c_name">Clinic name</label><input id="c_name" placeholder="Clinic name"></div>
+				<div class="form-group"><label for="c_address">Address</label><input id="c_address" placeholder="Address"></div>
+				<div class="form-group"><label for="c_phone">Phone</label><input id="c_phone" placeholder="Phone"></div>
+				<div class="form-group"><label for="c_hours">Opening hours</label><input id="c_hours" placeholder="Opening hours"></div>
+				<div class="form-group" style="display:flex;gap:8px">
+					<div style="flex:1"><label for="c_lat">Latitude</label><input id="c_lat" placeholder="Latitude"></div>
+					<div style="flex:1"><label for="c_lng">Longitude</label><input id="c_lng" placeholder="Longitude"></div>
+				</div>
+			</div>
+			<div class="modal-actions">
+				<button id="pickLocationBtn" class="btn btn-outline btn-sm">Pick on map</button>
+				<button id="saveClinicBtn" class="btn btn-primary btn-sm">Save</button>
+				<button id="cancelClinicBtn" class="btn btn-outline btn-sm">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="utils/leaflet.js"></script>
+	<script>
+	(async function(){
+		// Inline ClinicDetails (browser-global version)
+		class ClinicDetails {
+			constructor(clinicName, address, phoneNumber, openingHours, latitude = 0, longitude = 0) {
+				this.ClinicName = clinicName;
+				this.Address = address;
+				this.PhoneNumber = phoneNumber;
+				this.OpeningHours = openingHours;
+				this._latitude = latitude;
+				this._longitude = longitude;
+			}
+			ViewDetails() {
+				return `
+					<h3>${this.ClinicName}</h3>
+					<p><strong>Address:</strong> ${this.Address}</p>
+					<p><strong>Phone:</strong> ${this.PhoneNumber}</p>
+					<p><strong>Hours:</strong> ${this.OpeningHours}</p>
+				`;
+			}
+			UpdateDetails(newDetails) {
+				if (newDetails.ClinicName) this.ClinicName = newDetails.ClinicName;
+				if (newDetails.Address) this.Address = newDetails.Address;
+				if (newDetails.PhoneNumber) this.PhoneNumber = newDetails.PhoneNumber;
+				if (newDetails.OpeningHours) this.OpeningHours = newDetails.OpeningHours;
+			}
+			GetDistance(targetLatitude, targetLongitude) {
+				const R = 6371;
+				const dLat = this._deg2rad(targetLatitude - this._latitude);
+				const dLng = this._deg2rad(targetLongitude - this._longitude);
+				const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(this._deg2rad(this._latitude)) * Math.cos(this._deg2rad(targetLatitude)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+				const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				const distance = R * c;
+				return Math.round(distance * 100) / 100;
+			}
+			_deg2rad(deg) { return deg * (Math.PI / 180); }
+			toJSON() {
+				return {
+					ClinicName: this.ClinicName,
+					Address: this.Address,
+					PhoneNumber: this.PhoneNumber,
+					OpeningHours: this.OpeningHours,
+					latitude: this._latitude,
+					longitude: this._longitude
+				};
+			}
+			static fromJSON(obj) {
+				if (!obj) return null;
+				const lat = obj.latitude ?? obj.Latitude ?? obj._latitude ?? 0;
+				const lon = obj.longitude ?? obj.Longitude ?? obj._longitude ?? 0;
+				return new ClinicDetails(
+					obj.ClinicName || obj.name || '',
+					obj.Address || obj.address || '',
+					obj.PhoneNumber || obj.phoneNumber || obj.phone || '',
+					obj.OpeningHours || obj.openingHours || obj.hours || '',
+					Number(lat),
+					Number(lon)
+				);
+			}
+		}
+
+		// Inline ClinicStorage (uses localStorage)
+		const STORAGE_KEY = 'petaid_clinics';
+		function loadClinics() {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (!raw) return [];
+			try {
+				const arr = JSON.parse(raw);
+				if (!Array.isArray(arr)) return [];
+				return arr.map(obj => ClinicDetails.fromJSON(obj)).filter(Boolean);
+			} catch (e) {
+				console.error('Failed to parse clinics from storage', e);
+				return [];
+			}
+		}
+		function saveClinics(clinics) {
+			const arr = clinics.map(c => (c.toJSON ? c.toJSON() : c));
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+		}
+		async function saveClinicsToServer() {
+			try {
+				const clinics = loadClinics();
+				const payload = clinics.map(c => (c.toJSON ? c.toJSON() : c));
+				await fetch('/save-clinics', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+				console.log('Clinics saved to server');
+			} catch (err) {
+				console.warn('Could not save clinics to server', err);
+			}
+		}
+		function addClinic(clinic) {
+			const clinics = loadClinics();
+			clinics.push(clinic);
+			saveClinics(clinics);
+			// best-effort server save (no blocking)
+			saveClinicsToServer();
+			return clinics;
+		}
+
+		// If there are no clinics in localStorage, attempt to load from data/clinics.json
+		async function ensureClinicsLoaded() {
+			let clinics = loadClinics();
+			if (clinics.length > 0) return clinics;
+			try {
+				const res = await fetch('data/clinics.json');
+				if (!res.ok) return clinics;
+				const arr = await res.json();
+				if (!Array.isArray(arr)) return clinics;
+				clinics = arr.map(obj => ClinicDetails.fromJSON(obj)).filter(Boolean);
+				if (clinics.length > 0) saveClinics(clinics);
+			} catch (err) {
+				console.warn('Could not load data/clinics.json — using local storage or empty list', err);
+			}
+			return clinics;
+		}
+        
+
+		const fallback = [
+			{ id: 'center', name: 'Map Center', latitude: 1.5575585937055665, longitude: 110.3425426087814 },
+			{ id: 'nw', name: 'Northwest Corner', latitude: 1.6423989330919126, longitude: 110.12498090143737 },
+			{ id: 'ne', name: 'Northeast Corner', latitude: 1.6423989330919126, longitude: 110.56010431612543 },
+			{ id: 'sw', name: 'Southwest Corner', latitude: 1.4727182543192203, longitude: 110.12498090143737 },
+			{ id: 'se', name: 'Southeast Corner', latitude: 1.4727182543192203, longitude: 110.56010431612543 }
+		];
+
+		let presets = fallback;
+		try {
+			const res = await fetch('data/presets.json');
+			if (res.ok) presets = await res.json();
+		} catch (e) {
+			console.warn('Could not load data/presets.json — using fallback presets', e);
+		}
+
+		// Controls element exists in DOM (markup provides Add Clinic button)
+		const controls = document.querySelector('.controls');
+
+		const select = document.getElementById('presetSelect');
+		presets.forEach(p => { const opt = document.createElement('option'); opt.value = p.id; opt.textContent = p.name; select.appendChild(opt); });
+
+		const start = presets[0] || fallback[0];
+		const map = L.map('map').setView([start.latitude, start.longitude], 15);
+		// Use local tiles from the workspace `Tile` folder (no external API)
+		L.tileLayer('Tile/{z}/{x}/{y}.png', {
+			minZoom: 14,
+			maxZoom: 16,
+			noWrap: true,
+			attribution: 'Local tiles'
+		}).addTo(map);
+
+		select.addEventListener('change', () => {
+			const preset = presets.find(p => p.id === select.value);
+			if (preset) map.setView([preset.latitude, preset.longitude], 15);
+		});
+
+		// Marker management
+		const markers = [];
+		function addMarkerForClinic(clinic) {
+			const lat = clinic._latitude ?? clinic.latitude ?? 0;
+			const lng = clinic._longitude ?? clinic.longitude ?? 0;
+			const marker = L.marker([lat, lng]).addTo(map);
+			marker.bindPopup(clinic.ViewDetails());
+			markers.push(marker);
+			return marker;
+		}
+		function clearMarkers() { markers.forEach(m => map.removeLayer(m)); markers.length = 0; }
+		function renderClinics() { clearMarkers(); const clinics = loadClinics(); clinics.forEach(addMarkerForClinic); }
+		// Ensure clinics are loaded from file (if storage empty) then render
+		await ensureClinicsLoaded();
+		renderClinics();
+
+        
+
+		// Modal-based Add Clinic form handlers (uses markup in DOM)
+		const modalOverlay = document.getElementById('clinicModalOverlay');
+		const pickLocationBtn = document.getElementById('pickLocationBtn');
+		const saveClinicBtn = document.getElementById('saveClinicBtn');
+		const cancelClinicBtn = document.getElementById('cancelClinicBtn');
+
+		let picking = false;
+		document.getElementById('showAddForm').addEventListener('click', () => { modalOverlay.classList.add('active'); modalOverlay.setAttribute('aria-hidden','false'); });
+		cancelClinicBtn.addEventListener('click', () => { modalOverlay.classList.remove('active'); modalOverlay.setAttribute('aria-hidden','true'); });
+		pickLocationBtn.addEventListener('click', () => { picking = !picking; pickLocationBtn.textContent = picking ? 'Click map to pick' : 'Pick on map'; });
+		modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); modalOverlay.setAttribute('aria-hidden','true'); } });
+		map.on('click', function(e) { if (!picking) return; const lat = e.latlng.lat.toFixed(6); const lng = e.latlng.lng.toFixed(6); document.getElementById('c_lat').value = lat; document.getElementById('c_lng').value = lng; picking = false; pickLocationBtn.textContent = 'Pick on map'; });
+
+		saveClinicBtn.addEventListener('click', () => {
+			const name = document.getElementById('c_name').value.trim();
+			const address = document.getElementById('c_address').value.trim();
+			const phone = document.getElementById('c_phone').value.trim();
+			const hours = document.getElementById('c_hours').value.trim();
+			const lat = parseFloat(document.getElementById('c_lat').value);
+			const lng = parseFloat(document.getElementById('c_lng').value);
+			if (!name || Number.isNaN(lat) || Number.isNaN(lng)) { alert('Provide name and valid coordinates.'); return; }
+			const clinic = new ClinicDetails(name, address, phone, hours, lat, lng);
+			addClinic(clinic);
+			addMarkerForClinic(clinic);
+			modalOverlay.classList.remove('active');
+			modalOverlay.setAttribute('aria-hidden','true');
+			['c_name','c_address','c_phone','c_hours','c_lat','c_lng'].forEach(id => document.getElementById(id).value = '');
+		});
+	})();
+	</script>
+</body>
+</html>
+

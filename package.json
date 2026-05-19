@@ -1,4 +1,11 @@
 {
+  "name": "petaid-server",
+  "version": "1.0.0",
+  "description": "Minimal static server for PetAid with clinics save endpoint",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "^5.2.1"
   }
