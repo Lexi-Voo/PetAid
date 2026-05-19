@@ -172,7 +172,7 @@ function saveGuide() {
 
 // ===== Confirmation Popup =====
 document.addEventListener('DOMContentLoaded', () => {
-    const activeUser = getCurrentUser(); 
+    const activeUser = window.getCurrentUser(); 
     const navbarLinks = document.querySelector('.navbar-links');
 
     if (!navbarLinks) return;

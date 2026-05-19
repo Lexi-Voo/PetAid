@@ -1,5 +1,6 @@
 function renderNavbar(activePage = "") {
-    const role = "admin"; // "guest", "user", "admin"
+    const user = window.getCurrentUser ? window.getCurrentUser() : null;
+    const role = user ? user.role : "";
 
     let navLinks = [];
 
@@ -38,24 +39,24 @@ function renderNavbar(activePage = "") {
 
     // Auth buttons — change based on role
     let authHTML = "";
-    if (role === "guest") {
+    if (role === "") {
         navLinks = userNavLinks;
         authHTML = `
-            <button class="btn btn-login" onclick="">Login</button>
-            <button class="btn btn-primary" onclick="">Register</button>
+            <button class="btn btn-login" onclick="window.location.href='login.html'">Login</button>
+            <button class="btn btn-primary" onclick="window.location.href='register.html'">Register</button>
         `;
-    } else if (role === "user") {
+    } else if (role === "petowner" || role === "veterinarian") {
         navLinks = userNavLinks;
         authHTML = `
             <span class="navbar-username">Put username here</span>
-            <button class="btn btn-primary" onclick="">Profile</button>
-            <button class="btn btn-outline" onclick="logout()">Logout</button>
+            <button class="btn btn-primary" onclick="window.location.href='progile.html'">Profile</button>
+            <button class="btn btn-outline" onclick="window.logoutUser()">Logout</button>
         `;
     } else if (role === "admin") {
         navLinks = adminNavLinks;
         authHTML = `
             <span class="navbar-username navbar-admin-badge">Admin</span>
-            <button class="btn btn-outline" onclick="logout()">Logout</button>
+            <button class="btn btn-outline" onclick="window.logoutUser()">Logout</button>
         `;
     }
 
