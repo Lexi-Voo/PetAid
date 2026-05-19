@@ -7,11 +7,14 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+    <!-- Navbar -->
     <div id="navbar-container"></div>
+
     <!-- Main Content -->
     <main class="main-content">
-        <h1 class="page-title">First Aid Guide</h1>
-        <p class="page-subtitle">Choose any category to start your first aid session</p>
+        <h1 class="page-title">Quiz</h1>
+        <p class="page-subtitle">Choose any category to start your quiz session</p>
 
         <!-- Category Cards -->
         <div class="category-grid">
@@ -33,33 +36,34 @@
             </div>
         </div>
 
-        <!-- Guide List (appears below cards when category is selected) -->
-        <section class="guide-list-section" id="guideListSection">
-            <div class="guide-list-header">
-                <h2 class="guide-list-title" id="guideListTitle"></h2>
-                <button class="btn btn-primary btn-sm admin-only" onclick="openCreateGuideModal()">
-                    + Create Guide
+        <!-- Quiz List (appears below cards when category is selected) -->
+        <section class="quiz-list-section" id="quizListSection">
+            <div class="quiz-list-header">
+                <h2 class="quiz-list-title" id="quizListTitle"></h2>
+                <button class="btn btn-primary btn-sm admin-only" onclick="openCreateQuizModal()">
+                    + Create Quiz
                 </button>
             </div>
-            <div class="guide-list" id="guideList">
-                <!-- Guide items rendered by JS -->
+            <div class="quiz-list" id="quizList">
+                <!-- Quiz items rendered by JS -->
             </div>
         </section>
     </main>
 
+    <!-- Footer -->
     <div id="footer-container"></div>
 
-    <!-- Create Guide Modal -->
-    <div class="modal-overlay" id="guideModal">
+    <!-- Create Quiz Modal -->
+    <div class="modal-overlay" id="quizModal">
         <div class="modal">
-            <h3 class="modal-title" id="guideModalTitle">Create New Guide</h3>
+            <h3 class="modal-title" id="quizModalTitle">Create New Quiz</h3>
             <div class="form-group">
-                <label for="guideTitle">Guide Title</label>
-                <input type="text" id="guideTitle" placeholder="e.g. Choking">
+                <label for="quizTitle">Quiz Title</label>
+                <input type="text" id="quizTitle" placeholder="e.g. Choking">
             </div>
             <div class="form-group">
-                <label for="guideCategory">Category</label>
-                <select id="guideCategory">
+                <label for="quizCategory">Category</label>
+                <select id="quizCategory">
                     <option value="dog">Dog</option>
                     <option value="cat">Cat</option>
                     <option value="rabbit">Rabbit</option>
@@ -67,24 +71,25 @@
                 </select>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closeGuideModal()">Cancel</button>
-                <button class="btn btn-primary" id="guideModalSave" onclick="saveGuide()">Create</button>
+                <button class="btn btn-outline" onclick="closeQuizModal()">Cancel</button>
+                <button class="btn btn-primary" id="quizModalSave" onclick="saveQuiz()">Create</button>
             </div>
         </div>
     </div>
+
     
+
     <!-- Scripts (order matters) -->
     
-    <script src="classes/Step.js"></script>
-    <script src="classes/Video.js"></script>
-    <script src="classes/FirstAidGuide.js"></script>
+    <script src="classes/QuizQuestion.js"></script>
+    <script src="classes/Quiz.js"></script>
     <script src="components/Navbar.js"></script>
     <script src="components/Footer.js"></script>
     <script src="classes/User.js"></script>
     <script src="classes/Admin.js"></script>
     <script src="utils/StorageHelper.js"></script>
     <script src="utils/Confirmation.js"></script>
-    <script src="firstAid.js"></script>
+    <script src="quiz.js"></script>
 
 </body>
 </html>

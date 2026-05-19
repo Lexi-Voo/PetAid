@@ -1,13 +1,12 @@
 // ===== State =====
 let selectedCategory = null;
 let admin = null;
-let user = new User(null, "guest@petaid.com", null, "petowner");
 let guideToDelete = null;
 let editingGuideId = null;
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", function () {
-    renderNavbar("First Aid");
+    renderNavbar("Quizzes");
     renderFooter();
     loadSampleDataIfNeeded();
     checkAdminStatus();
@@ -18,14 +17,14 @@ document.addEventListener("DOMContentLoaded", function () {
 function loadSampleDataIfNeeded() {
     const existing = localStorage.getItem(STORAGE_KEY);
     if (!existing) {
-        fetch("data/sampleGuides.json")
+        fetch("data/sampleQuizzes.json")
             .then(response => response.json())
             .then(data => {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             })
             .catch(() => {
                 // If fetch fails (file:// protocol), load inline sample
-                console.log("Could not fetch sample data. Starting with empty guides.");
+                console.log("Could not fetch sample data. Starting with empty quizzes.");
             });
     }
 }
@@ -51,9 +50,9 @@ function toggleAdmin() {
         admin = null;
         showConfirmation("Admin mode disabled");
     }
-    // Re-render guide list if a category is selected
+    // Re-render quiz list if a category is selected
     if (selectedCategory) {
-        renderGuideList(selectedCategory);
+        renderQuizList(selectedCategory);
     }
 }
 
@@ -92,7 +91,7 @@ function renderGuideList(category) {
     const title = document.getElementById("guideListTitle");
     const list = document.getElementById("guideList");
 
-    const guides = user.browseGuide(category);
+    const guides = getGuidesByCategory(category);
 
     title.textContent = category + " First Aid Guides";
     section.classList.add("visible");
