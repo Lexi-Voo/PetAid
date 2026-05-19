@@ -24,8 +24,8 @@
         </ul>
         <div class="navbar-auth">
             <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
-            <button class="btn btn-login" id="loginBtn">Login</button>
-            <button class="btn btn-primary" id="registerBtn">Register</button>
+            <button class="btn btn-login" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
+            <button class="btn btn-primary" id="registerBtn" onclick="window.location.href='register.html'">Register</button>
             <button class="btn btn-outline admin-only" id="logoutBtn">Logout (Admin)</button>
         </div>
     </nav>
@@ -178,6 +178,7 @@
     <script src="utils/StorageHelper.js"></script>
     <script src="utils/Confirmation.js"></script>
     <script src="utils/DeleteConfirm.js"></script>
+    <script src="utils/SessionHelper.js"></script>
     <script src="guideView.js"></script>
 
 </body>

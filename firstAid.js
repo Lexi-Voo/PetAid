@@ -168,3 +168,14 @@ function saveGuide() {
 }
 
 // ===== Confirmation Popup =====
+document.addEventListener('DOMContentLoaded', () => {
+    const activeUser = getCurrentUser(); 
+    const navbarLinks = document.querySelector('.navbar-links');
+
+    if (!navbarLinks) return;
+    if (activeUser && activeUser.role === 'admin') {
+        const approvalsLi = document.createElement('li');
+        approvalsLi.innerHTML = `<a href="admin.html" id="adminApprovalsLink" style="color: #e74c3c; font-weight: bold;">Approvals 🛡️</a>`;
+        navbarLinks.appendChild(approvalsLi);
+    }
+});
