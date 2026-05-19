@@ -1,6 +1,7 @@
 // ===== State =====
 let selectedCategory = null;
 let admin = null;
+let user = new User(null, "guest@petaid.com", null, "petowner");
 let guideToDelete = null;
 let editingGuideId = null;
 
@@ -89,7 +90,7 @@ function renderGuideList(category) {
     const title = document.getElementById("guideListTitle");
     const list = document.getElementById("guideList");
 
-    const guides = getGuidesByCategory(category);
+    const guides = user.browseGuide(category);
 
     title.textContent = category + " First Aid Guides";
     section.classList.add("visible");
