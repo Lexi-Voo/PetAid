@@ -107,4 +107,75 @@ class Admin extends User {
         saveGuides(guides);
         return guide;
     }
+
+    manageQuestion(action, quizId, questionData) {
+        const quizzes = loadQuizzes();
+        const quiz = quizzes.find(
+            q => q.getId() === quizId
+        );
+        if (!quiz) return false;
+        switch (action) {
+            case "add":
+                quiz.addQuestion(
+                    questionData.id,
+                    questionData.questionText,
+                    questionData.options,
+                    questionData.correctAnswer
+                );
+                break;
+            case "edit":
+                quiz.editQuestion(
+                    questionData.id,
+                    {
+                        questionText: questionData.questionText,
+                        options: questionData.options,
+                        correctAnswer: questionData.correctAnswer
+                    }
+                );
+                break;
+            case "remove":
+                quiz.removeQuestion(
+                    questionData.id
+                );
+                break;
+        }
+        saveQuizzes(quizzes);
+        return true;
+    }
+
+    manageQuiz(action, quizData) {
+        let quizzes = loadQuizzes();
+        switch (action) {
+            case "edit":
+                const quiz = quizzes.find(
+                    q => q.getId() === quizData.id
+                );
+
+                if (!quiz) return false;
+
+                quiz.setTitle(quizData.title);
+                quiz.setCategory(quizData.category);
+
+                break;
+
+            case "delete":
+                quizzes = quizzes.filter(
+                    q => q.getId() !== quizData.id
+                );
+                break;
+
+            case "create":
+                const newQuiz = new Quiz(
+                    "qz" + Date.now(),
+                    quizData.title,
+                    quizData.category,
+                    []
+                );
+                quizzes.push(newQuiz);
+                break;
+        }
+
+        saveQuizzes(quizzes);
+        return true;
+    }
 }

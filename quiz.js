@@ -1,8 +1,7 @@
 // ===== State =====
 let selectedCategory = null;
 let admin = null;
-let guideToDelete = null;
-let editingGuideId = null;
+let user = new User(null, "guest@petaid.com", null, "petowner");
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", function () {
@@ -10,114 +9,90 @@ document.addEventListener("DOMContentLoaded", function () {
     renderFooter();
     loadSampleDataIfNeeded();
     checkAdminStatus();
-    setupAdminToggle();
 });
 
-// Load sample data into localStorage if it's empty (first visit)
+// ===== Load Sample Quiz Data =====
 function loadSampleDataIfNeeded() {
-    const existing = localStorage.getItem(STORAGE_KEY);
+    const existing = localStorage.getItem(QUIZ_STORAGE_KEY);
+
     if (!existing) {
         fetch("data/sampleQuizzes.json")
             .then(response => response.json())
             .then(data => {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(data));
             })
             .catch(() => {
-                // If fetch fails (file:// protocol), load inline sample
-                console.log("Could not fetch sample data. Starting with empty quizzes.");
+                console.log("Could not fetch sample quiz data.");
             });
     }
 }
 
-// Check if admin is logged in (using sessionStorage for session persistence)
+// ===== Check Admin Status =====
 function checkAdminStatus() {
-    const isAdmin = sessionStorage.getItem("petaid_role") === "admin";
-    if (isAdmin) {
+    const activeUser = getCurrentUser();
+
+    if (activeUser && activeUser.role === "admin") {
         document.body.classList.add("is-admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
-    }
-}
 
-// Toggle admin mode via button (for testing)
-function toggleAdmin() {
-    const isAdmin = document.body.classList.toggle("is-admin");
-    if (isAdmin) {
-        sessionStorage.setItem("petaid_role", "admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
-        showConfirmation("Admin mode enabled");
+        admin = new Admin(
+            activeUser.id,
+            activeUser.email,
+            activeUser.password
+        );
     } else {
-        sessionStorage.removeItem("petaid_role");
+        document.body.classList.remove("is-admin");
         admin = null;
-        showConfirmation("Admin mode disabled");
-    }
-    // Re-render quiz list if a category is selected
-    if (selectedCategory) {
-        renderQuizList(selectedCategory);
     }
 }
 
-function setupAdminToggle() {
-    // Logout button
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function () {
-            document.body.classList.remove("is-admin");
-            sessionStorage.removeItem("petaid_role");
-            admin = null;
-            showConfirmation("Logged out");
-            if (selectedCategory) {
-                renderGuideList(selectedCategory);
-            }
-        });
-    }
-}
-
-// ===== Category Selection =====
+// ===== Select Category =====
 function selectCategory(category) {
     selectedCategory = category;
 
-    // Update selected card styling
     document.querySelectorAll(".category-card").forEach(card => {
         card.classList.remove("selected");
     });
-    document.querySelector(`[data-category="${category}"]`).classList.add("selected");
 
-    renderGuideList(category);
+    document
+        .querySelector(`[data-category="${category}"]`)
+        .classList.add("selected");
+
+    renderQuizList(category);
 }
 
-// ===== Render Guide List =====
-function renderGuideList(category) {
-    const section = document.getElementById("guideListSection");
-    const title = document.getElementById("guideListTitle");
-    const list = document.getElementById("guideList");
+// ===== Render Quiz List =====
+function renderQuizList(category) {
+    const section = document.getElementById("quizListSection");
+    const title = document.getElementById("quizListTitle");
+    const list = document.getElementById("quizList");
 
-    const guides = getGuidesByCategory(category);
+    const quizzes = getQuizzesByCategory(category);
 
-    title.textContent = category + " First Aid Guides";
+    title.textContent = `${category} Quizzes`;
     section.classList.add("visible");
 
-    if (guides.length === 0) {
+    if (quizzes.length === 0) {
         list.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                No guides available for this category yet.
+            <div style="text-align:center; padding:40px; color:var(--text-secondary);">
+                No quizzes available for this category yet.
             </div>
         `;
         return;
     }
 
-    list.innerHTML = guides.map(guide => {
-        const data = guide.viewGuide();
-        const stepCount = data.steps.length;
-        const videoCount = data.videos.length;
+    list.innerHTML = quizzes.map(quiz => {
+        const data = quiz.viewQuiz();
 
         return `
-            <div class="guide-item" onclick="openGuide('${data.id}')">
+            <div class="guide-item" onclick="openQuiz('${data.id}')">
                 <div class="guide-item-info">
                     <div>
-                        <div class="guide-item-title">${data.title}</div>
+                        <div class="guide-item-title">
+                            ${data.title}
+                        </div>
+
                         <div class="guide-item-meta">
-                            ${stepCount} step${stepCount !== 1 ? "s" : ""}
-                            ${videoCount > 0 ? " · " + videoCount + " video" + (videoCount !== 1 ? "s" : "") : ""}
+                            ${data.questions.length} question${data.questions.length !== 1 ? "s" : ""}
                         </div>
                     </div>
                 </div>
@@ -126,47 +101,45 @@ function renderGuideList(category) {
     }).join("");
 }
 
-// ===== Navigate to Guide Detail =====
-function openGuide(guideId) {
-    window.location.href = `guideView.html?id=${guideId}`;
+// ===== Open Quiz =====
+function openQuiz(quizId) {
+    window.location.href = `quizView.html?id=${quizId}`;
 }
 
-// ===== Create Guide Modal =====
-function openCreateGuideModal() {
-    editingGuideId = null;
-    document.getElementById("guideModalTitle").textContent = "Create New Guide";
-    document.getElementById("guideModalSave").textContent = "Create";
-    document.getElementById("guideTitle").value = "";
-    document.getElementById("guideCategory").value = selectedCategory || "dog";
-    document.getElementById("guideModal").classList.add("active");
+// ===== Modal =====
+function openCreateQuizModal() {
+    document.getElementById("quizModalTitle").textContent = "Create New Quiz";
+    document.getElementById("quizModalSave").textContent = "Create";
+
+    document.getElementById("quizTitle").value = "";
+    document.getElementById("quizCategory").value =
+        selectedCategory || "dog";
+
+    document.getElementById("quizModal").classList.add("active");
 }
 
-function closeGuideModal() {
-    document.getElementById("guideModal").classList.remove("active");
-    editingGuideId = null;
+function closeQuizModal() {
+    document.getElementById("quizModal").classList.remove("active");
 }
 
-// ===== Edit Guide from List =====
-// Removed — edit/delete now handled on guideView page only
-
-// ===== Save Guide (Create Only) =====
-function saveGuide() {
-    const title = document.getElementById("guideTitle").value.trim();
-    const category = document.getElementById("guideCategory").value;
+// ===== Save Quiz =====
+function saveQuiz() {
+    const title = document.getElementById("quizTitle").value.trim();
+    const category = document.getElementById("quizCategory").value;
 
     if (!title) {
-        showConfirmation("Please enter a guide title", true);
+        showConfirmation("Please enter a quiz title", true);
         return;
     }
 
-    admin.manageGuide("create", {
-        title: title,
-        category: category
+    admin.manageQuiz("create", {
+        title,
+        category
     });
-    showConfirmation("Guide created successfully");
 
-    closeGuideModal();
-    renderGuideList(selectedCategory);
+    showConfirmation("Quiz created successfully");
+
+    closeQuizModal();
+
+    renderQuizList(selectedCategory);
 }
-
-// ===== Confirmation Popup =====

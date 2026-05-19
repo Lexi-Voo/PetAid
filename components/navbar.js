@@ -16,8 +16,7 @@ function renderNavbar(activePage = "") {
         { href: "firstAid.html",  label: "First Aid" },
         { href: "forum.html",     label: "Forum" },
         { href: "quiz.html",      label: "Quizzes" },
-        { href: "create.html",     label: "Create" },
-        { href: "confirm.html",  label: "Confirm" },
+        { href: "admin.html",  label: "Approve" },
         { href: "feedback.html",     label: "Feedback" },
     ];
 

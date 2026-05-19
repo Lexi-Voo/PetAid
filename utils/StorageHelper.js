@@ -135,8 +135,10 @@ async function initializeAllStorage() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initializeAllStorage();
+document.addEventListener("DOMContentLoaded", async () => {
+    await initializeAllStorage();
+
+    await initializeQuizStorage();
 });
 
 const FORUM_STORAGE_KEY = "petaid_forum_posts";
@@ -213,4 +215,103 @@ function getForumPostById(postId) {
     return loadForumPosts().find(
         post => post.getId() === postId
     ) || null;
+}
+
+// ============================================= Quiz Helper ===================================================================
+const QUIZ_STORAGE_KEY = "petaid_quizzes";
+
+function loadQuizzes() {
+    const data = localStorage.getItem(QUIZ_STORAGE_KEY);
+
+    if (!data) {
+        return [];
+    }
+
+    const parsed = JSON.parse(data);
+
+    return parsed.map(quizData => {
+
+        const questions = (quizData.questions || []).map(question =>
+            new QuizQuestion(
+                question.id,
+                question.questionText,
+                question.options,
+                question.correctAnswer
+            )
+        );
+
+        return new Quiz(
+            quizData.id,
+            quizData.title,
+            quizData.category,
+            questions,
+            quizData.score || 0
+        );
+    });
+}
+
+function saveQuizzes(quizzes) {
+    const plainData = quizzes.map(quiz => {
+        return {
+            id: quiz.getId(),
+            title: quiz.getTitle(),
+            category: quiz.getCategory(),
+            score: quiz.getScore().score,
+            questions: quiz.getQuestions().map(q => ({
+                id: q.id,
+                questionText: q.questionText,
+                options: q.options,
+                correctAnswer: q.correctAnswer
+            }))
+        };
+    });
+
+    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(plainData));
+
+    fetch('http://localhost:3000/api/save-quizzes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(plainData)
+    })
+    .then(res => res.json())
+    .then(data => console.log("Disk Sync:", data.message))
+    .catch(err => console.error("Could not sync quizzes.JSON file:", err));
+}
+
+function getAllQuizzes() {
+    return loadQuizzes();
+}
+
+function getQuizzesByCategory(category) {
+    const quizzes = loadQuizzes();
+
+    return quizzes.filter(
+        quiz => quiz.getCategory() === category
+    );
+}
+
+function getQuizById(quizId) {
+    return loadQuizzes().find(
+        quiz => quiz.getId() === quizId
+    ) || null;
+}
+
+async function initializeQuizStorage() {
+    if (!localStorage.getItem(QUIZ_STORAGE_KEY)) {
+        try {
+            const response = await fetch("data/sampleQuizzes.json");
+
+            const initialQuizzes = await response.json();
+
+            localStorage.setItem(
+                QUIZ_STORAGE_KEY,
+                JSON.stringify(initialQuizzes)
+            );
+
+            console.log("StorageHelper: Quiz dataset initialized.");
+
+        } catch (err) {
+            console.warn("StorageHelper: sampleQuizzes.json fallback active.", err);
+        }
+    }
 }
