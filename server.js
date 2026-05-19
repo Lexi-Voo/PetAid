@@ -1,26 +1,49 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-
 const app = express();
-const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'data', 'clinics.json');
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-app.use(express.json({ limit: '2mb' }));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
-app.post('/save-clinics', (req, res) => {
-  try {
-    const clinics = req.body;
-    if (!Array.isArray(clinics)) {
-      return res.status(400).json({ error: 'Expected an array of clinics' });
+app.post('/api/save-users', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'user.JSON');
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Physical user.JSON updated successfully.' });
+    } catch (err) {
+        console.error("Error writing to user.JSON:", err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
     }
-    fs.writeFileSync(DATA_FILE, JSON.stringify(clinics, null, 2), 'utf8');
-    return res.json({ status: 'ok' });
-  } catch (err) {
-    console.error('Failed to save clinics', err);
-    return res.status(500).json({ error: err.message });
-  }
 });
 
-app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+app.post('/api/save-approvals', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'approvals.JSON');
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Physical approvals.JSON updated successfully.' });
+    } catch (err) {
+        console.error("Error writing to approvals.JSON:", err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
+    }
+});
+
+app.post('/api/save-pets', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'pets.JSON');
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Physical pets.JSON updated successfully.' });
+    } catch (err) {
+        console.error("Error writing to pets.JSON:", err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
+    }
+});
+
+app.listen(3000, () => {
+    console.log('====================================================');
+    console.log('🚀 PetAid High-Capacity JSON Engine running!');
+    console.log('👉 Open your browser to: http://localhost:3000/firstAid.html');
+    console.log('Press Ctrl + C in this terminal window to stop the server.');
+    console.log('====================================================');
+});

@@ -42,6 +42,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 a {
@@ -171,11 +172,6 @@ a {
 .btn-sm {
     padding: 6px 14px;
     font-size: 0.82rem;
-}
-
-.btn-lg {
-    padding: 10px 22px;
-    font-size: 1rem;
 }
 
 .btn-icon {
@@ -690,3 +686,233 @@ body.is-admin button.admin-only {
     color: var(--primary-blue);
 }
 
+/* ===== Forum ===== */
+
+.forum-container {
+    display: flex;
+    gap: 24px;
+}
+
+.forum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.forum-sidebar {
+    width: 220px;
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    height: fit-content;
+}
+
+.forum-sidebar h3 {
+    margin-bottom: 16px;
+}
+
+.forum-sidebar ul {
+    list-style: none;
+}
+
+.forum-sidebar li {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.forum-sidebar li:hover,
+.forum-sidebar li.active {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.forum-posts {
+    flex: 1;
+}
+
+.forum-post-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.forum-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.forum-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.forum-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.forum-username {
+    font-weight: 600;
+}
+
+.forum-meta {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.forum-category-badge {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+.forum-post-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.forum-post-content {
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+.forum-post-footer {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.forum-post-card:hover {
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+}
+
+.empty-posts {
+    background-color: var(--bg-white);
+    border: 1px dashed var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.empty-posts-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.empty-posts h3 {
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+/* ===== Forum Detail Modal ===== */
+
+.forum-detail-modal {
+    max-width: 750px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.forum-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.forum-detail-meta {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.forum-detail-content {
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.forum-divider {
+    border: none;
+    border-top: 1px solid var(--border-light);
+    margin: 20px 0;
+}
+
+.forum-comments-title {
+    margin-bottom: 16px;
+}
+
+.comment-card {
+    background-color: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.comment-user {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.comment-content {
+    line-height: 1.5;
+}
+
+.forum-comment-form {
+    margin-top: 20px;
+}
+
+.forum-comment-form textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    font-family: inherit;
+}
+
+.forum-username-row,
+.comment-user-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.role-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.owner-badge {
+    background-color: #EEF3FF;
+    color: #3563E9;
+}
+
+.vet-badge {
+    background-color: #E8F7EC;
+    color: #2E7D32;
+}

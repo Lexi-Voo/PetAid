@@ -1,0 +1,62 @@
+[
+    {
+        "id": "p001",
+        "userId": "u001",
+        "category": "dog",
+        "title": "My dog refuses to eat after vaccination",
+        "content": "My dog stopped eating after yesterday's vaccination. Is this normal or should I bring him to the vet immediately?",
+        "datePosted": "2026-05-18T09:30:00",
+        "status": true,
+        "comments": [
+            {
+                "id": "c001",
+                "userId": "u002",
+                "content": "Loss of appetite for 1–2 days can happen after vaccination. Monitor hydration and energy levels carefully.",
+                "createdAt": "2026-05-18T10:00:00"
+            },
+
+            {
+                "id": "c002",
+                "userId": "u002",
+                "content": "If your dog starts vomiting, develops swelling, or refuses water, please visit a veterinary clinic immediately.",
+                "createdAt": "2026-05-18T10:08:00"
+            },
+
+            {
+                "id": "c003",
+                "userId": "u003",
+                "content": "My dog had the same reaction before and recovered the next day.",
+                "createdAt": "2026-05-18T10:20:00"
+            }
+        ]
+    },
+
+    {
+        "id": "p002",
+        "userId": "u004",
+        "category": "cat",
+        "title": "How do I stop my cat from scratching furniture?",
+        "content": "I bought a scratching post but my cat still scratches the sofa. Any advice?",
+        "datePosted": "2026-05-17T14:15:00",
+        "status": true,
+        "comments": [
+            {
+                "id": "c003",
+                "userId": "u001",
+                "content": "Try placing the scratching post near the sofa first.",
+                "createdAt": "2026-05-17T15:00:00"
+            }
+        ]
+    },
+
+    {
+        "id": "p003",
+        "userId": "u003",
+        "category": "rabbit",
+        "title": "Rabbit not eating hay",
+        "content": "My rabbit suddenly refuses to eat hay but still drinks water.",
+        "datePosted": "2026-05-16T08:45:00",
+        "status": true,
+        "comments": []
+    }
+]
