@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forum</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+            </svg>
+            PetAid
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#">Clinics</a></li>
+            <li><a href="firstAid.html">First Aid</a></li>
+            <li><a href="forum.html" class="active">Forum</a></li>
+            <li><a href="#">Quizzes</a></li>
+        </ul>
+        <div class="navbar-auth">
+            <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
+            <button class="btn btn-login" id="loginBtn">Login</button>
+            <button class="btn btn-primary" id="registerBtn">Register</button>
+            <button class="btn btn-outline admin-only" id="logoutBtn">Logout (Admin)</button>
+        </div>
+    </nav>
+
+    <main class="main-content forum-page">
+        <div class="forum-container">
+            <!-- Sidebar -->
+            <aside class="forum-sidebar">
+                <h3>Categories</h3>
+                <ul id="forum-categories">
+                    <li data-category="all" class="active">All</li>
+                    <li data-category="dog">Dog</li>
+                    <li data-category="cat">Cat</li>
+                    <li data-category="rabbit">Rabbit</li>
+                    <li data-category="hamster">Hamster</li>
+                </ul>
+            </aside>
+
+            <!-- Posts Area -->
+            <section class="forum-posts">
+                <div class="forum-header">
+                    <div>
+                        <h1 class="page-title">Forum</h1>
+
+                        <p class="page-subtitle">
+                            Connect, ask and share with pet owners and professional vets
+                        </p>
+                    </div>
+
+                    <button id="create-post-btn" class="btn btn-primary">
+                        New Post
+                    </button>
+                </div>
+                <div id="posts-container">
+                    <!-- ForumPost cards will be rendered here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+                </svg>
+            </div>
+            <span class="footer-org">Sarawak Veterinary Association</span>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-disclaimer">
+                &copy; 2026 Sarawak Veterinary Association. Disclaimer: Information provided is for informational purposes and does not replace professional medical advice.
+            </p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Medical Disclaimer</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Post Modal -->
+    <div class="modal-overlay" id="post-modal">
+        <div class="modal">
+            <h3>Create New Post</h3>
+            <div class="form-group">
+                <label for="post-category">Category</label>
+                <select id="post-category">
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="rabbit">Rabbit</option>
+                    <option value="hamster">Hamster</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="post-title">Title</label>
+                <input type="text" id="post-title">
+            </div>
+            <div class="form-group">
+                <label for="post-content">Content</label>
+                <textarea id="post-content"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="cancel-post" class="btn btn-outline">Cancel</button>
+                <button id="submit-post" class="btn btn-primary">Post</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div class="modal-overlay" id="post-detail-modal">
+
+        <div class="modal forum-detail-modal">
+
+            <div class="forum-detail-header">
+                <h2 id="detail-post-title"></h2>
+
+                <button
+                    class="btn-icon"
+                    id="close-detail-modal"
+                >
+                    ✕
+                </button>
+            </div>
+
+            <div class="forum-detail-meta">
+                <span id="detail-post-user"></span>
+                •
+                <span id="detail-post-date"></span>
+            </div>
+
+            <div
+                id="detail-post-content"
+                class="forum-detail-content"
+            ></div>
+
+            <hr class="forum-divider">
+
+            <div class="forum-comments-section">
+
+                <h3 class="forum-comments-title">
+                    Comments
+                </h3>
+
+                <div id="comments-container">
+
+                </div>
+
+                <div class="forum-comment-form">
+
+                    <textarea
+                        id="comment-input"
+                        placeholder="Write a comment..."
+                    ></textarea>
+
+                    <button
+                        id="submit-comment-btn"
+                        class="btn btn-primary"
+                    >
+                        Add Comment
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="classes/Comment.js"></script>
+    <script src="classes/ForumPost.js"></script>
+    <script src="classes/Forum.js"></script>
+    <script src="classes/User.js"></script>
+
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/Confirmation.js"></script>
+
+    <script src="forum.js"></script>
+</body>
+</html>
