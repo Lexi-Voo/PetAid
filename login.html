@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PetAid</title>
+    <style>
+        /* Base Styles - Easy to move to styles.css later */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
+        .navbar { background-color: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-brand { font-size: 24px; font-weight: bold; color: #2c3e50; text-decoration: none; }
+        .main-content { display: flex; justify-content: center; align-items: center; height: 80vh; }
+        
+        /* Card & Form Styles */
+        .auth-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        .auth-card h1 { margin-top: 0; color: #2c3e50; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        
+        /* Buttons & Text */
+        .btn { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        .btn:hover { background-color: #2980b9; }
+        .auth-footer { text-align: center; margin-top: 20px; font-size: 14px; }
+        .auth-footer a { color: #3498db; text-decoration: none; }
+        .status-msg { margin-bottom: 15px; font-size: 14px; text-align: center; }
+        .error { color: #e74c3c; }
+        .success { color: #2ecc71; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">🐾 PetAid</a>
+        <div>
+            <a href="register.html" style="text-decoration: none; color: #3498db; font-weight: bold;">Register</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="auth-card">
+            <h1>Welcome Back</h1>
+            <p style="color: #7f8c8d; margin-bottom: 30px;">Sign in to your account.</p>
+            
+            <div id="statusMessage" class="status-msg"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+
+            <p class="auth-footer">Don't have an account? <a href="register.html">Create one</a></p>
+        </div>
+    </main>
+
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/SessionHelper.js"></script>
+    <script src="utils/Confirmation.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

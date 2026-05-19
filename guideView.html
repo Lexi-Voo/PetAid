@@ -9,26 +9,7 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
-            </svg>
-            PetAid
-        </a>
-        <ul class="navbar-links">
-            <li><a href="#">Clinics</a></li>
-            <li><a href="firstAid.html" class="active">First Aid</a></li>
-            <li><a href="forum.html">Forum</a></li>
-            <li><a href="#">Quizzes</a></li>
-        </ul>
-        <div class="navbar-auth">
-            <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
-            <button class="btn btn-login" id="loginBtn">Login</button>
-            <button class="btn btn-primary" id="registerBtn">Register</button>
-            <button class="btn btn-outline admin-only" id="logoutBtn">Logout (Admin)</button>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -79,27 +60,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-top">
-            <div class="footer-logo">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
-                </svg>
-            </div>
-            <span class="footer-org">Sarawak Veterinary Association</span>
-        </div>
-        <div class="footer-bottom">
-            <p class="footer-disclaimer">
-                &copy; 2024 Sarawak Veterinary Association. Disclaimer: Information provided is for informational purposes and does not replace professional medical advice.
-            </p>
-            <div class="footer-links">
-                <a href="#">Terms of Service</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Medical Disclaimer</a>
-                <a href="#">Contact Us</a>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-container"></div>
 
     <!-- Edit Guide Modal -->
     <div class="modal-overlay" id="editGuideModal">
@@ -165,19 +126,18 @@
         </div>
     </div>
 
-    
-
-    
-
     <!-- Scripts -->
     <script src="classes/Step.js"></script>
     <script src="classes/Video.js"></script>
     <script src="classes/FirstAidGuide.js"></script>
+    <script src="components/Navbar.js"></script>
+    <script src="components/Footer.js"></script>
     <script src="classes/User.js"></script>
     <script src="classes/Admin.js"></script>
     <script src="utils/StorageHelper.js"></script>
     <script src="utils/Confirmation.js"></script>
     <script src="utils/DeleteConfirm.js"></script>
+    <script src="utils/SessionHelper.js"></script>
     <script src="guideView.js"></script>
 
 </body>

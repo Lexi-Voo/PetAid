@@ -5,6 +5,8 @@ let admin = null;
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", function () {
+    renderNavbar("First Aid");
+    renderFooter();
     checkAdminStatus();
     setupAdminToggle();
     loadGuide();
