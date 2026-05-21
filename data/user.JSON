@@ -6,8 +6,8 @@
     "name": "Admin",
     "email": "admin@gmail.com",
     "role": "admin",
-    "biography": "",
-    "profile_pic": "Root administrator account."
+    "biography": "Root administrator account.",
+    "profile_pic": ""
   },
   {
     "user_id": "2",
@@ -17,6 +17,6 @@
     "email": "faisal@gmail.com",
     "role": "petowner",
     "biography": "",
-    "profile_pic": "im faisal"
+    "profile_pic": "assets/profiles/profile.jpg"
   }
 ]
