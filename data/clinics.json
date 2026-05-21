@@ -1,0 +1,26 @@
+[
+  {
+    "ClinicName": "Sarawak Vet Clinic",
+    "Address": "123 Main Street, Kuching",
+    "PhoneNumber": "+60 82 123456",
+    "OpeningHours": "09:00-17:00",
+    "latitude": 1.552,
+    "longitude": 110.344
+  },
+  {
+    "ClinicName": "PetAid Association Office",
+    "Address": "Association Office, Kuching",
+    "PhoneNumber": "+60 82 654321",
+    "OpeningHours": "08:00-16:00",
+    "latitude": 1.5575585937055665,
+    "longitude": 110.3425426087814
+  },
+  {
+    "ClinicName": "Chicken",
+    "Address": "Jalan Casuarinna",
+    "PhoneNumber": "0128227356",
+    "OpeningHours": "09:00 - 17:00",
+    "latitude": 1.595061,
+    "longitude": 110.356576
+  }
+]
