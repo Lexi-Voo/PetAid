@@ -17,9 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const name = document.getElementById('fullName').value.trim();
         const role = roleSelect.value;
-        const email = document.getElementById('email').value.trim(); 
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
+        
+        const emailInputEl = document.getElementById('email');
+        const email = emailInputEl ? emailInputEl.value.trim() : "";
+        
         if (role === 'veterinarian') {
             if (!certInput || certInput.files.length === 0) {
                 showConfirmation("Error: Veterinarians must upload a valid professional certificate.", true);
@@ -27,44 +30,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-        const savedUsers = loadAuthUsers();
+        const savedUsers = loadAuthUsers(); 
         const savedApprovals = loadApprovals();
-        const usernameExists = savedUsers.some(u => u.username && u.username.toLowerCase() === username.toLowerCase()) ||
+
+        const usernameExists = savedUsers.some(u => u.getUsername().toLowerCase() === username.toLowerCase()) ||
                                savedApprovals.some(a => a.username && a.username.toLowerCase() === username.toLowerCase());
         if (usernameExists) {
             showConfirmation("Error: Username is already taken.", true);
+            return;
+        }
+        const emailExists = savedUsers.some(u => u.getEmail() && u.getEmail().toLowerCase() === email.toLowerCase()) ||
+                             savedApprovals.some(a => a.email && a.email.toLowerCase() === email.toLowerCase());
+        if (emailExists) {
+            showConfirmation("Error: Email address is already registered.", true);
             return;
         }
 
         if (role === 'petowner') {
             let maxUserId = 0;
             savedUsers.forEach(u => {
-                const idNum = parseInt(u.user_id);
+                const idNum = parseInt(u.getId());
                 if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
             });
             const newUserId = (maxUserId + 1).toString(); 
-            const newUser = {
-                "user_id": newUserId,
-                "username": username,
-                "password": password,
-                "name": name,
-                "email": email,
-                "role": "petowner",
-                "biography": "", 
-                "profile_pic": "assets/profiles/profile.jpg" 
-            };
-            savedUsers.push(newUser);
+            const starterProfile = new UserProfile(name, " ", "assets/profiles/profile.jpg");
+            const newOwnerInstance = new PetOwner(newUserId, starterProfile, username, password, email);
+
+            savedUsers.push(newOwnerInstance);
             saveAuthUsers(savedUsers);
 
-            const autoLoginSession = {
-                "user_id": newUser.user_id,
-                "username": newUser.username,
-                "name": newUser.name,
-                "role": newUser.role
-            };
-            localStorage.setItem('petaid_active_session', JSON.stringify(autoLoginSession));
+            localStorage.setItem('petaid_active_session', JSON.stringify(newOwnerInstance.toJSON()));
             showConfirmation("Registration successful! Logging you in...");         
             setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);
+
         } else if (role === 'veterinarian') {
             let maxReqId = 0;
             savedApprovals.forEach(a => {
@@ -74,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newReqId = (maxReqId + 1).toString(); 
             let assignedCertPath = "assets/certs/cert.jpg"; 
             const selectedCertFile = certInput.files[0];
+
             if (selectedCertFile) {
                 const formData = new FormData();
                 formData.append('id', newReqId);
@@ -92,12 +91,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Certificate disk syncing failure:", err);
                 }
             }
+
             const newApprovalRequest = {
                 "req_id": newReqId,
                 "username": username,
                 "password": password,
                 "name": name,
-                "email": email,
+                "email": email, 
                 "cert_path": assignedCertPath, 
                 "applied_at": new Date().toISOString().split('T')[0] 
             };

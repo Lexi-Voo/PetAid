@@ -28,8 +28,40 @@ const APPROVALS_KEY = "petaid_approvals";
 const PETS_KEY = "petaid_pets";
 
 function loadAuthUsers() {
-    const data = localStorage.getItem(USERS_KEY);
-    return data ? JSON.parse(data) : [];
+    const rawDataString = localStorage.getItem('petaid_users') || '[]';
+    const rawObjectsArray = JSON.parse(rawDataString);
+
+    return rawObjectsArray.map(u => {
+        const profileInstance = new UserProfile(u.name || "", u.biography || "", u.profile_pic || "assets/profiles/profile.jpg");
+        const resolvedId = (u.user_id || "0").toString();
+        const role = (u.role || "petowner").toLowerCase();
+        if (role === 'admin') {
+            return new Admin(resolvedId, profileInstance, u.username, u.password, u.email);
+        } else if (role === 'veterinarian') {
+            const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email);
+            vetInstance.cert_path = u.cert_path || "assets/certs/cert_1.jpg";
+            return vetInstance;
+        } else {
+            return new PetOwner(resolvedId, profileInstance, u.username, u.password, u.email);
+        }
+    });
+}
+
+function getCurrentUser() {
+    const sessionStr = localStorage.getItem('petaid_active_session');
+    if (!sessionStr) return null;
+    const s = JSON.parse(sessionStr);
+    const profileInstance = new UserProfile(s.name, s.biography, s.profile_pic);
+    const resolvedId = (s.user_id || "0").toString();
+    const role = (s.role || "petowner").toLowerCase();
+    
+    if (role === 'admin') return new Admin(resolvedId, profileInstance, s.username, s.password, s.email);
+    if (role === 'veterinarian') {
+        const v = new Veterinarian(resolvedId, profileInstance, s.username, s.password, s.email);
+        if (s.cert_path) v.cert_path = s.cert_path;
+        return v;
+    }
+    return new PetOwner(resolvedId, profileInstance, s.username, s.password, s.email);
 }
 
 function saveAuthUsers(users) {

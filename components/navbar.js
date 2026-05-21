@@ -1,6 +1,6 @@
 function renderNavbar(activePage = "") {
     const user = window.getCurrentUser ? window.getCurrentUser() : null;
-    const role = user ? user.role : "";
+    const role = user ? user.getRole() : "";
 
     let navLinks = [];
 
@@ -46,6 +46,7 @@ function renderNavbar(activePage = "") {
         `;
     } else if (role === "petowner" || role === "veterinarian") {
         navLinks = userNavLinks;
+        const usernameDisplay = user.getProfile().getName() || user.getUsername();
         authHTML = `
             <span class="navbar-username">Put username here</span>
             <button class="btn btn-primary" onclick="window.location.href='profile.html'">Profile</button>
@@ -54,21 +55,34 @@ function renderNavbar(activePage = "") {
     } else if (role === "admin") {
         navLinks = adminNavLinks;
         authHTML = `
-            <span class="navbar-username navbar-admin-badge">Admin</span>
+            <span class="navbar-username navbar-admin-badge" style="margin-right: 10px; font-weight: bold; color: #2c3e50;">Admin Mode 🛡️</span>
             <button class="btn btn-outline" onclick="window.logoutUser()">Logout</button>
         `;
     }
 
-    document.getElementById("navbar-container").innerHTML = `
-        <nav class="navbar">
-            <a href="index.html" class="navbar-brand">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
-                </svg>
-                PetAid
-            </a>
-            <ul class="navbar-links">${navLinks}</ul>
-            <div class="navbar-auth">${authHTML}</div>
-        </nav>
-    `;
+    const navbarTargetContainer = document.getElementById("navbar-container");
+    if (navbarTargetContainer) {
+        navbarTargetContainer.innerHTML = `
+            <nav class="navbar">
+                <a href="firstAid.html" class="navbar-brand">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+                    </svg>
+                    PetAid
+                </a>
+                <ul class="navbar-links">${navLinks}</ul>
+                <div class="navbar-auth">${authHTML}</div>
+            </nav>
+        `;
+    }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    let currentPageLabel = "";
+    if (document.title.includes("First Aid")) currentPageLabel = "First Aid";
+    if (document.title.includes("Clinics")) currentPageLabel = "Clinics";
+    if (document.title.includes("Forum")) currentPageLabel = "Forum";
+    if (document.title.includes("Quizzes")) currentPageLabel = "Quizzes";
+
+    renderNavbar(currentPageLabel);
+});

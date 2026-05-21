@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allPets = loadPets();
     const currentPet = allPets.find(p => p.pet_id === targetPetId);
 
-    if (!currentPet || currentPet.owner_id !== activeUser.user_id) {
+    if (!currentPet || currentPet.owner_id !== activeUser.getId()) {
         showConfirmation("Error: Pet record missing or unauthorized.", true);
         setTimeout(() => { window.location.href = "profile.html"; }, 1500);
         return;
@@ -48,26 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     populateUI(currentPet);
 
-    changePhotoBtn.addEventListener('click', () => {
-        petImgUploader.click();
-    });
-
+    changePhotoBtn.addEventListener('click', () => { petImgUploader.click(); });
     petImgUploader.addEventListener('change', async (e) => {
         const targetFile = e.target.files[0];
         if (!targetFile) return;
-
         const formData = new FormData();
         formData.append('id', targetPetId);
         formData.append('uploadType', 'pet'); 
         formData.append('image', targetFile);
 
         try {
-            const response = await fetch('/api/upload-image', {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch('/api/upload-image', { method: 'POST', body: formData });
             const result = await response.json();
-
             if (result.success) {
                 const diskPath = result.savedPath;
                 displayPetImg.src = diskPath;
@@ -78,10 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     savePets(allPets); 
                     currentPet.pet_img = diskPath; 
                     showConfirmation("Pet profile picture updated successfully!");
-
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    setTimeout(() => { window.location.reload(); }, 1000);
                 }
             } else {
                 showConfirmation("Error: " + result.message, true);
@@ -95,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let isEditing = false;
     petToggleBtn.addEventListener('click', () => {
         const inputFields = editPetForm.querySelectorAll('input, select, textarea');
-
         if (!isEditing) {
             nameCacheSnapshot = editPetName.value;
             categoryCacheSnapshot = editPetCategory.value;
@@ -128,16 +116,5 @@ document.addEventListener('DOMContentLoaded', () => {
             petToggleBtn.className = "btn btn-edit";
             petCancelBtn.classList.add('hidden');
         }
-    });
-    petCancelBtn.addEventListener('click', () => {
-        isEditing = false;
-        const inputFields = editPetForm.querySelectorAll('input, select, textarea');
-        editPetName.value = nameCacheSnapshot;
-        editPetCategory.value = categoryCacheSnapshot;
-        editPetBio.value = bioCacheSnapshot;
-        inputFields.forEach(field => field.setAttribute('disabled', 'true'));
-        petToggleBtn.textContent = "Edit Pet Information";
-        petToggleBtn.className = "btn btn-edit";
-        petCancelBtn.classList.add('hidden');
     });
 });
