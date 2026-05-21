@@ -49,7 +49,7 @@ function renderNavbar(activePage = "") {
         navLinks = userNavLinks;
         authHTML = `
             <span class="navbar-username">Put username here</span>
-            <button class="btn btn-primary" onclick="window.location.href='progile.html'">Profile</button>
+            <button class="btn btn-primary" onclick="window.location.href='profile.html'">Profile</button>
             <button class="btn btn-outline" onclick="window.logoutUser()">Logout</button>
         `;
     } else if (role === "admin") {
