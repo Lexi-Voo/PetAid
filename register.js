@@ -13,25 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
             certGroup.classList.add('hidden');
         }
     });
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const name = document.getElementById('fullName').value.trim();
         const role = roleSelect.value;
+        const email = document.getElementById('email').value.trim(); 
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
         if (role === 'veterinarian') {
             if (!certInput || certInput.files.length === 0) {
                 showConfirmation("Error: Veterinarians must upload a valid professional certificate.", true);
                 if (certInput) certInput.focus();
                 return;
             }
-        }
-        if (password !== confirmPassword) {
-            showConfirmation("Error: Passwords do not match.", true);
-            return;
         }
         const savedUsers = loadAuthUsers();
         const savedApprovals = loadApprovals();
@@ -42,13 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (role === 'owner') {
+        if (role === 'petowner') {
             let maxUserId = 0;
             savedUsers.forEach(u => {
                 const idNum = parseInt(u.user_id);
-                if (!isNaN(idNum) && idNum > maxUserId) {
-                    maxUserId = idNum;
-                }
+                if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
             });
             const newUserId = (maxUserId + 1).toString(); 
             const newUser = {
@@ -56,11 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 "username": username,
                 "password": password,
                 "name": name,
-                "role": "owner",
+                "email": email,
+                "role": "petowner",
                 "biography": "", 
                 "profile_pic": "assets/profiles/profile.jpg" 
             };
-
             savedUsers.push(newUser);
             saveAuthUsers(savedUsers);
 
@@ -72,32 +64,47 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             localStorage.setItem('petaid_active_session', JSON.stringify(autoLoginSession));
             showConfirmation("Registration successful! Logging you in...");         
-            setTimeout(() => {
-                window.location.href = "firstAid.html"; 
-            }, 1500);
+            setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);
         } else if (role === 'veterinarian') {
             let maxReqId = 0;
             savedApprovals.forEach(a => {
                 const idNum = parseInt(a.req_id);
-                if (!isNaN(idNum) && idNum > maxReqId) {
-                    maxReqId = idNum;
-                }
+                if (!isNaN(idNum) && idNum > maxReqId) { maxReqId = idNum; }
             });
             const newReqId = (maxReqId + 1).toString(); 
+            let assignedCertPath = "assets/certs/cert.jpg"; 
+            const selectedCertFile = certInput.files[0];
+            if (selectedCertFile) {
+                const formData = new FormData();
+                formData.append('id', newReqId);
+                formData.append('uploadType', 'cert'); 
+                formData.append('image', selectedCertFile);
+                try {
+                    const response = await fetch('/api/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        assignedCertPath = result.savedPath;
+                    }
+                } catch (err) {
+                    console.error("Certificate disk syncing failure:", err);
+                }
+            }
             const newApprovalRequest = {
                 "req_id": newReqId,
                 "username": username,
                 "password": password,
                 "name": name,
-                "cert_path": "assets/certs/cert.jpg", 
+                "email": email,
+                "cert_path": assignedCertPath, 
                 "applied_at": new Date().toISOString().split('T')[0] 
             };
             savedApprovals.push(newApprovalRequest);
             saveApprovals(savedApprovals);
             showConfirmation("Registration submitted! Please wait for Admin approval.");  
-            setTimeout(() => {
-                window.location.href = "firstAid.html";
-            }, 1500);       
+            setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);       
             registerForm.reset();
             certGroup.classList.add('hidden');
         }

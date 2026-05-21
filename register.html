@@ -4,30 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - PetAid</title>
-    <style>
-        /* Exact same base styles as login for consistency */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
-        .navbar { background-color: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .navbar-brand { font-size: 24px; font-weight: bold; color: #2c3e50; text-decoration: none; }
-        .main-content { display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
-        
-        .auth-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
-        .auth-card h1 { margin-top: 0; color: #2c3e50; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        
-        .btn { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
-        .btn:hover { background-color: #2980b9; }
-        .auth-footer { text-align: center; margin-top: 20px; font-size: 14px; }
-        .auth-footer a { color: #3498db; text-decoration: none; }
-        
-        /* specific to register */
-        .hidden { display: none; }
-        .status-msg { margin-bottom: 15px; font-size: 14px; text-align: center; }
-        .error { color: #e74c3c; }
-        .success { color: #2ecc71; }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -54,7 +31,7 @@
                 <div class="form-group">
                     <label for="role">Account Type</label>
                     <select id="role" required>
-                        <option value="owner">Pet Owner</option>
+                        <option value="petowner">Pet Owner</option>
                         <option value="veterinarian">Veterinarian</option>
                     </select>
                 </div>
@@ -62,6 +39,11 @@
                 <div class="form-group hidden" id="certGroup">
                     <label for="certificate">Veterinary Certificate (PDF/Image)</label>
                     <input type="file" id="certificate">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
                 </div>
 
                 <div class="form-group">
@@ -74,12 +56,12 @@
                     <input type="password" id="password" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" required>
-                </div>
-
-                <button type="submit" class="btn">Register</button>
+                <button type="submit" 
+                        style="display: block; width: max-content; padding: 12px 24px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"
+                        onmouseover="this.style.backgroundColor='#2980b9'" 
+                        onmouseout="this.style.backgroundColor='#3498db'">
+                    Register
+                </button>
             </form>
 
             <p class="auth-footer">Already have an account? <a href="login.html">Sign in</a></p>

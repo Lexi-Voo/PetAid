@@ -4,41 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approvals Management - PetAid</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
-        
-        .navbar { background-color: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .navbar-brand { font-size: 24px; font-weight: bold; color: #2c3e50; text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .navbar-brand svg { width: 24px; height: 24px; }
-        .navbar-links { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
-        .navbar-links a { text-decoration: none; color: #555; font-weight: 500; }
-        .navbar-links a.active { color: #e74c3c; font-weight: bold; }
-        .navbar-auth { display: flex; gap: 10px; align-items: center; }
-        
-        .admin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        .panel-block { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .panel-block h2 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f4f7f6; padding-bottom: 10px; margin-bottom: 20px; }
-        
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-        .admin-table th { background-color: #f8f9fa; color: #2c3e50; font-weight: 600; text-transform: uppercase; font-size: 12px; }
-        
-        .btn-approve { background-color: #2ecc71; color: white; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; }
-        .btn-approve:hover { background-color: #27ae60; }
-        .btn-reject { background-color: #e74c3c; color: white; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-reject:hover { background-color: #c0392b; }
-        
-        .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: inherit; }
-        .btn-sm { padding: 4px 8px; font-size: 12px; }
-        .btn-login { background: transparent; border: 1px solid #ddd; color: #555; }
-        .btn-primary { background-color: #3498db; border: 1px solid #3498db; color: white; }
-        .btn-outline { background: transparent; border: 2px solid #e74c3c; color: #e74c3c; transition: all 0.2s; }
-        .btn-outline:hover { background: #e74c3c; color: white; }
-
-        .cert-link { color: #3498db; text-decoration: none; font-weight: bold; }
-        .cert-link:hover { text-decoration: underline; }
-        .hidden { display: none !important; }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -54,7 +20,7 @@
             <li><a href="firstAid.html">First Aid</a></li>
             <li><a href="#">Forum</a></li>
             <li><a href="#">Quizzes</a></li>
-            <li><a href="admin.html" class="active">Approvals 🛡️</a></li>
+            <li><a href="admin.html" class="active">Approvals</a></li>
         </ul>
         <div class="navbar-auth">
             <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
@@ -80,106 +46,14 @@
                     </tr>
                 </thead>
                 <tbody id="adminQueueBody">
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </main>
 
     <script src="utils/StorageHelper.js"></script>
     <script src="utils/SessionHelper.js"></script> 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const activeUser = getCurrentUser();
-            if (!activeUser || activeUser.role !== 'admin') {
-                alert("Access Denied: Admin role credentials required.");
-                window.location.href = "login.html";
-                return;
-            }
-            const adminQueueBody = document.getElementById('adminQueueBody');
-            const requestsTable = document.getElementById('requestsTable');
-            const emptyQueueMsg = document.getElementById('emptyQueueMsg');
-            async function renderAdminQueue() {
-                try {
-                    let response = await fetch(`data/approvals.JSON?_=${Date.now()}`);
-                    
-                    if (!response.ok) {
-                        console.log("Approvals: .JSON failed, trying fallback to .json...");
-                        response = await fetch(`data/approvals.json?_=${Date.now()}`);
-                    }
-                    const pendingRequests = await response.json();
-                    localStorage.setItem('petaid_approvals', JSON.stringify(pendingRequests));
-                    if (!pendingRequests || pendingRequests.length === 0) {
-                        requestsTable.classList.add('hidden');
-                        emptyQueueMsg.classList.remove('hidden');
-                        return;
-                    }
-                    requestsTable.classList.remove('hidden');
-                    emptyQueueMsg.classList.add('hidden');
-
-                    adminQueueBody.innerHTML = pendingRequests.map(req => `
-                        <tr>
-                            <td style="font-weight: bold; color: #2c3e50;">${req.name}</td>
-                            <td><code>${req.username}</code></td>
-                            <td><a href="${req.cert_path || '#'}" target="_blank" class="cert-link">View Certificate 📄</a></td>
-                            <td>
-                                <button class="btn-approve" onclick="handleAdminAction('${req.req_id}', 'approve')">Approve</button>
-                                <button class="btn-reject" onclick="handleAdminAction('${req.req_id}', 'reject')">Reject</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                } catch (err) {
-                    console.error("Error loading physical approvals file:", err);
-                    requestsTable.classList.add('hidden');
-                    emptyQueueMsg.classList.remove('hidden');
-                }
-            }
-
-            window.handleAdminAction = async function(requestId, actionType) {
-                try {
-                    let response = await fetch(`data/approvals.JSON?_=${Date.now()}`);
-                    if (!response.ok) {
-                        response = await fetch(`data/approvals.json?_=${Date.now()}`);
-                    }
-                    const currentApprovalsList = await response.json();
-                    const targetIndex = currentApprovalsList.findIndex(a => a.req_id === requestId);
-                    if (targetIndex === -1) return;
-                    const targetRequest = currentApprovalsList[targetIndex];
-
-                    if (actionType === 'approve') {
-                        const currentMasterUsers = loadAuthUsers();
-                        let maxUserId = 0;
-                        currentMasterUsers.forEach(u => {
-                            const idNum = parseInt(u.user_id);
-                            if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
-                        });
-                        const newUserId = (maxUserId + 1).toString();
-
-                        const approvedVet = {
-                            "user_id": newUserId,
-                            "username": targetRequest.username,
-                            "password": targetRequest.password,
-                            "name": targetRequest.name,
-                            "role": "veterinarian",
-                            "biography": `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`,
-                            "profile_pic": "assets/profiles/profile.jpg"
-                        };
-                        currentMasterUsers.push(approvedVet);
-                        saveAuthUsers(currentMasterUsers); 
-                        alert(`${targetRequest.name} successfully approved and migrated to user.JSON!`);
-                    } else {
-                        alert(`Request for ${targetRequest.name} rejected.`);
-                    }
-                    currentApprovalsList.splice(targetIndex, 1);
-                    saveApprovals(currentApprovalsList);
-                    setTimeout(() => {
-                        renderAdminQueue();
-                    }, 200);
-                } catch (err) {
-                    console.error("Failed to execute administration action sequence:", err);
-                }
-            };
-            renderAdminQueue();
-        });
-    </script>
+    <script src="utils/Confirmation.js"></script> 
+    <script src="admin.js"></script>
 </body>
 </html>
