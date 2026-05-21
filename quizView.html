@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - PetAid</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            
+            <h1 class="quiz-detail-title" id="quizTitle">Loading...</h1>
+
+            <!-- Admin: Edit quiz title/category, Delete entire quiz -->
+            <div class="quiz-detail-actions admin-only">
+                <button class="btn btn-outline btn-sm" onclick="openEditQuizModal()">
+                    Edit Quiz
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="openDeleteQuizModal()">
+                    Delete Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <section class="questions-section">
+            <div class="questions-section-header">
+                <h2 class="section-title">Questions</h2>
+                <button class="btn btn-primary btn-sm admin-only" onclick="openAddQuestionModal()">
+                    + Add Question
+                </button>
+            </div>
+            <div id="questionsList">
+                <!-- questions rendered by JS -->
+            </div>
+            <button class="btn btn-primary" onclick="submitQuiz()">
+                Submit Quiz
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Edit Quiz Modal -->
+    <div class="modal-overlay" id="editQuizModal">
+        <div class="modal">
+            <h3 class="modal-title">Edit Quiz</h3>
+            <div class="form-group">
+                <label for="editQuizTitle">Quiz Title</label>
+                <input type="text" id="editQuizTitle">
+            </div>
+            <div class="form-group">
+                <label for="editQuizCategory">Category</label>
+                <select id="editQuizCategory">
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="rabbit">Rabbit</option>
+                    <option value="hamster">Hamster</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeEditQuizModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditQuiz()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Question Modal -->
+    <div class="modal-overlay" id="questionModal">
+        <div class="modal">
+
+            <h3 class="modal-title" id="questionModalTitle">
+                Add Question
+            </h3>
+
+            <div class="form-group">
+                <label for="questionText">Question</label>
+
+                <textarea id="questionText"
+                    placeholder="Enter question here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="option1">Option 1</label>
+                <input type="text" id="option1">
+            </div>
+
+            <div class="form-group">
+                <label for="option2">Option 2</label>
+                <input type="text" id="option2">
+            </div>
+
+            <div class="form-group">
+                <label for="option3">Option 3</label>
+                <input type="text" id="option3">
+            </div>
+
+            <div class="form-group">
+                <label for="option4">Option 4</label>
+                <input type="text" id="option4">
+            </div>
+
+            <div class="form-group">
+                <label for="correctAnswer">Correct Answer</label>
+
+                <select id="correctAnswer">
+                    <option value="0">Option 1</option>
+                    <option value="1">Option 2</option>
+                    <option value="2">Option 3</option>
+                    <option value="3">Option 4</option>
+                </select>
+            </div>
+
+            <input type="hidden" id="editingQuestionId">
+
+            <div class="modal-actions">
+                <button class="btn btn-outline"
+                        onclick="closeQuestionModal()">
+                    Cancel
+                </button>
+
+                <button class="btn btn-primary"
+                        id="questionModalSave"
+                        onclick="saveQuestion()">
+                    Add
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="classes/QuizQuestion.js"></script>
+    <script src="classes/Quiz.js"></script>
+    <script src="components/Navbar.js"></script>
+    <script src="components/Footer.js"></script>
+    <script src="classes/User.js"></script>
+    <script src="classes/Admin.js"></script>
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/Confirmation.js"></script>
+    <script src="utils/DeleteConfirm.js"></script>
+    <script src="utils/SessionHelper.js"></script>
+    <script src="quizView.js"></script>
+
+</body>
+</html>

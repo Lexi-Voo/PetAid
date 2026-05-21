@@ -171,6 +171,7 @@ function saveGuide() {
 }
 
 // ===== Confirmation Popup =====
+// Comments from Jasmine (can delete this to prevent from fighting with the existing navbar component!)
 document.addEventListener('DOMContentLoaded', () => {
     const activeUser = window.getCurrentUser(); 
     const navbarLinks = document.querySelector('.navbar-links');

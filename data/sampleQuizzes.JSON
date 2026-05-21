@@ -1,7 +1,7 @@
 [
     {
         "id": "qz001",
-        "quizTitle": "Dog First Aid Basics",
+        "title": "Dog First Aid Basics",
         "category": "dog",
         "questions": [
             {
@@ -63,7 +63,7 @@
     },
     {
         "id": "qz002",
-        "quizTitle": "Dog Emergency Response",
+        "title": "Dog Emergency Response",
         "category": "dog",
         "questions": [
             {
@@ -103,7 +103,7 @@
     },
     {
         "id": "qz003",
-        "quizTitle": "Cat First Aid Basics",
+        "title": "Cat First Aid Basics",
         "category": "cat",
         "questions": [
             {
@@ -154,7 +154,7 @@
     },
     {
         "id": "qz004",
-        "quizTitle": "Rabbit GI Stasis",
+        "title": "Rabbit GI Stasis",
         "category": "rabbit",
         "questions": [
             {
@@ -194,7 +194,7 @@
     },
     {
         "id": "qz005",
-        "quizTitle": "Hamster Wet Tail",
+        "title": "Hamster Wet Tail",
         "category": "hamster",
         "questions": [
             {
