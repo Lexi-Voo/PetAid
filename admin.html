@@ -10,6 +10,29 @@
 
     <div id="navbar-container"></div>
  
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
+            </svg>
+            PetAid
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#">Clinics</a></li>
+            <li><a href="firstAid.html">First Aid</a></li>
+            <li><a href="#">Forum</a></li>
+            <li><a href="#">Quizzes</a></li>
+            <li><a href="admin.html" class="active">Approvals</a></li>
+        </ul>
+        <div class="navbar-auth">
+            <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
+            <button class="btn btn-login" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
+            <button class="btn btn-primary" id="registerBtn" onclick="window.location.href='register.html'">Register</button>
+            
+            <button class="btn btn-outline admin-only" id="logoutBtn" onclick="localStorage.removeItem('petaid_active_session'); window.location.href='login.html';">Logout (Admin)</button>
+        </div>
+    </nav>
+
     <main class="admin-container">
         <div class="panel-block">
             <h2>Veterinarian Verification Queue</h2>
@@ -128,5 +151,7 @@
             renderAdminQueue();
         });
     </script>
+    <script src="utils/Confirmation.js"></script> 
+    <script src="admin.js"></script>
 </body>
 </html>
