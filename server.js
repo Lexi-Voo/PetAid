@@ -1,11 +1,58 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(express.static(__dirname));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let folder = 'profiles'; 
+
+        if (req.body.uploadType === 'pet') {
+            folder = 'petprofile';
+        } else if (req.body.uploadType === 'cert') {
+            folder = 'certs';
+        }
+        const dir = path.join(__dirname, 'assets', folder);
+        
+        fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        const id = req.body.id || 'unknown';
+        const ext = path.extname(file.originalname).toLowerCase(); 
+        
+        let prefix = 'user';
+        if (req.body.uploadType === 'pet') {
+            prefix = 'pet';
+        } else if (req.body.uploadType === 'cert') {
+            prefix = 'cert';
+        }
+        cb(null, `${prefix}_${id}${ext}`);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/api/upload-image', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    }
+    let folder = 'profiles';
+    if (req.body.uploadType === 'pet') folder = 'petprofile';
+    if (req.body.uploadType === 'cert') folder = 'certs';
+    const cleanPath = `assets/${folder}/${req.file.filename}`;
+    res.json({ 
+        success: true, 
+        message: 'File written onto physical disk smoothly!', 
+        savedPath: cleanPath 
+    });
+});
 
 app.post('/api/save-users', (req, res) => {
     const filePath = path.join(__dirname, 'data', 'user.JSON');

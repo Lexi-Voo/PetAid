@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault(); 
 
-        const inputUsername = document.getElementById('username').value.trim();
+        const inputEmail = document.getElementById('email').value.trim();
         const inputPassword = document.getElementById('password').value.trim();
         const savedUsers = loadAuthUsers();
         const savedApprovals = loadApprovals();
-        const activeUser = savedUsers.find(u => u.username && u.username.toLowerCase() === inputUsername.toLowerCase());
+        const activeUser = savedUsers.find(u => u.email && u.email.toLowerCase() === inputEmail.toLowerCase());
 
         if (activeUser) {
             if (activeUser.password === inputPassword) {
@@ -25,16 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 1200);
                 return;
             } else {
-                showConfirmation('Invalid username or password.', true);
+                showConfirmation('Invalid email or password.', true);
                 return;
             }
         }
 
-        const pendingVet = savedApprovals.find(a => a.username && a.username.toLowerCase() === inputUsername.toLowerCase());
+        const pendingVet = savedApprovals.find(a => a.email && a.email.toLowerCase() === inputEmail.toLowerCase());
         if (pendingVet) {
             showConfirmation('Your veterinary registration is still pending administrator review.', true);
             return;
         }
-        showConfirmation('Invalid username or password.', true);
+        showConfirmation('Invalid email or password.', true);
     });
 });
