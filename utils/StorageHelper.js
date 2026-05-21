@@ -44,9 +44,9 @@ function saveAuthUsers(users) {
     .catch(err => console.error("Could not sync to physical user.JSON file:", err));
 }
 
-function findAuthUserByUsername(username) {
+function findAuthUserByEmail(email) {
     const users = loadAuthUsers();
-    return users.find(u => u.username.toLowerCase() === username.trim().toLowerCase()) || null;
+    return users.find(u => u.email && u.email.toLowerCase() === email.trim().toLowerCase()) || null;
 }
 
 function findAuthUserById(id) {
@@ -72,9 +72,9 @@ function saveApprovals(approvals) {
     .catch(err => console.error("Could not sync to physical approvals.JSON file:", err));
 }
 
-function findApprovalByUsername(username) {
+function findApprovalByEmail(email) {
     const approvals = loadApprovals();
-    return approvals.find(a => a.username.toLowerCase() === username.trim().toLowerCase()) || null;
+    return approvals.find(a => a.email && a.email.toLowerCase() === email.trim().toLowerCase()) || null;
 }
 
 function loadPets() {
