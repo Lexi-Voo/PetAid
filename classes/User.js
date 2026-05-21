@@ -58,15 +58,19 @@ class User {
     }
 
     toJSON() {
-        return {
-            user_id: this.getId(),
-            username: this.getUsername(),
-            password: this.getPassword(),
-            name: this.getProfile().getName(),
-            email: this.getEmail(),
-            role: this.getRole(),
-            biography: this.getProfile().getBiography(),
-            profile_pic: this.getProfile().getProfilePic()
+        const data = {
+        user_id: this.getId(),
+        username: this.getUsername(),
+        password: this.getPassword(),
+        name: this.getProfile().getName(),
+        email: this.getEmail(),
+        role: this.getRole(),
+        biography: this.getProfile().getBiography(),
+        profile_pic: this.getProfile().getProfilePic()
         };
+        if (typeof this.getPhone === 'function') {
+            data.phone = this.getPhone();
+        }
+        return data;
     }
 }

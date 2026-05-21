@@ -57,6 +57,28 @@
                     <div id="statusMessage" class="status-msg success">Biography synchronized!</div>
                 </form>
             </div>
+            <div class="panel-block hidden" id="vetPhonePanel">
+                <h2>Contact Information</h2>
+                <form id="phoneForm">
+                    <div class="form-group">
+                        <label for="phoneInput">Professional Contact Number</label>
+                        <input 
+                            type="tel" 
+                            id="phoneInput" 
+                            placeholder="e.g. +60123456789" 
+                            pattern="^[+\d\s\-]+$"
+                            required
+                            disabled
+                            oninvalid="this.setCustomValidity('Please enter a valid phone number')"
+                            oninput="this.setCustomValidity('')"
+                        >
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" id="phoneToggleBtn" class="btn btn-edit">Edit Phone</button>
+                        <button type="button" id="phoneCancelBtn" class="btn btn-cancel hidden">Cancel</button>
+                    </div>
+                </form>
+            </div>
 
             <div class="panel-block hidden" id="addPetPanel">
                 <h2>🐾 Add New Pet</h2>

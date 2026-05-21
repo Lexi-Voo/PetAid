@@ -13,7 +13,7 @@ function getCurrentUser() {
         if (rawObj.role === 'admin') {
             return new Admin(rawObj.user_id, profileInstance, rawObj.username, rawObj.password, rawObj.email);
         } else if (rawObj.role === 'veterinarian') {
-            const vetInstance = new Veterinarian(rawObj.user_id, profileInstance, rawObj.username, rawObj.password, rawObj.email);
+            const vetInstance = new Veterinarian(rawObj.user_id, profileInstance, rawObj.username, rawObj.password, rawObj.email, rawObj.phone || "");
             if (rawObj.cert_path) vetInstance.cert_path = rawObj.cert_path;
             return vetInstance;
         } else {

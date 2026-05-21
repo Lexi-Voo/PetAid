@@ -91,13 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Certificate disk syncing failure:", err);
                 }
             }
-
+            const vetPhoneInput = document.getElementById('phone');
+            const phone = vetPhoneInput ? vetPhoneInput.value.trim() : "";
             const newApprovalRequest = {
                 "req_id": newReqId,
                 "username": username,
                 "password": password,
                 "name": name,
                 "email": email, 
+                "phone": phone,
                 "cert_path": assignedCertPath, 
                 "applied_at": new Date().toISOString().split('T')[0] 
             };

@@ -38,7 +38,7 @@ function loadAuthUsers() {
         if (role === 'admin') {
             return new Admin(resolvedId, profileInstance, u.username, u.password, u.email);
         } else if (role === 'veterinarian') {
-            const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email);
+            const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email, u.phone || "");
             vetInstance.cert_path = u.cert_path || "assets/certs/cert_1.jpg";
             return vetInstance;
         } else {

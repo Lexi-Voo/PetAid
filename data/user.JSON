@@ -6,7 +6,17 @@
     "name": "Admin",
     "email": "admin@gmail.com",
     "role": "admin",
-    "biography": "Root administrator account.",
-    "profile_pic": "assets/profiles/profile.jpg"
+    "biography": "",
+    "profile_pic": "Root administrator account."
+  },
+  {
+    "user_id": "2",
+    "username": "faisal",
+    "password": "faisal",
+    "name": "faisal",
+    "email": "faisal@gmail.com",
+    "role": "petowner",
+    "biography": "",
+    "profile_pic": "im faisal"
   }
 ]

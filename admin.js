@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="font-weight: bold; color: #2c3e50;">${req.name}</td>
                     <td><code>${req.username}</code></td>
                     <td><a href="${req.cert_path || '#'}" target="_blank" class="cert-link">View Certificate 📄</a></td>
+                    <td style="color: #7f8c8d; font-family: monospace;">${req.phone || 'N/A'}</td>
                     <td>
                         <button class="btn-approve" onclick="handleAdminAction('${req.req_id}', 'approve')">Approve</button>
                         <button class="btn-reject" onclick="handleAdminAction('${req.req_id}', 'reject')">Reject</button>
@@ -63,8 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
                 });
                 const newUserId = (maxUserId + 1).toString();
-                const newProfile = new UserProfile(targetRequest.name, `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`, "assets/profiles/profile.jpg");
-                const approvedVetInstance = new Veterinarian(newUserId, newProfile, targetRequest.username, targetRequest.password, targetRequest.email);
+                const newProfile = new UserProfile(
+                    targetRequest.name, 
+                    targetRequest.biography || `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`, 
+                    "assets/profiles/profile.jpg"
+                );
+                const approvedVetInstance = new Veterinarian(newUserId, newProfile, targetRequest.username, targetRequest.password, targetRequest.email, targetRequest.phone);
                 approvedVetInstance.cert_path = targetRequest.cert_path || "assets/certs/cert.jpg";
                 currentMasterUsers.push(approvedVetInstance);
                 saveAuthUsers(currentMasterUsers); 

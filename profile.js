@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const petImgFile = document.getElementById('petImgFile');
     const vetCertPanel = document.getElementById('vetCertPanel');
     const displayVetCert = document.getElementById('displayVetCert');
+    const vetPhonePanel = document.getElementById('vetPhonePanel');
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneToggleBtn = document.getElementById('phoneToggleBtn');
+    const phoneCancelBtn = document.getElementById('phoneCancelBtn');
+    let phoneSnapshotCache = "";
 
     let bioSnapshotCache = "";
     const activeProfile = activeUser.getProfile();
@@ -55,8 +60,58 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (activeUser.getRole() === 'veterinarian') {
         vetCertPanel.classList.remove('hidden'); 
         displayVetCert.href = activeUser.cert_path || '#'; 
+        if (vetPhonePanel && phoneInput) {
+            vetPhonePanel.classList.remove('hidden');
+            phoneInput.value = activeUser.getPhone() || "";
+            phoneInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9+\-\s]/g, '');
+            });
+        }
     }
-    
+    if (phoneToggleBtn && phoneInput) {
+        let isPhoneEditing = false;
+        phoneToggleBtn.addEventListener('click', () => {
+            if (!isPhoneEditing) {
+                phoneSnapshotCache = phoneInput.value;
+                isPhoneEditing = true;
+                phoneInput.removeAttribute('disabled');
+                phoneInput.focus();
+                phoneToggleBtn.textContent = "Save Phone";
+                phoneToggleBtn.className = "btn btn-save";
+                phoneCancelBtn.classList.remove('hidden');
+            } else {
+                if (!phoneInput.checkValidity()) {
+                    phoneInput.reportValidity();
+                    return;
+                }
+
+                const allUsers = loadAuthUsers();
+                const userIndex = allUsers.findIndex(u => u.getId() === activeUser.getId());
+                if (userIndex !== -1) {
+                    activeUser.setPhone(phoneInput.value.trim());
+                    allUsers[userIndex] = activeUser;
+                    localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                    saveAuthUsers(allUsers);
+                    showConfirmation("Contact number saved successfully!");
+                }
+                isPhoneEditing = false;
+                phoneInput.setAttribute('disabled', 'true');
+                phoneToggleBtn.textContent = "Edit Phone";
+                phoneToggleBtn.className = "btn btn-edit";
+                phoneCancelBtn.classList.add('hidden');
+            }
+        });
+
+        phoneCancelBtn.addEventListener('click', () => {
+            isPhoneEditing = false;
+            phoneInput.value = phoneSnapshotCache;
+            phoneInput.setAttribute('disabled', 'true');
+            phoneToggleBtn.textContent = "Edit Phone";
+            phoneToggleBtn.className = "btn btn-edit";
+            phoneCancelBtn.classList.add('hidden');
+        });
+    }
+
     changeOwnerPhotoBtn.addEventListener('click', () => { ownerImgUploader.click(); });
     ownerImgUploader.addEventListener('change', async (e) => {
         const targetFile = e.target.files[0];
