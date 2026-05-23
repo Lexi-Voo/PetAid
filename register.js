@@ -3,16 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const roleSelect = document.getElementById('role');
     const certGroup = document.getElementById('certGroup'); 
     const certInput = document.getElementById('certificate'); 
+    const phoneInputEl = document.getElementById('phone');
 
     if (!registerForm) return;
-
     roleSelect.addEventListener('change', (e) => {
         if (e.target.value === 'veterinarian') {
             certGroup.classList.remove('hidden');
+            if (phoneInputEl) phoneInputEl.setAttribute('required', 'true');
         } else {
             certGroup.classList.add('hidden');
+            if (phoneInputEl) {
+                phoneInputEl.removeAttribute('required');
+                phoneInputEl.value = "";
+            }
         }
     });
+
+    if (phoneInputEl) {
+        phoneInputEl.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9+\-\s]/g, '');
+        });
+    }
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('fullName').value.trim();
@@ -55,11 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const newUserId = (maxUserId + 1).toString(); 
             const starterProfile = new UserProfile(name, " ", "assets/profiles/profile.jpg");
             const newOwnerInstance = new PetOwner(newUserId, starterProfile, username, password, email);
+            newOwnerInstance.register();
 
-            savedUsers.push(newOwnerInstance);
-            saveAuthUsers(savedUsers);
-
-            localStorage.setItem('petaid_active_session', JSON.stringify(newOwnerInstance.toJSON()));
             showConfirmation("Registration successful! Logging you in...");         
             setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);
 
@@ -72,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const newReqId = (maxReqId + 1).toString(); 
             let assignedCertPath = "assets/certs/cert.jpg"; 
             const selectedCertFile = certInput.files[0];
-
             if (selectedCertFile) {
                 const formData = new FormData();
                 formData.append('id', newReqId);
@@ -91,20 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Certificate disk syncing failure:", err);
                 }
             }
-            const vetPhoneInput = document.getElementById('phone');
-            const phone = vetPhoneInput ? vetPhoneInput.value.trim() : "";
-            const newApprovalRequest = {
-                "req_id": newReqId,
-                "username": username,
-                "password": password,
-                "name": name,
-                "email": email, 
-                "phone": phone,
-                "cert_path": assignedCertPath, 
-                "applied_at": new Date().toISOString().split('T')[0] 
-            };
-            savedApprovals.push(newApprovalRequest);
-            saveApprovals(savedApprovals);
+            
+            const phone = phoneInputEl ? phoneInputEl.value.trim() : "";
+            const starterProfile = new UserProfile(name, "Approved Vet. Registered on 2026-05-21.", "assets/profiles/profile.jpg");
+            const newVetInstance = new Veterinarian(newReqId, starterProfile, username, password, email, phone);
+            newVetInstance.register(assignedCertPath);
             showConfirmation("Registration submitted! Please wait for Admin approval.");  
             setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);       
             registerForm.reset();

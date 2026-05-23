@@ -158,4 +158,39 @@ class Admin extends User {
         saveQuizzes(quizzes);
         return true;
     }
+
+    approveVet(targetRequest, actionType) {
+        if (!targetRequest) return false;
+        if (actionType === 'approve') {
+            const currentMasterUsers = loadAuthUsers();
+            let maxUserId = 0;
+            currentMasterUsers.forEach(u => {
+                const idNum = parseInt(u.getId()); 
+                if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
+            });
+            const newUserId = (maxUserId + 1).toString();
+            const newProfile = new UserProfile(
+                targetRequest.name, 
+                targetRequest.biography || `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`, 
+                "assets/profiles/profile.jpg",
+                targetRequest.phone || ""
+            );
+            
+            const approvedVetInstance = new Veterinarian(
+                newUserId, 
+                newProfile, 
+                targetRequest.username, 
+                targetRequest.password, 
+                targetRequest.email, 
+                targetRequest.phone || ""
+            );
+            approvedVetInstance.cert_path = targetRequest.cert_path || "assets/certs/cert.jpg";
+            currentMasterUsers.push(approvedVetInstance);
+            saveAuthUsers(currentMasterUsers);
+            return { success: true, action: "approved" };
+        } else if (actionType === 'reject') {
+            return { success: true, action: "rejected" };
+        }
+        return false;
+    }
 }

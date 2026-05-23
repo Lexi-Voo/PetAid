@@ -115,8 +115,8 @@ function loadPets() {
 }
 
 function getPetsByOwnerId(ownerId) {
-    const pets = loadPets();
-    return pets.filter(pet => pet.owner_id === ownerId);
+    const allPets = loadPets(); 
+    return allPets.filter(pet => pet.getOwnerId().toString() === ownerId.toString());
 }
 
 function savePets(pets) {
@@ -345,5 +345,18 @@ async function initializeQuizStorage() {
         } catch (err) {
             console.warn("StorageHelper: sampleQuizzes.json fallback active.", err);
         }
+    }
+}
+
+function loadPets() {
+    const rawData = localStorage.getItem('petaid_pets');
+    if (!rawData) return [];
+    
+    try {
+        const parsedList = JSON.parse(rawData);
+        return parsedList.map(p => new Pet(p.pet_id, p.owner_id, p.name, p.category, p.pet_bio, p.pet_img));
+    } catch (e) {
+        console.error("Failed to parse pet records:", e);
+        return [];
     }
 }

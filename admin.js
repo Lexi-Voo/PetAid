@@ -55,24 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetIndex = currentApprovalsList.findIndex(a => a.req_id === requestId);
             if (targetIndex === -1) return;
             const targetRequest = currentApprovalsList[targetIndex];
-
-            if (actionType === 'approve') {
-                const currentMasterUsers = loadAuthUsers();
-                let maxUserId = 0;
-                currentMasterUsers.forEach(u => {
-                    const idNum = parseInt(u.getId()); 
-                    if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
-                });
-                const newUserId = (maxUserId + 1).toString();
-                const newProfile = new UserProfile(
-                    targetRequest.name, 
-                    targetRequest.biography || `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`, 
-                    "assets/profiles/profile.jpg"
-                );
-                const approvedVetInstance = new Veterinarian(newUserId, newProfile, targetRequest.username, targetRequest.password, targetRequest.email, targetRequest.phone);
-                approvedVetInstance.cert_path = targetRequest.cert_path || "assets/certs/cert.jpg";
-                currentMasterUsers.push(approvedVetInstance);
-                saveAuthUsers(currentMasterUsers); 
+            const statusResult = activeUser.approveVet(targetRequest, actionType);
+            if (statusResult && statusResult.action === 'approved') {
                 showConfirmation(`Approved: ${targetRequest.name} migrated to system registry successfully.`);
             } else {
                 showConfirmation(`Rejected application workflow for ${targetRequest.name}.`, true);

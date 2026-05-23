@@ -7,7 +7,8 @@ function getCurrentUser() {
         const profileInstance = new UserProfile(
             rawObj.name, 
             rawObj.biography || "", 
-            rawObj.profile_pic || "assets/profiles/profile.jpg"
+            rawObj.profile_pic || "assets/profiles/profile.jpg",
+            rawObj.phone || "" 
         );
 
         if (rawObj.role === 'admin') {
@@ -23,12 +24,6 @@ function getCurrentUser() {
         console.error("Session instantiation hydration failure:", err);
         return null;
     }
-}
-
-// Clear session data and log out
-function logoutUser() {
-    localStorage.removeItem('petaid_active_session');
-    window.location.href = 'firstAid.html'; 
 }
 
 function updateNavbarAuth() {
@@ -50,18 +45,23 @@ function updateNavbarAuth() {
                 <span style="margin-right: 15px; color: #555;">Welcome, <strong>${displayName}</strong> (${roleLabel})</span>
                 <button class="btn btn-sm" id="navProfileBtn" style="padding: 5px 10px; margin-right: 5px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">My Profile</button>
                 <button class="btn btn-sm" id="navLogoutBtn" style="padding: 5px 10px; background:#7f8c8d; color:white; border:none; border-radius:4px; cursor:pointer;">Logout</button>`;
-            document.getElementById('navProfileBtn').addEventListener('click', () => {
-                window.location.href = 'profile.html';
+            const navProfileBtn = document.getElementById('navProfileBtn');
+            if (navProfileBtn) {
+                navProfileBtn.addEventListener('click', () => {
+                    window.location.href = 'profile.html';
+                });
+            }
+        }
+        const navLogoutBtn = document.getElementById('navLogoutBtn');
+        if (navLogoutBtn) {
+            navLogoutBtn.addEventListener('click', () => {
+                userInstance.logout();
+                window.location.href = 'firstAid.html'; 
             });
         }
-        document.getElementById('navLogoutBtn').addEventListener('click', logoutUser);
     } else {
         authContainer.innerHTML = `
             <button class="btn btn-login" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
             <button class="btn btn-primary" id="registerBtn" onclick="window.location.href='register.html'">Register</button>`;
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    updateNavbarAuth();
-});
