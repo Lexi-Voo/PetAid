@@ -5,14 +5,14 @@ function renderNavbar(activePage = "") {
     let navLinks = [];
 
     const userLinks = [
-        { href: "clinic.html",     label: "Clinics" },
+        { href: "map.html",     label: "Clinics" },
         { href: "firstAid.html",  label: "First Aid" },
         { href: "forum.html",     label: "Forum" },
         { href: "quiz.html",      label: "Quizzes" },
     ];
 
     const adminLinks = [
-        { href: "clinic.html",     label: "Clinics" },
+        { href: "map.html",     label: "Clinics" },
         { href: "firstAid.html",  label: "First Aid" },
         { href: "forum.html",     label: "Forum" },
         { href: "quiz.html",      label: "Quizzes" },
@@ -48,7 +48,7 @@ function renderNavbar(activePage = "") {
         navLinks = userNavLinks;
         const usernameDisplay = user.getProfile().getName() || user.getUsername();
         authHTML = `
-            <span class="navbar-username">Put username here</span>
+            <span class="navbar-username">${usernameDisplay}</span>
             <button class="btn btn-primary" onclick="window.location.href='profile.html'">Profile</button>
             <button class="btn btn-outline" id="navLogoutBtn">Logout</button>
         `;

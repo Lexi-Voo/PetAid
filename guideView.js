@@ -8,42 +8,14 @@ document.addEventListener("DOMContentLoaded", function () {
     renderNavbar("First Aid");
     renderFooter();
     checkAdminStatus();
-    setupAdminToggle();
     loadGuide();
 });
 
 function checkAdminStatus() {
-    const isAdmin = sessionStorage.getItem("petaid_role") === "admin";
-    if (isAdmin) {
+    const activeUser = getCurrentUser();
+    if (activeUser && activeUser.getRole() === "admin") {
         document.body.classList.add("is-admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
-    }
-}
-
-function toggleAdmin() {
-    const isAdmin = document.body.classList.toggle("is-admin");
-    if (isAdmin) {
-        sessionStorage.setItem("petaid_role", "admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
-        showConfirmation("Admin mode enabled");
-    } else {
-        sessionStorage.removeItem("petaid_role");
-        admin = null;
-        showConfirmation("Admin mode disabled");
-    }
-    renderGuide();
-}
-
-function setupAdminToggle() {
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function () {
-            document.body.classList.remove("is-admin");
-            sessionStorage.removeItem("petaid_role");
-            admin = null;
-            showConfirmation("Logged out");
-            renderGuide();
-        });
+        admin = activeUser;
     }
 }
 
@@ -244,6 +216,8 @@ function openAddStepModal() {
     document.getElementById("stepModalSave").textContent = "Add";
     document.getElementById("stepInstruction").value = "";
     document.getElementById("stepImageURL").value = "";
+    document.getElementById("stepImageFile").value = "";
+    document.getElementById("stepImagePreview").style.display = "none";
     document.getElementById("editingStepNumber").value = "";
     document.getElementById("stepModal").classList.add("active");
 }
@@ -258,6 +232,13 @@ function openEditStepModal(stepNumber) {
     document.getElementById("stepModalSave").textContent = "Save";
     document.getElementById("stepInstruction").value = step.instruction;
     document.getElementById("stepImageURL").value = step.imageURL || "";
+    document.getElementById("stepImageFile").value = "";
+    if (step.imageURL) {
+        document.getElementById("stepImagePreview").src = step.imageURL;
+        document.getElementById("stepImagePreview").style.display = "block";
+    } else {
+        document.getElementById("stepImagePreview").style.display = "none";
+    }
     document.getElementById("editingStepNumber").value = stepNumber;
     document.getElementById("stepModal").classList.add("active");
 }
@@ -266,18 +247,41 @@ function closeStepModal() {
     document.getElementById("stepModal").classList.remove("active");
 }
 
-function saveStep() {
+async function saveStep() {
     const instruction = document.getElementById("stepInstruction").value.trim();
-    const imageURL = document.getElementById("stepImageURL").value.trim();
     const editingStep = document.getElementById("editingStepNumber").value;
+    const fileInput = document.getElementById("stepImageFile");
+    let imageURL = document.getElementById("stepImageURL").value; // keeps existing URL when editing
 
     if (!instruction) {
         showConfirmation("Please enter step instruction", true);
         return;
     }
 
+    // Upload image if a new file was selected
+    if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('id', currentGuideId + '_step' + (editingStep || (currentGuide.viewGuide().steps.length + 1)));
+        formData.append('uploadType', 'guide');
+        formData.append('image', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/api/upload-image', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.success) {
+                imageURL = result.savedPath;
+            } else {
+                showConfirmation("Image upload failed: " + result.message, true);
+                return;
+            }
+        } catch (err) {
+            console.error("Image upload error:", err);
+            showConfirmation("Image upload failed", true);
+            return;
+        }
+    }
+
     if (editingStep) {
-        // Edit existing step
         admin.manageStep("edit", currentGuideId, {
             stepNumber: parseInt(editingStep),
             instruction: instruction,
@@ -285,7 +289,6 @@ function saveStep() {
         });
         showConfirmation("Step updated successfully");
     } else {
-        // Add new step — auto-number based on current count
         const data = currentGuide.viewGuide();
         const nextNumber = data.steps.length + 1;
         admin.manageStep("add", currentGuideId, {
@@ -296,7 +299,6 @@ function saveStep() {
         showConfirmation("Step added successfully");
     }
 
-    // Reload guide from storage
     currentGuide = getGuideById(currentGuideId);
     closeStepModal();
     renderGuide();
@@ -373,4 +375,3 @@ function openDeleteVideoModal(videoTitle) {
         }
     );
 }
-

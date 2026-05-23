@@ -40,7 +40,7 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
     min-height: 100vh;
-    /* display: flex; */
+    display: flex;
     flex-direction: column;
     overflow-y: scroll;
 }

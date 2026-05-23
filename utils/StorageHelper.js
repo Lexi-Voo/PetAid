@@ -11,6 +11,15 @@ function loadGuides() {
 function saveGuides(guides) {
     const data = guides.map(guide => guide.toJSON());
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+    fetch('/api/save-guides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => console.log("Disk Sync:", data.message))
+    .catch(err => console.error("Could not sync to physical sampleGuides.JSON file:", err));
 }
 
 function getGuidesByCategory(category) {
@@ -163,6 +172,17 @@ async function initializeAllStorage() {
             console.log("StorageHelper: Successfully seeded initial pet metrics tracking dataset.");
         } catch (err) {
             console.warn("StorageHelper: pets.JSON fallback active.", err);
+        }
+    }
+
+    if (!localStorage.getItem(STORAGE_KEY)) {
+        try {
+            const response = await fetch('data/sampleGuides.JSON');
+            const initialGuides = await response.json();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialGuides));
+            console.log("StorageHelper: Successfully seeded first aid guide dataset.");
+        } catch (err) {
+            console.warn("StorageHelper: sampleGuides.JSON fallback active.", err);
         }
     }
 }

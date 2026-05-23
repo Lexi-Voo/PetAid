@@ -7,7 +7,7 @@
     "email": "admin@gmail.com",
     "role": "admin",
     "biography": "Root administrator account.",
-    "profile_pic": ""
+    "profile_pic": "assets/profiles/profile.jpg"
   },
   {
     "user_id": "2",
@@ -16,7 +16,19 @@
     "name": "faisal",
     "email": "faisal@gmail.com",
     "role": "petowner",
-    "biography": "",
+    "biography": "im faisalllll!!!",
+    "profile_pic": "assets/profiles/user_2.png"
+  },
+  {
+    "user_id": "3",
+    "username": "ramisa",
+    "password": "ramisa",
+    "name": "ramisa",
+    "email": "ramisa@gmail.com",
+    "role": "veterinarian",
+    "cert_path": "assets/certs/cert_1.jpg",
+    "phone": "",
+    "biography": "Approved Vet. Registered on 2026-05-19.",
     "profile_pic": "assets/profiles/profile.jpg"
   }
 ]
