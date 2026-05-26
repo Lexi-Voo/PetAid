@@ -1,1 +1,39 @@
-[]
+[
+  {
+    "id": "p1779766066938",
+    "userId": "2",
+    "category": "cat",
+    "title": "Indoor cat suddenly scratching furniture aggressively",
+    "content": "My indoor cat recently started scratching the sofa and curtains every day even though she has a scratching post. Any advice to stop this behavior?",
+    "datePosted": "2026-05-26T03:27:46.938Z",
+    "comments": [],
+    "status": true
+  },
+  {
+    "id": "p1779765938786",
+    "userId": "4",
+    "category": "dog",
+    "title": "My dog refuses to eat after vaccination",
+    "content": "My 2 year old golden retriever got vaccinated yesterday and today he seems tired and refuses to eat. He still drinks water though. Is this normal or should I bring him back to the clinic?",
+    "datePosted": "2026-05-26T03:25:38.786Z",
+    "comments": [
+      {
+        "id": "c1779765986216",
+        "userId": "3",
+        "content": "It is quite common for dogs to experience mild fatigue and reduced appetite for 24-48 hours after vaccination. Monitor for vomiting, breathing difficulty, or severe weakness. If symptoms worsen, visit your vet immediately.",
+        "createdAt": "2026-05-26T03:26:26.216Z"
+      }
+    ],
+    "status": true
+  },
+  {
+    "id": "p1779765839183",
+    "userId": "1",
+    "category": "all-pet",
+    "title": "Welcome to the New PetAid Community Platform",
+    "content": "We are excited to welcome everyone to the upgraded PetAid platform. You can now explore first aid guides, participate in quizzes, join community discussions, and locate nearby veterinary clinics more easily.\nPlease remember that all emergency guides are for educational purposes only and should not replace professional veterinary treatment. Always contact a veterinarian immediately during serious emergencies.\nThank you for being part of the PetAid community and helping create a safer environment for pets.",
+    "datePosted": "2026-05-26T03:23:59.183Z",
+    "comments": [],
+    "status": true
+  }
+]
