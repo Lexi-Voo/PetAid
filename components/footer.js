@@ -21,6 +21,7 @@ function renderFooter() {
                         <a href="#">Privacy Policy</a>
                         <a href="#">Medical Disclaimer</a>
                         <a href="#">Contact Us</a>
+                        <a href="feedback.html">Feedback</a>
                     </div>
                 </div>
             </footer>

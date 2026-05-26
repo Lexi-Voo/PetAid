@@ -15,7 +15,8 @@ class QuizQuestion {
         return {
             id: this.#id,
             questionText: this.#questionText,
-            options: this.shuffleOptions()
+            options: this.shuffleOptions(),
+            correctAnswer: this.#correctAnswer
         };
     }
 
@@ -25,28 +26,6 @@ class QuizQuestion {
 
     shuffleOptions() {
         return [...this.#options].sort(() => Math.random() - 0.5);
-    }
-
-    saveQuizzes(quizzes) {
-        const plainData = quizzes.map(quiz => ({
-            id: quiz.getId(),
-            title: quiz.getTitle(),
-            category: quiz.getCategory(),
-
-            questions: quiz.getQuestions().map(question => ({
-                id: question.id,
-                questionText: question.questionText,
-                options: question.options,
-                correctAnswer: question.correctAnswer
-            })),
-
-            score: quiz.getScore().score
-        }));
-
-        localStorage.setItem(
-            QUIZ_STORAGE_KEY,
-            JSON.stringify(plainData)
-        );
     }
 
     // Getters

@@ -426,6 +426,11 @@ a {
     color: var(--text-primary);
 }
 
+.quiz-detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
 
 .question-card {
     border: 1px solid var(--border-color);

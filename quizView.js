@@ -2,6 +2,7 @@
 let currentQuiz = null;
 let currentQuizId = null;
 let admin = null;
+let shuffledQuestions = [];
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", function () {
@@ -14,18 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function checkAdminStatus() {
     const activeUser = getCurrentUser();
-
-    if (activeUser && activeUser.role === "admin") {
+    if (activeUser && activeUser.getRole() === "admin") {
         document.body.classList.add("is-admin");
-
-        admin = new Admin(
-            activeUser.id,
-            activeUser.email,
-            activeUser.password
-        );
-    } else {
-        document.body.classList.remove("is-admin");
-        admin = null;
+        admin = activeUser;
     }
 }
 
@@ -115,10 +107,12 @@ function renderQuestions(questions) {
                 <div class="admin-only">
                     <button class="btn-icon"
                             onclick="openEditQuestionModal('${question.id}')">
+                            Edit
                     </button>
 
                     <button class="btn-icon danger"
                             onclick="openDeleteQuestionModal('${question.id}')">
+                            Delete
                     </button>
                 </div>
             </div>
@@ -293,7 +287,7 @@ function openEditQuestionModal(questionId) {
 
     const correctIndex = question.options.indexOf(question.correctAnswer);
 
-    document.getElementById("correctAnswer").value = correctIndex >= 0 ? correctIndex : 0;
+    document.getElementById("correctAnswer").value = correctIndex;
 
     document.getElementById("editingQuestionId").value = question.id;
 
@@ -372,6 +366,8 @@ function saveQuestion() {
 
     currentQuiz = getQuizById(currentQuizId);
 
+    shuffledQuestions = [];
+
     closeQuestionModal();
 
     renderQuiz();
@@ -394,6 +390,8 @@ function openDeleteQuestionModal(questionId) {
             );
 
             currentQuiz = getQuizById(currentQuizId);
+
+            shuffledQuestions = [];
 
             renderQuiz();
 
