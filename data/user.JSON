@@ -30,5 +30,15 @@
     "phone": "",
     "biography": "Approved Vet. Registered on 2026-05-19.",
     "profile_pic": "assets/profiles/profile.jpg"
+  },
+  {
+    "user_id": "4",
+    "username": "jody",
+    "password": "jody",
+    "name": "Jody Law",
+    "email": "jodylaw0714@gmail.com",
+    "role": "petowner",
+    "biography": " ",
+    "profile_pic": "assets/profiles/profile.jpg"
   }
 ]
