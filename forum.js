@@ -160,7 +160,7 @@ function renderPosts(category = "all") {
                         </div>
                     </div>
                     <span class="forum-category-badge">
-                        ${escapeHTML(data.category)}
+                        ${escapeHTML(formatCategory(data.category))}
                     </span>
                 </div>
 
@@ -777,11 +777,43 @@ function getRoleBadge(role) {
         `;
     }
 
+    if (role === "admin") {
+        return `
+            <span class="role-badge admin-badge">
+                Admin
+            </span>
+        `;
+    }
+
     return `
         <span class="role-badge owner-badge">
             Pet Owner
         </span>
     `;
+}
+
+function formatCategory(category) {
+
+    switch (category) {
+
+        case "all-pet":
+            return "All Pets";
+
+        case "dog":
+            return "Dog";
+
+        case "cat":
+            return "Cat";
+
+        case "rabbit":
+            return "Rabbit";
+
+        case "hamster":
+            return "Hamster";
+
+        default:
+            return category;
+    }
 }
 
 function escapeHTML(text) {

@@ -1172,6 +1172,11 @@ body.is-admin button.admin-only {
     color: #2E7D32;
 }
 
+.admin-badge {
+    background-color: #FFF3E0;
+    color: #EF6C00;
+}
+
 .my-post {
     border-left: 5px solid #4caf50;
     background: #f6fff6;
