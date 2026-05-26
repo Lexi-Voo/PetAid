@@ -56,23 +56,6 @@ function loadAuthUsers() {
     });
 }
 
-function getCurrentUser() {
-    const sessionStr = localStorage.getItem('petaid_active_session');
-    if (!sessionStr) return null;
-    const s = JSON.parse(sessionStr);
-    const profileInstance = new UserProfile(s.name, s.biography, s.profile_pic);
-    const resolvedId = (s.user_id || "0").toString();
-    const role = (s.role || "petowner").toLowerCase();
-    
-    if (role === 'admin') return new Admin(resolvedId, profileInstance, s.username, s.password, s.email);
-    if (role === 'veterinarian') {
-        const v = new Veterinarian(resolvedId, profileInstance, s.username, s.password, s.email);
-        if (s.cert_path) v.cert_path = s.cert_path;
-        return v;
-    }
-    return new PetOwner(resolvedId, profileInstance, s.username, s.password, s.email);
-}
-
 function saveAuthUsers(users) {
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
     fetch('/api/save-users', {
@@ -116,11 +99,6 @@ function saveApprovals(approvals) {
 function findApprovalByEmail(email) {
     const approvals = loadApprovals();
     return approvals.find(a => a.email && a.email.toLowerCase() === email.trim().toLowerCase()) || null;
-}
-
-function loadPets() {
-    const data = localStorage.getItem(PETS_KEY);
-    return data ? JSON.parse(data) : [];
 }
 
 function getPetsByOwnerId(ownerId) {
@@ -196,23 +174,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 const FORUM_STORAGE_KEY = "petaid_forum_posts";
 
 function loadForumPosts() {
-    const data = localStorage.getItem(FORUM_STORAGE_KEY);
+    const raw =
+        JSON.parse(
+            localStorage.getItem(FORUM_STORAGE_KEY)
+        ) || [];
 
-    if (!data) {
-        return [];
-    }
+    return raw.map(postData => {
 
-    const parsed = JSON.parse(data);
-
-    return parsed.map(postData => {
-        const comments = (postData.comments || []).map(comment =>
-            new Comment(
-                comment.id,
-                comment.userId,
-                comment.content,
-                new Date(comment.createdAt)
-            )
-        );
+        const comments =
+            (postData.comments || []).map(c =>
+                new Comment(
+                    c.id,
+                    c.userId,
+                    c.content,
+                    new Date(c.createdAt)
+                )
+            );
 
         return new ForumPost(
             postData.id,
@@ -228,45 +205,58 @@ function loadForumPosts() {
 }
 
 function saveForumPosts(posts) {
-    const plainData = posts.map(post => {
+    const plainPosts = posts.map(post => {
 
         const data = post.viewPost();
 
         return {
             ...data,
-
-            comments: data.comments.map(comment =>
-                comment.viewComment()
+            comments: data.comments.map(c =>
+                c.viewComment()
             )
         };
     });
 
     localStorage.setItem(
         FORUM_STORAGE_KEY,
-        JSON.stringify(plainData)
+        JSON.stringify(plainPosts)
     );
-}
 
-function getAllForumPosts() {
-    return loadForumPosts();
+    fetch('/api/save-forum-posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(plainPosts)
+    })
+    .then(res => res.json())
+    .then(data => console.log(data.message))
+    .catch(err => {
+        console.error("Forum save failed:", err);
+    });
 }
 
 function getForumPostsByCategory(category) {
-    const posts = loadForumPosts();
+    const posts =
+        loadForumPosts();
 
     if (category === "all") {
-        return posts;
+        return posts.filter(
+            p => p.getStatus()
+        );
     }
 
     return posts.filter(
-        post => post.getCategory() === category
+        p =>
+            p.getStatus() &&
+            p.getCategory() === category
     );
 }
 
 function getForumPostById(postId) {
-    return loadForumPosts().find(
-        post => post.getId() === postId
-    ) || null;
+    const posts = loadForumPosts();
+
+    return posts.find(
+        p => p.getId() === postId
+    );
 }
 
 // ============================================= Quiz Helper ===================================================================

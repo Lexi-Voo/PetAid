@@ -89,11 +89,13 @@ class ForumPost {
 
     validateContent() {
         return (
-            this.#title &&
+            typeof this.#title === "string" &&
             this.#title.trim() !== "" &&
-            this.#content &&
+
+            typeof this.#content === "string" &&
             this.#content.trim() !== "" &&
-            this.#category &&
+
+            typeof this.#category === "string" &&
             this.#category.trim() !== ""
         );
     }
@@ -109,5 +111,27 @@ class ForumPost {
             comments: this.#comments,
             status: this.#status
         };
+    }
+
+    isOwnedBy(userId) {
+        return this.#userId === userId;
+    }
+
+    canEdit(user) {
+        if (!user) return false;
+
+        return (
+            user.getRole() === "admin" ||
+            user.getId() === this.#userId
+        );
+    }
+
+    canDelete(user) {
+        if (!user) return false;
+
+        return (
+            user.getRole() === "admin" ||
+            user.getId() === this.#userId
+        );
     }
 }

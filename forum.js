@@ -1,39 +1,62 @@
 // STATE
 let selectedCategory = "all";
 let currentOpenedPostId = null;
+let forum = null;
+let editingPostId = null;
 
 // INITIALIZATION
-document.addEventListener("DOMContentLoaded", function () {
-    loadForumSampleDataIfNeeded();
+document.addEventListener("DOMContentLoaded", async function () {
+    await loadForumSampleDataIfNeeded();
+
+    forum = loadForum();
+
+    renderNavbar("Forum");
+    renderFooter();
 
     setupCategoryFilter();
-
     setupModal();
 
     renderPosts("all");
 });
 
 // LOAD SAMPLE DATA
-function loadForumSampleDataIfNeeded() {
-    const existing = localStorage.getItem(FORUM_STORAGE_KEY);
+async function loadForumSampleDataIfNeeded() {
+    const existing =
+        localStorage.getItem(FORUM_STORAGE_KEY);
 
     if (!existing) {
-        fetch("data/sampleForumPosts.JSON")
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem(
-                    FORUM_STORAGE_KEY,
-                    JSON.stringify(data)
-                );
 
-                renderPosts("all");
-            })
-            .catch(() => {
-                console.log(
-                    "Could not load sample forum data."
-                );
-            });
+        try {
+
+            const response =
+                await fetch("data/forum.JSON");
+
+            const data =
+                await response.json();
+
+            localStorage.setItem(
+                FORUM_STORAGE_KEY,
+                JSON.stringify(data)
+            );
+
+        } catch {
+
+            console.log(
+                "Could not load sample forum data."
+            );
+        }
     }
+}
+
+function loadForum() {
+    const raw = loadForumPosts(); // existing function
+
+    return new Forum(
+        "pet-forum",
+        "Pet Forum",
+        "Community discussion",
+        raw
+    );
 }
 
 // CATEGORY FILTER
@@ -62,8 +85,20 @@ function renderPosts(category = "all") {
     const container =
         document.getElementById("posts-container");
 
-    let posts =
-        getForumPostsByCategory(category);
+    let posts = forum.getPosts();
+
+    if (category !== "all") {
+        posts = posts.filter(
+            p =>
+                p.getStatus() &&
+                p.getCategory() === category
+        );
+    }
+    else {
+        posts = posts.filter(
+            p => p.getStatus()
+        );
+    }
 
     // newest first
     posts.sort((a, b) =>
@@ -88,22 +123,31 @@ function renderPosts(category = "all") {
 
     container.innerHTML = posts.map(post => {
         const data = post.viewPost();
+        const currentUser = getCurrentUser();
+
+        const isOwner =
+            currentUser &&
+            currentUser.getId() === data.userId;
+
         return `
             <div 
-                class="forum-post-card"
+                class="
+                    forum-post-card
+                    ${isOwner ? "my-post" : ""}
+                "
                 onclick="openPostDetail('${data.id}')"
             >
                 <div class="forum-post-header">
                     <div class="forum-user-info">
                         <img 
-                            src="assets/images/profile.jpg"
+                            src="${getUserProfilePic(data.userId)}"
                             class="forum-avatar"
                             alt="Profile"
                         >
                         <div>
                             <div class="forum-username-row">
                                 <div class="forum-username">
-                                    ${getDisplayName(data.userId)}
+                                    ${escapeHTML(getDisplayName(data.userId))}
                                 </div>
 
                                 ${getRoleBadge(
@@ -116,27 +160,38 @@ function renderPosts(category = "all") {
                         </div>
                     </div>
                     <span class="forum-category-badge">
-                        ${data.category}
+                        ${escapeHTML(data.category)}
                     </span>
                 </div>
 
                 <h3 class="forum-post-title">
-                    ${data.title}
+                    ${escapeHTML(data.title)}
                 </h3>
 
                 <p class="forum-post-content">
-                    ${data.content}
+                    ${escapeHTML(data.content)}
                 </p>
 
                 <div class="forum-post-footer">
-                    <span>
+                    <div class="post-stats">
                         💬 ${data.comments.length} comments
-                    </span>
+                    </div>
+
+                    ${renderPostActions(post)}
+
                 </div>
             </div>
         `;
 
     }).join("");
+}
+
+function getUserProfilePic(userId) {
+    const user = getUserById(userId);
+
+    return user
+        ? user.getProfile().getProfilePic()
+        : "assets/profiles/profile.jpg";
 }
 
 function openPostDetail(postId) {
@@ -196,7 +251,7 @@ function renderComments(post) {
         <div class="comment-card">
             <div class="comment-user-row">
                 <div class="comment-user">
-                    ${getDisplayName(comment.getUserId())}
+                    ${escapeHTML(getDisplayName(comment.getUserId()))}
                 </div>
 
                 ${getRoleBadge(
@@ -209,12 +264,98 @@ function renderComments(post) {
             </div>
 
             <div class="comment-content">
-                ${comment.getContent()}
+                ${escapeHTML(comment.getContent())}
+            </div>
+
+            <div class="comment-footer">
+                <div class="comment-actions">
+                    ${renderCommentActions(comment)}
+                </div>
             </div>
 
         </div>
 
     `).join("");
+}
+
+function renderCommentActions(comment) {
+    const currentUser =
+        getCurrentUser();
+
+    if (!currentUser) return "";
+
+    if (!comment.canDelete(currentUser))
+        return "";
+
+    return `
+        <button
+            class="icon-btn delete-btn"
+            onclick="
+                deleteComment(
+                    '${currentOpenedPostId}',
+                    '${comment.getId()}'
+                )
+            "
+            title="Delete Comment"
+        >
+            🗑️
+        </button>
+    `;
+}
+
+function deleteComment(postId, commentId) {
+    const currentUser =
+        getCurrentUser();
+
+    if (!currentUser) {
+
+        showConfirmation(
+            "Please login first.",
+            true
+        );
+
+        return;
+    }
+
+    const posts =
+        forum.getPosts();
+
+    const post =
+        posts.find(
+            p => p.getId() === postId
+        );
+
+    if (!post) return;
+
+    const comment =
+        post.getComments().find(
+            c => c.getId() === commentId
+        );
+
+    if (!comment) return;
+
+    // permission check
+    if (!comment.canDelete(currentUser)) {
+
+        showConfirmation(
+            "Permission denied.",
+            true
+        );
+
+        return;
+    }
+
+    post.removeComment(commentId);
+
+    saveForumPosts(posts);
+
+    renderComments(post);
+
+    renderPosts(selectedCategory);
+
+    showConfirmation(
+        "Comment deleted."
+    );
 }
 
 // MODAL
@@ -229,6 +370,16 @@ function setupModal() {
         document.getElementById("cancel-post");
 
     openBtn.addEventListener("click", function () {
+        const currentUser = getCurrentUser();
+
+        if (!currentUser) {
+            showConfirmation(
+                "Please login first.",
+                true
+            );
+            return;
+        }
+
         modal.classList.add("active");
     });
 
@@ -268,15 +419,7 @@ function closeModal() {
     clearModalFields();
 }
 
-function clearModalFields() {
-    document.getElementById("post-category").value = "dog";
-
-    document.getElementById("post-title").value = "";
-
-    document.getElementById("post-content").value = "";
-}
-
-// CREATE POST
+// CREATE POST + EDIT POST
 function createPost() {
     const category =
         document.getElementById("post-category").value;
@@ -291,8 +434,8 @@ function createPost() {
             .value
             .trim();
 
-    // validation
     if (!category || !title || !content) {
+
         showConfirmation(
             "Please fill in all fields.",
             true
@@ -301,33 +444,101 @@ function createPost() {
         return;
     }
 
-    const posts = loadForumPosts();
+    const currentUser =
+        getCurrentUser();
 
-    // temporary user
-    const userId = "u001";
+    if (!currentUser) {
 
-    const newPost = new ForumPost(
-        generatePostId(),
-        userId,
-        category,
-        title,
-        content,
-        new Date(),
-        [],
-        true
-    );
+        showConfirmation(
+            "Please login first.",
+            true
+        );
 
-    posts.unshift(newPost);
+        return;
+    }
 
-    saveForumPosts(posts);
+    // EDIT MODE
+    if (editingPostId) {
 
-    showConfirmation(
-        "Forum post created successfully!"
+        const post =
+            forum.getPostById(editingPostId);
+
+        if (!post) return;
+
+        if (!post.canEdit(currentUser)) {
+
+            showConfirmation(
+                "Permission denied.",
+                true
+            );
+
+            return;
+        }
+
+        post.editPost({
+            title,
+            content,
+            category
+        });
+
+        showConfirmation(
+            "Post updated successfully!"
+        );
+
+        editingPostId = null;
+    }
+
+    // CREATE MODE
+    else {
+
+        forum.addPost(
+            generatePostId(),
+            currentUser.getId(),
+            category,
+            title,
+            content
+        );
+
+        showConfirmation(
+            "Forum post created successfully!"
+        );
+    }
+
+    saveForumPosts(
+        forum.getPosts()
     );
 
     closeModal();
 
     renderPosts(selectedCategory);
+
+    if (currentOpenedPostId) {
+        openPostDetail(currentOpenedPostId);
+    }
+}
+
+function clearModalFields() {
+    editingPostId = null;
+
+    document.getElementById(
+        "modal-title"
+    ).textContent = "Create Forum Post";
+
+    document.getElementById(
+        "submit-post"
+    ).textContent = "Post";
+
+    document.getElementById(
+        "post-category"
+    ).value = "dog";
+
+    document.getElementById(
+        "post-title"
+    ).value = "";
+
+    document.getElementById(
+        "post-content"
+    ).value = "";
 }
 
 // SUBMIT COMMENT
@@ -348,7 +559,7 @@ function submitComment() {
         return;
     }
 
-    const posts = loadForumPosts();
+    const posts = forum.getPosts();
 
     const post = posts.find(
         p => p.getId() === currentOpenedPostId
@@ -358,16 +569,29 @@ function submitComment() {
         return;
     }
 
+    const currentUser =
+        getCurrentUser();
+
+    if (!currentUser) {
+
+        showConfirmation(
+            "Please login first.",
+            true
+        );
+
+        return;
+    }
+
     const newComment = new Comment(
         generateCommentId(),
-        "u001",
+        currentUser.getId(),
         content,
         new Date()
     );
 
     post.addComment(newComment);
 
-    saveForumPosts(posts);
+    saveForumPosts(forum.getPosts());
 
     input.value = "";
 
@@ -378,6 +602,122 @@ function submitComment() {
     showConfirmation(
         "Comment added successfully!"
     );
+}
+
+function renderPostActions(post) {
+    const currentUser =
+        getCurrentUser();
+
+    if (!currentUser) return "";
+
+    const canEdit =
+        post.canEdit(currentUser);
+
+    const canDelete =
+        post.canDelete(currentUser);
+
+    if (!canEdit && !canDelete)
+        return "";
+
+    return `
+        <div class="forum-post-actions">
+
+            ${canEdit ? `
+                <button
+                    class="icon-btn edit-btn"
+                    onclick="
+                        event.stopPropagation();
+                        openEditModal('${post.getId()}')
+                    "
+                    title="Edit Post"
+                >
+                    ✏️
+                </button>
+            ` : ""}
+
+            ${canDelete ? `
+                <button
+                    class="icon-btn delete-btn"
+                    onclick="
+                        event.stopPropagation();
+                        deletePost('${post.getId()}')
+                    "
+                    title="Delete Post"
+                >
+                    🗑️
+                </button>
+            ` : ""}
+
+        </div>
+    `;
+}
+
+function deletePost(postId) {
+    const currentUser =
+        getCurrentUser();
+
+    const posts =
+        forum.getPosts();
+
+    const post =
+        posts.find(
+            p => p.getId() === postId
+        );
+
+    if (!post) return;
+
+    if (!post.canDelete(currentUser)) {
+
+        showConfirmation(
+            "Permission denied.",
+            true
+        );
+
+        return;
+    }
+
+    forum.deletePost(postId);
+
+    saveForumPosts(forum.getPosts());
+
+    renderPosts(selectedCategory);
+
+    showConfirmation(
+        "Post deleted successfully."
+    );
+}
+
+function openEditModal(postId) {
+    const post =
+        forum.getPostById(postId);
+
+    if (!post) return;
+
+    editingPostId = postId;
+
+    document.getElementById(
+        "post-category"
+    ).value = post.getCategory();
+
+    document.getElementById(
+        "post-title"
+    ).value = post.getTitle();
+
+    document.getElementById(
+        "post-content"
+    ).value = post.getContent();
+
+    document.getElementById(
+        "modal-title"
+    ).textContent = "Edit Forum Post";
+
+    document.getElementById(
+        "submit-post"
+    ).textContent = "Save Changes";
+
+    document
+        .getElementById("post-modal")
+        .classList.add("active");
 }
 
 // HELPERS
@@ -397,42 +737,34 @@ function formatDate(date) {
     return formatted.toLocaleString();
 }
 
+function getUserById(userId) {
 
-function getUserData(userId) {
-    const users = {
-        u001: {
-            name: "alex",
-            role: "pet-owner"
-        },
+    const users =
+        loadAuthUsers();
 
-        u002: {
-            name: "Dr. Sarah",
-            role: "veterinarian"
-        },
-
-        u003: {
-            name: "john",
-            role: "pet-owner"
-        },
-
-        u004: {
-            name: "emily",
-            role: "pet-owner"
-        }
-    };
-
-    return users[userId] || {
-        name: "anonymous",
-        role: "pet-owner"
-    };
+    return users.find(
+        u => u.getId() === userId
+    );
 }
 
 function getDisplayName(userId) {
-    return getUserData(userId).name;
+
+    const user =
+        getUserById(userId);
+
+    return user
+        ? user.getDisplayName()
+        : "Unknown";
 }
 
 function getUserRole(userId) {
-    return getUserData(userId).role;
+
+    const user =
+        getUserById(userId);
+
+    return user
+        ? user.getRole()
+        : "petowner";
 }
 
 function getRoleBadge(role) {
@@ -450,4 +782,13 @@ function getRoleBadge(role) {
             Pet Owner
         </span>
     `;
+}
+
+function escapeHTML(text) {
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
 }

@@ -5,6 +5,7 @@ function renderNavbar(activePage = "") {
     let navLinks = [];
 
     const userLinks = [
+        { href: "index.html",     label: "Home" },
         { href: "map.html",     label: "Clinics" },
         { href: "firstAid.html",  label: "First Aid" },
         { href: "forum.html",     label: "Forum" },
@@ -12,6 +13,7 @@ function renderNavbar(activePage = "") {
     ];
 
     const adminLinks = [
+        { href: "index.html",     label: "Home" },
         { href: "map.html",     label: "Clinics" },
         { href: "firstAid.html",  label: "First Aid" },
         { href: "forum.html",     label: "Forum" },
@@ -64,7 +66,7 @@ function renderNavbar(activePage = "") {
     if (navbarTargetContainer) {
         navbarTargetContainer.innerHTML = `
             <nav class="navbar">
-                <a href="firstAid.html" class="navbar-brand">
+                <a href="index.html" class="navbar-brand">
                     <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px; height:24px; vertical-align:middle; margin-right:5px;">
                         <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
                     </svg>
@@ -91,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.title.includes("Clinics")) currentPageLabel = "Clinics";
     if (document.title.includes("Forum")) currentPageLabel = "Forum";
     if (document.title.includes("Quizzes")) currentPageLabel = "Quizzes";
+    if (document.title.includes("Home")) currentPageLabel = "Home";
 
     renderNavbar(currentPageLabel);
 });
