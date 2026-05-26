@@ -135,6 +135,17 @@ app.post('/api/save-guides', (req, res) => {
     }
 });
 
+app.post('/api/save-forum-posts', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'forum.JSON');
+
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Forum updated successfully.' });
+    } catch (err) {
+        res.status(500).json({ success: false });
+    }
+});
+
 app.listen(3000, () => {
     console.log('====================================================');
     console.log('PetAid JSON Engine running!');

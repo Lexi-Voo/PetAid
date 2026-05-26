@@ -41,6 +41,10 @@ class Forum {
         }
     }
 
+    deleteForum() {
+        this.#posts = [];
+    }
+
     viewForum() {
         return {
             category: this.#category,
@@ -53,7 +57,7 @@ class Forum {
     getPostById(postId) {
         return this.#posts.find(
             post => post.getId() === postId
-        );
+        ) || null;
     }
 
     createPost(id, userId, category, title, content) {
@@ -67,19 +71,32 @@ class Forum {
     }
 
     addPost(id, userId, category, title, content) {
-        const newPost = this.createPost(id, userId, category, title, content);
+        const newPost = this.createPost(
+            id,
+            userId,
+            category,
+            title,
+            content
+        );
 
-        if (newPost.validateContent()) {
-            this.#posts.unshift(newPost);
-            return newPost;
+        if (!newPost.validateContent()) {
+            return null;
         }
 
-        return null;
+        this.#posts.unshift(newPost);
+
+        return newPost;
     }
 
     deletePost(postId) {
-        this.#posts = this.#posts.filter(
-            post => post.getId() !== postId
-        );
+        const post = this.getPostById(postId);
+
+        if (!post) {
+            return false;
+        }
+
+        post.deletePost();
+
+        return true;
     }
 }

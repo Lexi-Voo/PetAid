@@ -44,4 +44,17 @@ class Comment {
             createdAt: this.#createdAt
         };
     }
+
+    isOwnedBy(userId) {
+        return this.#userId === userId;
+    }
+
+    canDelete(user) {
+        if (!user) return false;
+
+        return (
+            user.getRole() === "admin" ||
+            user.getId() === this.#userId
+        );
+    }
 }
