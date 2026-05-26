@@ -9,29 +9,13 @@
 <body>
 
     <div id="navbar-container"></div>
- 
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M4.5 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm15 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm-12.5 3a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm10 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zM12 21c-3.5 0-6-2.5-6-6 0-3 2.5-5.5 6-5.5s6 2.5 6 5.5c0 3.5-2.5 6-6 6z"/>
-            </svg>
-            PetAid
-        </a>
-        <ul class="navbar-links">
-            <li><a href="#">Clinics</a></li>
-            <li><a href="firstAid.html">First Aid</a></li>
-            <li><a href="#">Forum</a></li>
-            <li><a href="#">Quizzes</a></li>
-            <li><a href="admin.html" class="active">Approvals</a></li>
-        </ul>
-        <div class="navbar-auth">
+        <!-- <div class="navbar-auth">
             <button class="btn btn-outline btn-sm" id="adminToggleBtn" onclick="toggleAdmin()">Toggle Admin</button>
             <button class="btn btn-login" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
             <button class="btn btn-primary" id="registerBtn" onclick="window.location.href='register.html'">Register</button>
             
             <button class="btn btn-outline admin-only" id="logoutBtn" onclick="localStorage.removeItem('petaid_active_session'); window.location.href='login.html';">Logout (Admin)</button>
-        </div>
-    </nav>
+        </div> -->
 
     <main class="admin-container">
         <div class="panel-block">
@@ -53,105 +37,21 @@
         </div>
     </main>
 
+    <div id="footer-container"></div>
+
     <script src="components/Navbar.js"></script>
+    <script src="components/Footer.js"></script>
     <script src="utils/StorageHelper.js"></script>
     <script src="utils/SessionHelper.js"></script> 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderNavbar("Approve");
-            const activeUser = getCurrentUser();
-            if (!activeUser || activeUser.role !== 'admin') {
-                alert("Access Denied: Admin role credentials required.");
-                window.location.href = "login.html";
-                return;
-            }
-            const adminQueueBody = document.getElementById('adminQueueBody');
-            const requestsTable = document.getElementById('requestsTable');
-            const emptyQueueMsg = document.getElementById('emptyQueueMsg');
-            async function renderAdminQueue() {
-                try {
-                    let response = await fetch(`data/approvals.JSON?_=${Date.now()}`);
-                    
-                    if (!response.ok) {
-                        console.log("Approvals: .JSON failed, trying fallback to .json...");
-                        response = await fetch(`data/approvals.json?_=${Date.now()}`);
-                    }
-                    const pendingRequests = await response.json();
-                    localStorage.setItem('petaid_approvals', JSON.stringify(pendingRequests));
-                    if (!pendingRequests || pendingRequests.length === 0) {
-                        requestsTable.classList.add('hidden');
-                        emptyQueueMsg.classList.remove('hidden');
-                        return;
-                    }
-                    requestsTable.classList.remove('hidden');
-                    emptyQueueMsg.classList.add('hidden');
-
-                    adminQueueBody.innerHTML = pendingRequests.map(req => `
-                        <tr>
-                            <td style="font-weight: bold; color: #2c3e50;">${req.name}</td>
-                            <td><code>${req.username}</code></td>
-                            <td><a href="${req.cert_path || '#'}" target="_blank" class="cert-link">View Certificate 📄</a></td>
-                            <td>
-                                <button class="btn-approve" onclick="handleAdminAction('${req.req_id}', 'approve')">Approve</button>
-                                <button class="btn-reject" onclick="handleAdminAction('${req.req_id}', 'reject')">Reject</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                } catch (err) {
-                    console.error("Error loading physical approvals file:", err);
-                    requestsTable.classList.add('hidden');
-                    emptyQueueMsg.classList.remove('hidden');
-                }
-            }
-
-            window.handleAdminAction = async function(requestId, actionType) {
-                try {
-                    let response = await fetch(`data/approvals.JSON?_=${Date.now()}`);
-                    if (!response.ok) {
-                        response = await fetch(`data/approvals.json?_=${Date.now()}`);
-                    }
-                    const currentApprovalsList = await response.json();
-                    const targetIndex = currentApprovalsList.findIndex(a => a.req_id === requestId);
-                    if (targetIndex === -1) return;
-                    const targetRequest = currentApprovalsList[targetIndex];
-
-                    if (actionType === 'approve') {
-                        const currentMasterUsers = loadAuthUsers();
-                        let maxUserId = 0;
-                        currentMasterUsers.forEach(u => {
-                            const idNum = parseInt(u.user_id);
-                            if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
-                        });
-                        const newUserId = (maxUserId + 1).toString();
-
-                        const approvedVet = {
-                            "user_id": newUserId,
-                            "username": targetRequest.username,
-                            "password": targetRequest.password,
-                            "name": targetRequest.name,
-                            "role": "veterinarian",
-                            "biography": `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`,
-                            "profile_pic": "assets/profiles/profile.jpg"
-                        };
-                        currentMasterUsers.push(approvedVet);
-                        saveAuthUsers(currentMasterUsers); 
-                        alert(`${targetRequest.name} successfully approved and migrated to user.JSON!`);
-                    } else {
-                        alert(`Request for ${targetRequest.name} rejected.`);
-                    }
-                    currentApprovalsList.splice(targetIndex, 1);
-                    saveApprovals(currentApprovalsList);
-                    setTimeout(() => {
-                        renderAdminQueue();
-                    }, 200);
-                } catch (err) {
-                    console.error("Failed to execute administration action sequence:", err);
-                }
-            };
-            renderAdminQueue();
-        });
-    </script>
-    <script src="utils/Confirmation.js"></script> 
+    <script src="classes/UserProfile.js"></script>
+    <script src="classes/User.js"></script>
+    <script src="classes/PetOwner.js"></script>
+    <script src="classes/Veterinarian.js"></script>
+    <script src="classes/Admin.js"></script>
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/SessionHelper.js"></script>
+    <script src="utils/Confirmation.js"></script>
+    <script src="components/Footer.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

@@ -9,32 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault(); 
-
-        const inputEmail = document.getElementById('email').value.trim();
+        const inputUsername = document.getElementById('email').value.trim(); 
         const inputPassword = document.getElementById('password').value.trim();
-        const savedUsers = loadAuthUsers();
-        const savedApprovals = loadApprovals();
-        const activeUser = savedUsers.find(u => u.email && u.email.toLowerCase() === inputEmail.toLowerCase());
+        const authResult = User.authenticate(inputUsername, inputPassword);
 
-        if (activeUser) {
-            if (activeUser.password === inputPassword) {
-                showConfirmation('Login successful! Redirecting to home...');
-                localStorage.setItem('petaid_active_session', JSON.stringify(activeUser));
-                setTimeout(() => {
-                    window.location.href = "firstAid.html"; 
-                }, 1200);
-                return;
-            } else {
-                showConfirmation('Invalid email or password.', true);
-                return;
-            }
+        if (authResult.success) {
+            showConfirmation('Login successful! Redirecting to home...');
+            authResult.user.login(); 
+            setTimeout(() => { window.location.href = "firstAid.html"; }, 1200);
+        } else {
+            showConfirmation(authResult.message, true);
         }
-
-        const pendingVet = savedApprovals.find(a => a.email && a.email.toLowerCase() === inputEmail.toLowerCase());
-        if (pendingVet) {
-            showConfirmation('Your veterinary registration is still pending administrator review.', true);
-            return;
-        }
-        showConfirmation('Invalid email or password.', true);
     });
 });

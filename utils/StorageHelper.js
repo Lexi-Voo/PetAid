@@ -11,6 +11,15 @@ function loadGuides() {
 function saveGuides(guides) {
     const data = guides.map(guide => guide.toJSON());
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+    fetch('/api/save-guides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => console.log("Disk Sync:", data.message))
+    .catch(err => console.error("Could not sync to physical sampleGuides.JSON file:", err));
 }
 
 function getGuidesByCategory(category) {
@@ -28,8 +37,40 @@ const APPROVALS_KEY = "petaid_approvals";
 const PETS_KEY = "petaid_pets";
 
 function loadAuthUsers() {
-    const data = localStorage.getItem(USERS_KEY);
-    return data ? JSON.parse(data) : [];
+    const rawDataString = localStorage.getItem('petaid_users') || '[]';
+    const rawObjectsArray = JSON.parse(rawDataString);
+
+    return rawObjectsArray.map(u => {
+        const profileInstance = new UserProfile(u.name || "", u.biography || "", u.profile_pic || "assets/profiles/profile.jpg");
+        const resolvedId = (u.user_id || "0").toString();
+        const role = (u.role || "petowner").toLowerCase();
+        if (role === 'admin') {
+            return new Admin(resolvedId, profileInstance, u.username, u.password, u.email);
+        } else if (role === 'veterinarian') {
+            const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email, u.phone || "");
+            vetInstance.cert_path = u.cert_path || "assets/certs/cert_1.jpg";
+            return vetInstance;
+        } else {
+            return new PetOwner(resolvedId, profileInstance, u.username, u.password, u.email);
+        }
+    });
+}
+
+function getCurrentUser() {
+    const sessionStr = localStorage.getItem('petaid_active_session');
+    if (!sessionStr) return null;
+    const s = JSON.parse(sessionStr);
+    const profileInstance = new UserProfile(s.name, s.biography, s.profile_pic);
+    const resolvedId = (s.user_id || "0").toString();
+    const role = (s.role || "petowner").toLowerCase();
+    
+    if (role === 'admin') return new Admin(resolvedId, profileInstance, s.username, s.password, s.email);
+    if (role === 'veterinarian') {
+        const v = new Veterinarian(resolvedId, profileInstance, s.username, s.password, s.email);
+        if (s.cert_path) v.cert_path = s.cert_path;
+        return v;
+    }
+    return new PetOwner(resolvedId, profileInstance, s.username, s.password, s.email);
 }
 
 function saveAuthUsers(users) {
@@ -83,8 +124,8 @@ function loadPets() {
 }
 
 function getPetsByOwnerId(ownerId) {
-    const pets = loadPets();
-    return pets.filter(pet => pet.owner_id === ownerId);
+    const allPets = loadPets(); 
+    return allPets.filter(pet => pet.getOwnerId().toString() === ownerId.toString());
 }
 
 function savePets(pets) {
@@ -131,6 +172,17 @@ async function initializeAllStorage() {
             console.log("StorageHelper: Successfully seeded initial pet metrics tracking dataset.");
         } catch (err) {
             console.warn("StorageHelper: pets.JSON fallback active.", err);
+        }
+    }
+
+    if (!localStorage.getItem(STORAGE_KEY)) {
+        try {
+            const response = await fetch('data/sampleGuides.JSON');
+            const initialGuides = await response.json();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialGuides));
+            console.log("StorageHelper: Successfully seeded first aid guide dataset.");
+        } catch (err) {
+            console.warn("StorageHelper: sampleGuides.JSON fallback active.", err);
         }
     }
 }
@@ -313,5 +365,18 @@ async function initializeQuizStorage() {
         } catch (err) {
             console.warn("StorageHelper: sampleQuizzes.json fallback active.", err);
         }
+    }
+}
+
+function loadPets() {
+    const rawData = localStorage.getItem('petaid_pets');
+    if (!rawData) return [];
+    
+    try {
+        const parsedList = JSON.parse(rawData);
+        return parsedList.map(p => new Pet(p.pet_id, p.owner_id, p.name, p.category, p.pet_bio, p.pet_img));
+    } catch (e) {
+        console.error("Failed to parse pet records:", e);
+        return [];
     }
 }

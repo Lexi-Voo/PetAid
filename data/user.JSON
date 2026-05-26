@@ -16,8 +16,8 @@
     "name": "faisal",
     "email": "faisal@gmail.com",
     "role": "petowner",
-    "biography": "im faisal",
-    "profile_pic": "assets/profiles/profile.jpg"
+    "biography": "im faisalllll!!!",
+    "profile_pic": "assets/profiles/user_2.png"
   },
   {
     "user_id": "3",
@@ -27,6 +27,7 @@
     "email": "ramisa@gmail.com",
     "role": "veterinarian",
     "cert_path": "assets/certs/cert_1.jpg",
+    "phone": "",
     "biography": "Approved Vet. Registered on 2026-05-19.",
     "profile_pic": "assets/profiles/profile.jpg"
   }

@@ -1,7 +1,6 @@
 // ===== State =====
 let selectedCategory = null;
 let admin = null;
-let user = new User(null, "guest@petaid.com", null, "petowner");
 let guideToDelete = null;
 let editingGuideId = null;
 
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     renderFooter();
     loadSampleDataIfNeeded();
     checkAdminStatus();
-    setupAdminToggle();
 });
 
 // Load sample data into localStorage if it's empty (first visit)
@@ -30,48 +28,15 @@ function loadSampleDataIfNeeded() {
     }
 }
 
-// Check if admin is logged in (using sessionStorage for session persistence)
+// Check if admin is logged in (using the actual login session)
 function checkAdminStatus() {
-    const isAdmin = sessionStorage.getItem("petaid_role") === "admin";
-    if (isAdmin) {
+    const activeUser = getCurrentUser();
+    if (activeUser && activeUser.getRole() === "admin") {
         document.body.classList.add("is-admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
+        admin = activeUser;
     }
 }
 
-// Toggle admin mode via button (for testing)
-function toggleAdmin() {
-    const isAdmin = document.body.classList.toggle("is-admin");
-    if (isAdmin) {
-        sessionStorage.setItem("petaid_role", "admin");
-        admin = new Admin(null, "admin@petaid.com", "admin");
-        showConfirmation("Admin mode enabled");
-    } else {
-        sessionStorage.removeItem("petaid_role");
-        admin = null;
-        showConfirmation("Admin mode disabled");
-    }
-    // Re-render guide list if a category is selected
-    if (selectedCategory) {
-        renderGuideList(selectedCategory);
-    }
-}
-
-function setupAdminToggle() {
-    // Logout button
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function () {
-            document.body.classList.remove("is-admin");
-            sessionStorage.removeItem("petaid_role");
-            admin = null;
-            showConfirmation("Logged out");
-            if (selectedCategory) {
-                renderGuideList(selectedCategory);
-            }
-        });
-    }
-}
 
 // ===== Category Selection =====
 function selectCategory(category) {
@@ -92,7 +57,7 @@ function renderGuideList(category) {
     const title = document.getElementById("guideListTitle");
     const list = document.getElementById("guideList");
 
-    const guides = user.browseGuide(category);
+    const guides = getGuidesByCategory(category);
 
     title.textContent = category + " First Aid Guides";
     section.classList.add("visible");
@@ -170,16 +135,4 @@ function saveGuide() {
     renderGuideList(selectedCategory);
 }
 
-// ===== Confirmation Popup =====
-// Comments from Jasmine (can delete this to prevent from fighting with the existing navbar component!)
-document.addEventListener('DOMContentLoaded', () => {
-    const activeUser = window.getCurrentUser(); 
-    const navbarLinks = document.querySelector('.navbar-links');
-
-    if (!navbarLinks) return;
-    if (activeUser && activeUser.role === 'admin') {
-        const approvalsLi = document.createElement('li');
-        approvalsLi.innerHTML = `<a href="admin.html" id="adminApprovalsLink" style="color: #e74c3c; font-weight: bold;">Approvals 🛡️</a>`;
-        navbarLinks.appendChild(approvalsLi);
-    }
-});
+// Navbar admin link injection removed — handled by renderNavbar() in Navbar.js

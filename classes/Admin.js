@@ -1,6 +1,6 @@
 class Admin extends User {
-    constructor(profile, email, password) {
-        super(profile, email, password, "admin");
+    constructor(id, profile, username, password, email) {
+        super(id, profile, username, password, email, "admin");
     }
 
     manageGuide(action, data) {
@@ -19,9 +19,7 @@ class Admin extends User {
                 return newGuide;
 
             case "edit":
-                const guideToEdit = guides.find(
-                    g => g.getId() === data.id
-                );
+                const guideToEdit = guides.find(g => g.getId() === data.id);
                 if (guideToEdit) {
                     guideToEdit.editGuide(data);
                     saveGuides(guides);
@@ -29,15 +27,11 @@ class Admin extends User {
                 return guideToEdit;
 
             case "delete":
-                const guideToDelete = guides.find(
-                    g => g.getId() === data.id
-                );
+                const guideToDelete = guides.find(g => g.getId() === data.id);
                 if (guideToDelete){
                     guideToDelete.deleteGuide();
                 }
-                guides = guides.filter(
-                    g => g.getId() !== data.id
-                );
+                guides = guides.filter(g => g.getId() !== data.id);
                 saveGuides(guides);
                 return true;
 
@@ -62,9 +56,7 @@ class Admin extends User {
 
             case "edit":
                 const steps = guide.getSteps();
-                const step = steps.find(
-                    s => s.getStepNumber() === stepData.stepNumber
-                );
+                const step = steps.find(s => s.getStepNumber() === stepData.stepNumber);
                 if (step) {
                     step.editStep(stepData);
                 }
@@ -95,9 +87,7 @@ class Admin extends User {
 
             case "edit":
                 const videos = guide.getVideos();
-                const video = videos.find(
-                    v => v.getTitle() === videoData.oldTitle
-                );
+                const video = videos.find(v => v.getTitle() === videoData.oldTitle);
                 if (video) {
                     video.editVideo(videoData);
                 }
@@ -110,9 +100,7 @@ class Admin extends User {
 
     manageQuestion(action, quizId, questionData) {
         const quizzes = loadQuizzes();
-        const quiz = quizzes.find(
-            q => q.getId() === quizId
-        );
+        const quiz = quizzes.find(q => q.getId() === quizId);
         if (!quiz) return false;
         switch (action) {
             case "add":
@@ -134,9 +122,7 @@ class Admin extends User {
                 );
                 break;
             case "remove":
-                quiz.removeQuestion(
-                    questionData.id
-                );
+                quiz.removeQuestion(questionData.id);
                 break;
         }
         saveQuizzes(quizzes);
@@ -147,21 +133,15 @@ class Admin extends User {
         let quizzes = loadQuizzes();
         switch (action) {
             case "edit":
-                const quiz = quizzes.find(
-                    q => q.getId() === quizData.id
-                );
-
+                const quiz = quizzes.find(q => q.getId() === quizData.id);
                 if (!quiz) return false;
 
                 quiz.setTitle(quizData.title);
                 quiz.setCategory(quizData.category);
-
                 break;
 
             case "delete":
-                quizzes = quizzes.filter(
-                    q => q.getId() !== quizData.id
-                );
+                quizzes = quizzes.filter(q => q.getId() !== quizData.id);
                 break;
 
             case "create":
@@ -177,5 +157,40 @@ class Admin extends User {
 
         saveQuizzes(quizzes);
         return true;
+    }
+
+    approveVet(targetRequest, actionType) {
+        if (!targetRequest) return false;
+        if (actionType === 'approve') {
+            const currentMasterUsers = loadAuthUsers();
+            let maxUserId = 0;
+            currentMasterUsers.forEach(u => {
+                const idNum = parseInt(u.getId()); 
+                if (!isNaN(idNum) && idNum > maxUserId) { maxUserId = idNum; }
+            });
+            const newUserId = (maxUserId + 1).toString();
+            const newProfile = new UserProfile(
+                targetRequest.name, 
+                targetRequest.biography || `Approved Vet. Registered on ${new Date().toISOString().split('T')[0]}.`, 
+                "assets/profiles/profile.jpg",
+                targetRequest.phone || ""
+            );
+            
+            const approvedVetInstance = new Veterinarian(
+                newUserId, 
+                newProfile, 
+                targetRequest.username, 
+                targetRequest.password, 
+                targetRequest.email, 
+                targetRequest.phone || ""
+            );
+            approvedVetInstance.cert_path = targetRequest.cert_path || "assets/certs/cert.jpg";
+            currentMasterUsers.push(approvedVetInstance);
+            saveAuthUsers(currentMasterUsers);
+            return { success: true, action: "approved" };
+        } else if (actionType === 'reject') {
+            return { success: true, action: "rejected" };
+        }
+        return false;
     }
 }

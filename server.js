@@ -17,6 +17,8 @@ const storage = multer.diskStorage({
             folder = 'petprofile';
         } else if (req.body.uploadType === 'cert') {
             folder = 'certs';
+        } else if (req.body.uploadType === 'guide') {
+            folder = 'guides';
         }
         const dir = path.join(__dirname, 'assets', folder);
         
@@ -32,6 +34,8 @@ const storage = multer.diskStorage({
             prefix = 'pet';
         } else if (req.body.uploadType === 'cert') {
             prefix = 'cert';
+        } else if (req.body.uploadType === 'guide') {
+            prefix = 'step';
         }
         cb(null, `${prefix}_${id}${ext}`);
     }
@@ -46,6 +50,7 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
     let folder = 'profiles';
     if (req.body.uploadType === 'pet') folder = 'petprofile';
     if (req.body.uploadType === 'cert') folder = 'certs';
+    if (req.body.uploadType === 'guide') folder = 'guides';
     const cleanPath = `assets/${folder}/${req.file.filename}`;
     res.json({ 
         success: true, 
@@ -119,10 +124,21 @@ app.post('/api/save-quizzes', (req, res) => {
     }
 });
 
+app.post('/api/save-guides', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'sampleGuides.JSON');
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Physical sampleGuides.JSON updated successfully.' });
+    } catch (err) {
+        console.error("Error writing to sampleGuides.JSON:", err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
+    }
+});
+
 app.listen(3000, () => {
     console.log('====================================================');
-    console.log('🚀 PetAid High-Capacity JSON Engine running!');
-    console.log('👉 Open your browser to: http://localhost:3000/firstAid.html');
+    console.log('PetAid JSON Engine running!');
+    console.log('Open your browser to: http://localhost:3000/firstAid.html');
     console.log('Press Ctrl + C in this terminal window to stop the server.');
     console.log('====================================================');
 });
