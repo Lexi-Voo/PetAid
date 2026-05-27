@@ -1356,3 +1356,32 @@ body.is-admin button.admin-only {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Feedback Page Styles ===== */
+.rating-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.rating-label { width:180px; font-weight:600; }
+.rating-bubbles { display:flex; gap:6px; }
+.rating-bubbles input { display:none; }
+.rating-bubbles label {
+    width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; background:#eef2f5; color:#333; border:1px solid #d0d7dd; font-size:12px;
+}
+.rating-bubbles input:checked + label { background: #2b8cc4; color: white; border-color: #1f6f99; }
+.feedback-actions { margin-top:18px; }
+.feedback-result { margin-top:12px; color: var(--success-green); }
+textarea#comments { width:100%; min-height:120px; }
+
+/* Analytics card styling for feedback-view */
+.analytics-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-card);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: var(--shadow-sm);
+}
+.analytics-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+.analytics-card canvas { display: block; width: 100% !important; height: auto !important; }

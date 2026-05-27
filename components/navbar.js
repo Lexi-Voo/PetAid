@@ -19,7 +19,7 @@ function renderNavbar(activePage = "") {
         { href: "forum.html",     label: "Forum" },
         { href: "quiz.html",      label: "Quizzes" },
         { href: "admin.html",  label: "Approve" },
-        { href: "feedback.html",     label: "Feedback" },
+        { href: "feedback-view.html",     label: "Feedback" },
     ];
 
     const userNavLinks = userLinks.map(link => `

@@ -146,6 +146,8 @@ app.post('/api/save-forum-posts', (req, res) => {
     }
 });
 
+// Feedback persistence removed: feedback now saved client-side to localStorage.
+
 app.listen(3000, () => {
     console.log('====================================================');
     console.log('PetAid JSON Engine running!');

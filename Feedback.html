@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - PetAid</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <main class="main-content">
+        <h1 class="page-title">Feedback</h1>
+        <p class="page-subtitle">We'd love to hear your thoughts!</p>
+
+        <form id="feedbackForm" class="feedback-form">
+            <div class="form-group rating-row">
+                <div class="rating-label">Forum</div>
+                <div class="rating-bubbles" data-field="forum" role="radiogroup" required="" aria-label="Forum rating"></div>
+            </div>
+            <div class="form-group rating-row">
+                <div class="rating-label">Quiz</div>
+                <div class="rating-bubbles" data-field="quiz" role="radiogroup" aria-label="Quiz rating"></div>
+            </div>
+            <div class="form-group rating-row">
+                <div class="rating-label">First Aid Guide</div>
+                <div class="rating-bubbles" data-field="firstaid" role="radiogroup" required="" aria-label="First Aid rating"></div>
+            </div>
+            <div class="form-group rating-row">
+                <div class="rating-label">Login Page</div>
+                <div class="rating-bubbles" data-field="login" role="radiogroup" required="" aria-label="Login rating"></div>
+            </div>
+            <div class="form-group rating-row">
+                <div class="rating-label">Map</div>
+                <div class="rating-bubbles" data-field="map" role="radiogroup" required="" aria-label="Map rating"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Anything else you'd like to tell us?</label>
+                <textarea id="comments" style="border-color:black" name="comments" placeholder="Write your thoughts here..."></textarea>
+            </div>
+
+            <div class="feedback-actions">
+                <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                <span class="feedback-result" id="feedbackResult" aria-live="polite"></span>
+            </div>
+        </form>
+    </main>
+    <div id="footer-container"></div>
+
+    <script src="classes/UserProfile.js"></script>
+    <script src="classes/User.js"></script>
+    <script src="classes/PetOwner.js"></script>
+    <script src="classes/Veterinarian.js"></script>
+    <script src="classes/Admin.js"></script>
+    <script src="utils/StorageHelper.js"></script>
+    <script src="utils/SessionHelper.js"></script>
+    <script src="classes/Feedback.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+
+    <script>
+        // populate radio bubbles for each field
+        (function hydrateRadios(){
+            const fields = ['forum','quiz','firstaid','login','map'];
+            fields.forEach(field => {
+                const container = document.querySelector(`.rating-bubbles[data-field="${field}"]`);
+                if (!container) return;
+                container.innerHTML = '';
+                for (let n=1;n<=10;n++) {
+                    const input = document.createElement('input');
+                    input.type = 'radio'; input.name = field; input.id = `${field}_${n}`; input.value = String(n);
+                    const label = document.createElement('label'); label.htmlFor = input.id; label.textContent = String(n);
+                    container.appendChild(input); container.appendChild(label);
+                }
+            });
+        })();
+
+        document.getElementById('feedbackForm').addEventListener('submit', async function(e){
+            e.preventDefault();
+            const getVal = (name) => {
+                const v = document.querySelector(`input[name="${name}"]:checked`);
+                return v ? Number(v.value) : null;
+            };
+                const ratings = {
+                    forum: getVal('forum'),
+                    quiz: getVal('quiz'),
+                    firstAid: getVal('firstaid'),
+                    login: getVal('login'),
+                    map: getVal('map')
+                };
+
+                const fb = new Feedback('Site feedback', document.getElementById('comments').value.trim(), ratings);
+                const result = await fb.submit();
+                if (result && result.success) {
+                    document.getElementById('feedbackResult').textContent = 'Feedback submitted — thank you!';
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    const msg = result && result.errors ? result.errors.join('; ') : 'Failed to submit feedback.';
+                    document.getElementById('feedbackResult').textContent = msg;
+                    console.error('Feedback submit result', result);
+                }
+        });
+    </script>
+</body>
+</html>

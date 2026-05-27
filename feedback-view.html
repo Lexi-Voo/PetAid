@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback View - PetAid</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <main class="main-content">
+        <h1 class="page-title">Feedback View</h1>
+        <p class="page-subtitle">View all user feedback submissions.</p>
+
+        <section id="analytics" style="display:grid;grid-template-columns:1fr;gap:20px;max-width:1000px;margin-top:18px;">
+            <div style="background:var(--bg-white);padding:18px;border:1px solid var(--border-card);border-radius:10px;">
+                <h2 style="margin:0 0 12px 0;font-size:1.1rem">Rating distributions (per-section, 1–10)</h2>
+                <div id="rating-colors-legend" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;align-items:start;">
+                    <div class="analytics-card">
+                        <div class="analytics-header">Forum</div>
+                        <canvas id="pie_forum" width="260" height="160"></canvas>
+                        <canvas id="bar_forum" width="260" height="80" style="margin-top:6px"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-header">Quiz</div>
+                        <canvas id="pie_quiz" width="260" height="160"></canvas>
+                        <canvas id="bar_quiz" width="260" height="80" style="margin-top:6px"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-header">First Aid Guide</div>
+                        <canvas id="pie_firstAid" width="260" height="160"></canvas>
+                        <canvas id="bar_firstAid" width="260" height="80" style="margin-top:6px"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-header">Login Page</div>
+                        <canvas id="pie_login" width="260" height="160"></canvas>
+                        <canvas id="bar_login" width="260" height="80" style="margin-top:6px"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-header">Map</div>
+                        <canvas id="pie_map" width="260" height="160"></canvas>
+                        <canvas id="bar_map" width="260" height="80" style="margin-top:6px"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average rating per section removed; per-section horizontal bars provide same info -->
+        </section>
+
+        <section id="raw-data" style="margin-top:18px;max-width:1000px;">
+            <h3 style="margin-bottom:8px">Raw submissions</h3>
+            <div id="feedbackList" style="background:var(--bg-white);padding:12px;border:1px solid var(--border-card);border-radius:8px;max-height:320px;overflow:auto;font-family:monospace;font-size:13px;color:var(--text-secondary);"></div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fetch feedback dataset (tries static data/feedback.JSON, falls back to localStorage key)
+        async function loadFeedbackRecords() {
+            try {
+                const res = await fetch('data/feedback.JSON?_=' + Date.now());
+                if (res.ok) {
+                    const json = await res.json();
+                    if (Array.isArray(json)) return json;
+                }
+            } catch (e) {
+                console.warn('Could not load data/feedback.JSON', e);
+            }
+            // fallback to localStorage 'petaid_feedback'
+            try {
+                const raw = localStorage.getItem('petaid_feedback') || '[]';
+                const arr = JSON.parse(raw);
+                if (Array.isArray(arr)) return arr;
+            } catch (e) { console.warn('local fallback failed', e); }
+            return [];
+        }
+
+        function computeMetrics(records) {
+            const sections = ['forum','quiz','firstAid','login','map'];
+            const counts = {};
+            const sums = {};
+            sections.forEach(s => { counts[s]=0; sums[s]=0; });
+
+            records.forEach(r => {
+                sections.forEach(s => {
+                    const key = s === 'firstAid' ? 'firstAid' : s;
+                    const val = r.ratings ? r.ratings[s] : (r[s] ?? null);
+                    const num = val === null || val === undefined ? null : Number(val);
+                    if (!Number.isNaN(num) && num !== null) {
+                        counts[s]++;
+                        sums[s] += num;
+                    }
+                });
+            });
+
+            const averages = {};
+            sections.forEach(s => { averages[s] = counts[s] > 0 ? +(sums[s]/counts[s]).toFixed(2) : 0; });
+            return { sections, counts, averages };
+        }
+
+        function niceLabel(key) {
+            if (key === 'firstAid') return 'First Aid';
+            return key.charAt(0).toUpperCase() + key.slice(1);
+        }
+
+        (async function renderAnalytics(){
+            const records = await loadFeedbackRecords();
+            const { sections, counts, averages } = computeMetrics(records);
+
+            // Per-section rating distributions (1..10)
+            const ratingLabels = Array.from({length:10},(_,i)=>(i+1).toString());
+            // distinct color palette for ratings 1..10
+            const ratingColors = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0','#f032e6','#bcf60c','#fabebe'];
+
+            // Render a single horizontal legend for rating colors
+            const legendContainer = document.getElementById('rating-colors-legend');
+            if (legendContainer) {
+                legendContainer.innerHTML = ratingLabels.map((lab,i)=>{
+                    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;border:1px solid var(--border-card);background:var(--bg-white)"><span style="width:14px;height:14px;background:${ratingColors[i]};display:inline-block;border-radius:3px;border:1px solid rgba(0,0,0,0.06)"></span><strong style="font-size:13px">${lab}</strong></div>`;
+                }).join('');
+            }
+
+            function getDistribution(records, section) {
+                const out = Array.from({length:10}, ()=>0);
+                records.forEach(r => {
+                    const val = r.ratings ? r.ratings[section] : (r[section] ?? null);
+                    const num = val === null || val === undefined ? null : Number(val);
+                    if (!Number.isNaN(num) && num !== null && num >= 1 && num <= 10) {
+                        out[num-1]++;
+                    }
+                });
+                return out;
+            }
+
+            const barColor = '#2b8cc4';
+            sections.forEach((section, idx) => {
+                const dist = getDistribution(records, section);
+                const pieCanvas = document.getElementById('pie_' + section);
+                if (pieCanvas) {
+                    const ctx = pieCanvas.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: { labels: ratingLabels, datasets: [{ data: dist, backgroundColor: ratingColors }] },
+                        options: { responsive: true, plugins: { legend: { display: false } } }
+                    });
+                }
+
+                const barCanvas = document.getElementById('bar_' + section);
+                if (barCanvas) {
+                    const ctxBar = barCanvas.getContext('2d');
+                    // Horizontal bar showing average rating for this section
+                    const avg = averages[section] || 0;
+                    new Chart(ctxBar, {
+                        type: 'bar',
+                        data: { labels: [niceLabel(section)], datasets: [{ data: [avg], backgroundColor: [barColor] }] },
+                        options: { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 10 } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `Average: ${ctx.parsed.x}` } } } }
+                    });
+                }
+            });
+
+            // Removed global average bar chart; per-section horizontal bars remain.
+
+            // Raw list
+            const listEl = document.getElementById('feedbackList');
+            if (records.length === 0) {
+                listEl.textContent = 'No feedback records found.';
+            } else {
+                listEl.innerHTML = records.map(r => {
+                    const when = r.submitted_at || r.submittedAt || r.dateSubmitted || '';
+                    const ratings = r.ratings ? r.ratings : { forum: r.forum, quiz: r.quiz, firstAid: r.firstAid, login: r.login, map: r.map };
+                    return `<div style="padding:8px;border-bottom:1px solid var(--border-card)"><div><strong>${when}</strong></div><div style="margin-top:6px">Ratings: ${sections.map(s=>`${niceLabel(s)}:${ratings[s] ?? '-'} `).join(' | ')}</div><div style="margin-top:6px;color:var(--text-secondary)">${(r.comments||'').slice(0,200)}</div></div>`;
+                }).join('');
+            }
+        })();
+    </script>
+</body>
+</html>
