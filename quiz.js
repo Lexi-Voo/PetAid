@@ -30,18 +30,9 @@ function loadSampleDataIfNeeded() {
 // ===== Check Admin Status =====
 function checkAdminStatus() {
     const activeUser = getCurrentUser();
-
-    if (activeUser && activeUser.role === "admin") {
+    if (activeUser && activeUser.getRole() === "admin") {
         document.body.classList.add("is-admin");
-
-        admin = new Admin(
-            activeUser.id,
-            activeUser.email,
-            activeUser.password
-        );
-    } else {
-        document.body.classList.remove("is-admin");
-        admin = null;
+        admin = activeUser;
     }
 }
 

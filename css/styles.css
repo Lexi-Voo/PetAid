@@ -426,6 +426,11 @@ a {
     color: var(--text-primary);
 }
 
+.quiz-detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
 
 .question-card {
     border: 1px solid var(--border-color);
@@ -1170,6 +1175,11 @@ body.is-admin button.admin-only {
 .vet-badge {
     background-color: #E8F7EC;
     color: #2E7D32;
+}
+
+.admin-badge {
+    background-color: #FFF3E0;
+    color: #EF6C00;
 }
 
 .my-post {
