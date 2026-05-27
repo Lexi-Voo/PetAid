@@ -60,19 +60,46 @@ class Feedback {
         if (!validation.valid) {
             return { success: false, errors: validation.errors };
         }
-
         const payload = this.toJSON();
+        const key = 'petaid_feedback';
+        let localSaved = false;
 
+        // Persist locally first (offline-first)
         try {
-            const key = 'petaid_feedback';
             const raw = localStorage.getItem(key) || '[]';
             const arr = JSON.parse(raw);
             arr.push(payload);
             localStorage.setItem(key, JSON.stringify(arr));
-            return { success: true, message: 'Saved to localStorage' };
+            localSaved = true;
         } catch (err) {
             console.error('Feedback.submit localStorage save failed:', err);
-            return { success: false, errors: ['Failed to persist feedback to localStorage'] };
+        }
+
+        // Attempt to persist on server if available
+        let serverSaved = false;
+        try {
+            const res = await fetch('/api/save-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+                serverSaved = true;
+            } else {
+                console.warn('Server save-feedback responded with status', res.status);
+            }
+        } catch (err) {
+            console.warn('Feedback.submit server POST failed:', err);
+        }
+
+        if (serverSaved && localSaved) {
+            return { success: true, message: 'Saved to localStorage and server' };
+        } else if (serverSaved) {
+            return { success: true, message: 'Saved to server (localStorage failed)' };
+        } else if (localSaved) {
+            return { success: true, message: 'Saved to localStorage (server unavailable)' };
+        } else {
+            return { success: false, errors: ['Failed to persist feedback locally and to server'] };
         }
     }
 

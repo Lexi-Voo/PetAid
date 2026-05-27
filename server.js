@@ -146,6 +146,26 @@ app.post('/api/save-forum-posts', (req, res) => {
     }
 });
 
+app.post('/api/save-feedback', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'feedback.JSON');
+    try {
+        const incoming = req.body;
+        let arr = [];
+        if (fs.existsSync(filePath)) {
+            try { arr = JSON.parse(fs.readFileSync(filePath, 'utf8') || '[]'); } catch (e) { arr = []; }
+            if (!Array.isArray(arr)) arr = [];
+        }
+
+        if (Array.isArray(incoming)) arr = incoming; else arr.push(incoming);
+
+        fs.writeFileSync(filePath, JSON.stringify(arr, null, 2), 'utf8');
+        res.json({ success: true, message: 'feedback.JSON updated' });
+    } catch (err) {
+        console.error('Error writing to feedback.JSON:', err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
+    }
+});
+
 // Feedback persistence removed: feedback now saved client-side to localStorage.
 
 app.listen(3000, () => {
