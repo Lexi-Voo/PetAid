@@ -7,12 +7,12 @@
       {
         "stepNumber": 1,
         "instruction": "Stay calm and restrain your dog gently to prevent biting.",
-        "imageURL": "assets/images/guides/dog-choking-1.png"
+        "imageURL": "assets/guides/step_g001_step1.jpg"
       },
       {
         "stepNumber": 2,
         "instruction": "Open the dog's mouth carefully and look for the foreign object.",
-        "imageURL": "assets/images/guides/dog-choking-2.png"
+        "imageURL": "assets/guides/step_g001_step2.jpg"
       },
       {
         "stepNumber": 3,
@@ -21,8 +21,8 @@
       },
       {
         "stepNumber": 4,
-        "instruction": "If the object cannot be removed, perform the Heimlich maneuver by placing your fist below the rib cage and pushing upward firmly.",
-        "imageURL": "assets/images/guides/dog-choking-4.png"
+        "instruction": "If the object cannot be removed, perform the Heimlich maneuver by placing your fist below the rib cage.",
+        "imageURL": "assets/guides/step_g001_step4.jpg"
       },
       {
         "stepNumber": 5,
@@ -32,8 +32,12 @@
     ],
     "videos": [
       {
-        "title": "How to Save a Dog",
-        "url": "https://www.youtube.com/watch?v=gT_vNktCbyw"
+        "title": "how to help chocking",
+        "url": "https://youtu.be/gT_vNktCbyw?si=u5qUgTOT6nRw0O_K"
+      },
+      {
+        "title": "Dog in Pain",
+        "url": "https://youtu.be/5D6HnK6-xsw?si=MfBUFIvVpIj_qN7T"
       }
     ]
   },
@@ -116,7 +120,7 @@
       {
         "stepNumber": 2,
         "instruction": "Gently open the mouth and check for visible foreign objects.",
-        "imageURL": ""
+        "imageURL": "assets/guides/step_g004_step2.webp"
       },
       {
         "stepNumber": 3,
@@ -134,7 +138,12 @@
         "imageURL": ""
       }
     ],
-    "videos": []
+    "videos": [
+      {
+        "title": "cat choakcing",
+        "url": "https://youtu.be/v_wsV8ADwvs?si=srez4TM5GmDMN88B"
+      }
+    ]
   },
   {
     "id": "g005",
