@@ -101,11 +101,8 @@ function openQuiz(quizId) {
 function openCreateQuizModal() {
     document.getElementById("quizModalTitle").textContent = "Create New Quiz";
     document.getElementById("quizModalSave").textContent = "Create";
-
     document.getElementById("quizTitle").value = "";
-    document.getElementById("quizCategory").value =
-        selectedCategory || "dog";
-
+    document.getElementById("quizCategory").value = selectedCategory || "dog";
     document.getElementById("quizModal").classList.add("active");
 }
 
@@ -123,14 +120,8 @@ function saveQuiz() {
         return;
     }
 
-    admin.manageQuiz("create", {
-        title,
-        category
-    });
-
+    admin.manageQuiz("create", {title, category});
     showConfirmation("Quiz created successfully");
-
     closeQuizModal();
-
     renderQuizList(selectedCategory);
 }

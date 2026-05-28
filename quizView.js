@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
     renderNavbar("Quizzes");
     renderFooter();
     checkAdminStatus();
-    setupAdminToggle();
     loadQuiz();
 });
 
@@ -35,35 +34,17 @@ function toggleAdmin() {
     renderQuiz();
 }
 
-function setupAdminToggle() {
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", function () {
-            document.body.classList.remove("is-admin");
-            sessionStorage.removeItem("petaid_role");
-            admin = null;
-            showConfirmation("Logged out");
-            renderQuiz();
-        });
-    }
-}
-
 function loadQuiz() {
     const params = new URLSearchParams(window.location.search);
-
     currentQuizId = params.get("id");
-
     if (!currentQuizId) {
-        document.getElementById("quizTitle").textContent =
-            "Quiz not found";
+        document.getElementById("quizTitle").textContent = "Quiz not found";
         return;
     }
 
     currentQuiz = getQuizById(currentQuizId);
-
     if (!currentQuiz) {
-        document.getElementById("quizTitle").textContent =
-            "Quiz not found";
+        document.getElementById("quizTitle").textContent = "Quiz not found";
         return;
     }
 
@@ -143,9 +124,7 @@ function submitQuiz() {
 
     data.questions.forEach(question => {
 
-        const selected = document.querySelector(
-            `input[name="${question.id}"]:checked`
-        );
+        const selected = document.querySelector(`input[name="${question.id}"]:checked`);
 
         if (selected) {
             answers[question.id] = selected.value;
@@ -154,80 +133,45 @@ function submitQuiz() {
 
     const result = currentQuiz.submitQuiz(answers);
 
-    showConfirmation(
-        `You scored ${result.score}/${result.total}`
-    );
+    showConfirmation(`You scored ${result.score}/${result.total}`);
 }
 
 // ===== Edit Quiz Modal =====
 function openEditQuizModal() {
     const data = currentQuiz.viewQuiz();
-
-    document.getElementById("editQuizTitle").value =
-        data.title;
-
-    document.getElementById("editQuizCategory").value =
-        data.category;
-
-    document.getElementById("editQuizModal")
-        .classList.add("active");
+    document.getElementById("editQuizTitle").value = data.title;
+    document.getElementById("editQuizCategory").value = data.category;
+    document.getElementById("editQuizModal").classList.add("active");
 }
 
 function closeEditQuizModal() {
-    document.getElementById("editQuizModal")
-        .classList.remove("active");
+    document.getElementById("editQuizModal").classList.remove("active");
 }
 
 function saveEditQuiz() {
-    const title =
-        document.getElementById("editQuizTitle")
-        .value.trim();
-
-    const category =
-        document.getElementById("editQuizCategory")
-        .value;
+    const title = document.getElementById("editQuizTitle").value.trim();
+    const category = document.getElementById("editQuizCategory").value;
 
     if (!title) {
-        showConfirmation(
-            "Please enter a quiz title",
-            true
-        );
+        showConfirmation("Please enter a quiz title", true);
         return;
     }
 
-    admin.manageQuiz("edit", {
-        id: currentQuizId,
-        title: title,
-        category: category
-    });
-
+    admin.manageQuiz("edit", {id: currentQuizId, title: title, category: category});
     currentQuiz = getQuizById(currentQuizId);
-
     closeEditQuizModal();
-
     renderQuiz();
-
-    showConfirmation(
-        "Quiz updated successfully"
-    );
+    showConfirmation("Quiz updated successfully");
 }
 
 // ===== Delete Quiz =====
 function openDeleteQuizModal() {
     showDeleteConfirm(
         "Delete Quiz",
-
         "Are you sure you want to delete this quiz?",
-
         function () {
-
-            admin.manageQuiz("delete", {
-                id: currentQuizId
-            });
-
-            showConfirmation(
-                "Quiz deleted successfully"
-            );
+            admin.manageQuiz("delete", {id: currentQuizId});
+            showConfirmation("Quiz deleted successfully");
 
             setTimeout(() => {
 
@@ -242,55 +186,33 @@ function openDeleteQuizModal() {
 // ===== Add Question Modal =====
 function openAddQuestionModal() {
     document.getElementById("questionModalTitle").textContent = "Add Question";
-
     document.getElementById("questionModalSave").textContent = "Add";
-
     document.getElementById("questionText").value = "";
-
     document.getElementById("option1").value = "";
-
     document.getElementById("option2").value = "";
-
     document.getElementById("option3").value = "";
-
     document.getElementById("option4").value = "";
-
     document.getElementById("correctAnswer").value = "0";
-
     document.getElementById("editingQuestionId").value = "";
-
-    document.getElementById("questionModal")
-        .classList.add("active");
+    document.getElementById("questionModal").classList.add("active");
 }
 
 // ===== Edit Question Modal =====
 function openEditQuestionModal(questionId) {
-    const question = currentQuiz
-        .getQuestions()
-        .find(q => q.id === questionId);
+    const question = currentQuiz.getQuestions().find(q => q.id === questionId);
 
     if (!question) return;
 
     document.getElementById("questionModalTitle").textContent = "Edit Question";
-
     document.getElementById("questionModalSave").textContent = "Save";
-
     document.getElementById("questionText").value = question.questionText;
-
     document.getElementById("option1").value = question.options[0] || "";
-
     document.getElementById("option2").value = question.options[1] || "";
-
     document.getElementById("option3").value = question.options[2] || "";
-
     document.getElementById("option4").value = question.options[3] || "";
-
     const correctIndex = question.options.indexOf(question.correctAnswer);
-
     document.getElementById("correctAnswer").value = correctIndex;
-
     document.getElementById("editingQuestionId").value = question.id;
-
     document.getElementById("questionModal").classList.add("active");
 }
 
@@ -315,22 +237,12 @@ function saveQuestion() {
     const correctAnswer = filteredOptions[correctIndex];
     const editingQuestionId = document.getElementById("editingQuestionId").value;
 
-    if (
-        !questionText ||
-        filteredOptions.length < 2 ||
-        !correctAnswer
-    ) {
-
-        showConfirmation(
-            "Please complete all fields",
-            true
-        );
-
+    if (!questionText || filteredOptions.length < 2 || !correctAnswer) {
+        showConfirmation("Please complete all fields", true);
         return;
     }
 
     if (editingQuestionId) {
-
         admin.manageQuestion(
             "edit",
             currentQuizId,
@@ -342,12 +254,8 @@ function saveQuestion() {
             }
         );
 
-        showConfirmation(
-            "Question updated successfully"
-        );
-
+        showConfirmation("Question updated successfully");
     } else {
-
         admin.manageQuestion(
             "add",
             currentQuizId,
@@ -359,17 +267,12 @@ function saveQuestion() {
             }
         );
 
-        showConfirmation(
-            "Question added successfully"
-        );
+        showConfirmation("Question added successfully");
     }
 
     currentQuiz = getQuizById(currentQuizId);
-
     shuffledQuestions = [];
-
     closeQuestionModal();
-
     renderQuiz();
 }
 
@@ -377,24 +280,12 @@ function saveQuestion() {
 function openDeleteQuestionModal(questionId) {
     showDeleteConfirm(
         "Delete Question",
-
         "Are you sure you want to delete this question?",
-
         function () {
-            admin.manageQuestion(
-                "remove",
-                currentQuizId,
-                {
-                    id: questionId
-                }
-            );
-
+            admin.manageQuestion("remove", currentQuizId, {id: questionId});
             currentQuiz = getQuizById(currentQuizId);
-
             shuffledQuestions = [];
-
             renderQuiz();
-
             showConfirmation("Question deleted successfully");
         }
     );

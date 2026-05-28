@@ -93,34 +93,13 @@ app.post('/api/save-pets', (req, res) => {
 });
 
 app.post('/api/save-quizzes', (req, res) => {
-    const filePath = path.join(
-        __dirname,
-        'data',
-        'quizzes.JSON'
-    );
-
+    const filePath = path.join(__dirname, 'data', 'quizzes.JSON');
     try {
-        fs.writeFileSync(
-            filePath,
-            JSON.stringify(req.body, null, 2),
-            'utf8'
-        );
-
-        res.json({
-            success: true,
-            message: 'Physical quizzes.JSON updated successfully.'
-        });
-
+        fs.writeFileSync(filePath, SON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Physical quizzes.JSON updated successfully.'});
     } catch (err) {
-        console.error(
-            "Error writing to quizzes.JSON:",
-            err
-        );
-
-        res.status(500).json({
-            success: false,
-            message: 'Failed to write to file.'
-        });
+        console.error("Error writing to quizzes.JSON:", err);
+        res.status(500).json({ success: false, message: 'Failed to write to file.' });
     }
 });
 

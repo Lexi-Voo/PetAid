@@ -7,7 +7,7 @@
       {
         "stepNumber": 1,
         "instruction": "Stay calm and restrain your dog gently to prevent biting.",
-        "imageURL": "assets/guides/step_g001_step1.jpeg"
+        "imageURL": "assets/images/guides/dog-choking-1.png"
       },
       {
         "stepNumber": 2,
@@ -28,17 +28,12 @@
         "stepNumber": 5,
         "instruction": "Seek immediate veterinary attention even if the object is removed.",
         "imageURL": ""
-      },
-      {
-        "stepNumber": 6,
-        "instruction": "great, admin wokrs",
-        "imageURL": ""
       }
     ],
     "videos": [
       {
-        "title": "how to help chocking",
-        "url": "https://youtu.be/gT_vNktCbyw?si=u5qUgTOT6nRw0O_K"
+        "title": "How to Save a Dog",
+        "url": "https://www.youtube.com/watch?v=gT_vNktCbyw"
       }
     ]
   },
@@ -235,19 +230,6 @@
       {
         "stepNumber": 5,
         "instruction": "Visit a vet immediately. Wet tail is a serious condition that requires antibiotics.",
-        "imageURL": ""
-      }
-    ],
-    "videos": []
-  },
-  {
-    "id": "g1779524176718",
-    "title": "bleeding",
-    "category": "dog",
-    "steps": [
-      {
-        "stepNumber": 1,
-        "instruction": "first, stop the bleeding usind a clean cloth",
         "imageURL": ""
       }
     ],

@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let categoryCacheSnapshot = "";
     let bioCacheSnapshot = "";
 
+    renderNavbar("");
     function populateUI(pet) {
         displayPetImg.src = pet.getPetImg() || 'assets/petprofile/dog.jpg';
         displayPetName.textContent = pet.getName();
