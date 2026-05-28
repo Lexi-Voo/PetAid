@@ -81,7 +81,7 @@ function renderNavbar(activePage = "") {
         if (navLogoutBtn && user) {
             navLogoutBtn.addEventListener('click', () => {
                 user.logout(); 
-                window.location.href = 'firstAid.html';
+                window.location.href = 'index.html';
             });
         }
     }
