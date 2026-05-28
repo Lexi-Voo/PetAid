@@ -22,13 +22,8 @@ class User {
     getEmail() { return this.#email; } 
     getRole() { return this.#role; } 
 
-    login() {
-        localStorage.setItem('petaid_active_session', JSON.stringify(this.toJSON()));
-    }
-
-    logout() {
-        localStorage.removeItem('petaid_active_session');
-    }
+    login() { saveSession(this); }
+    logout() { clearSession(); }
 
     register() {
         throw new Error("Method 'register()' must be implemented by concrete user subclasses.");

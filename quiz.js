@@ -7,25 +7,11 @@ let user = new User(null, "guest@petaid.com", null, "petowner");
 document.addEventListener("DOMContentLoaded", function () {
     renderNavbar("Quizzes");
     renderFooter();
-    loadSampleDataIfNeeded();
+    // loadSampleDataIfNeeded();
     checkAdminStatus();
 });
 
-// ===== Load Sample Quiz Data =====
-function loadSampleDataIfNeeded() {
-    const existing = localStorage.getItem(QUIZ_STORAGE_KEY);
 
-    if (!existing) {
-        fetch("data/sampleQuizzes.json")
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(data));
-            })
-            .catch(() => {
-                console.log("Could not fetch sample quiz data.");
-            });
-    }
-}
 
 // ===== Check Admin Status =====
 function checkAdminStatus() {

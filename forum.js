@@ -19,34 +19,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     renderPosts("all");
 });
 
-// LOAD SAMPLE DATA
-async function loadForumSampleDataIfNeeded() {
-    const existing =
-        localStorage.getItem(FORUM_STORAGE_KEY);
 
-    if (!existing) {
-
-        try {
-
-            const response =
-                await fetch("data/forum.JSON");
-
-            const data =
-                await response.json();
-
-            localStorage.setItem(
-                FORUM_STORAGE_KEY,
-                JSON.stringify(data)
-            );
-
-        } catch {
-
-            console.log(
-                "Could not load sample forum data."
-            );
-        }
-    }
-}
 
 function loadForum() {
     const raw = loadForumPosts(); // existing function

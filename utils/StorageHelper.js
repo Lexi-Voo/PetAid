@@ -163,6 +163,18 @@ async function initializeAllStorage() {
             console.warn("StorageHelper: sampleGuides.JSON fallback active.", err);
         }
     }
+
+    // Add inside initializeAllStorage(), before the closing brace
+    if (!localStorage.getItem(FORUM_STORAGE_KEY)) {
+        try {
+            const response = await fetch('data/forum.JSON');
+            const initialForum = await response.json();
+            localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(initialForum));
+            console.log("StorageHelper: Forum dataset initialized.");
+        } catch (err) {
+            console.warn("StorageHelper: forum.JSON fallback active.", err);
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -369,4 +381,53 @@ function loadPets() {
         console.error("Failed to parse pet records:", e);
         return [];
     }
+}
+
+// Add to StorageHelper.js
+function saveSession(user) {
+    localStorage.setItem('petaid_active_session', JSON.stringify(user.toJSON()));
+}
+function clearSession() {
+    localStorage.removeItem('petaid_active_session');
+}
+
+function updateSession(user) {
+    localStorage.setItem('petaid_active_session', JSON.stringify(user.toJSON()));
+}
+
+function saveFeedback(feedback) {
+    const key = 'petaid_feedback';
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    arr.push(feedback);
+    localStorage.setItem(key, JSON.stringify(arr));
+    fetch('/api/save-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback)
+    }).catch(err => console.warn('Feedback server sync failed:', err));
+}
+
+async function loadFeedback() {
+    try {
+        const raw = localStorage.getItem('petaid_feedback');
+        if (raw) {
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+        }
+    } catch (e) {
+        console.warn('localStorage feedback read failed:', e);
+    }
+
+    try {
+        const res = await fetch('data/feedback.JSON');
+        const arr = await res.json();
+        if (Array.isArray(arr)) {
+            localStorage.setItem('petaid_feedback', JSON.stringify(arr));
+            return arr;
+        }
+    } catch (e) {
+        console.warn('Server feedback fetch failed:', e);
+    }
+
+    return [];
 }

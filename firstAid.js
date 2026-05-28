@@ -8,25 +8,11 @@ let editingGuideId = null;
 document.addEventListener("DOMContentLoaded", function () {
     renderNavbar("First Aid");
     renderFooter();
-    loadSampleDataIfNeeded();
+    //loadSampleDataIfNeeded();
     checkAdminStatus();
 });
 
-// Load sample data into localStorage if it's empty (first visit)
-function loadSampleDataIfNeeded() {
-    const existing = localStorage.getItem(STORAGE_KEY);
-    if (!existing) {
-        fetch("data/sampleGuides.json")
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            })
-            .catch(() => {
-                // If fetch fails (file:// protocol), load inline sample
-                console.log("Could not fetch sample data. Starting with empty guides.");
-            });
-    }
-}
+
 
 // Check if admin is logged in (using the actual login session)
 function checkAdminStatus() {

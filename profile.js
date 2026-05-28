@@ -102,7 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         activeUser.setPhone(phoneInput.value.trim());
                     }
                     allUsers[userIndex] = activeUser;
-                    localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                    //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                    updateSession(activeUser);
                     saveAuthUsers(allUsers);
                     showConfirmation("Contact number saved successfully!");
                 }
@@ -141,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userIndex !== -1) {
                     activeUser.getProfile().updateProfile({ biography: biographyInput.value.trim() });
                     allUsers[userIndex] = activeUser;
-                    localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                    //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                    updateSession(activeUser);
                     saveAuthUsers(allUsers);
                     showConfirmation("Biography saved successfully!");
                 }
@@ -185,7 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (userIndex !== -1) {
                         activeUser.getProfile().updateProfile({ profilePic: diskPath });
                         allUsers[userIndex] = activeUser; 
-                        localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                        //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
+                        updateSession(activeUser);
                         saveAuthUsers(allUsers);
                         showConfirmation("Profile picture written to disk and saved successfully!");
                     }

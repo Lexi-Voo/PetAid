@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 response = await fetch(`data/approvals.json?_=${Date.now()}`);
             }
             const pendingRequests = await response.json();
-            localStorage.setItem('petaid_approvals', JSON.stringify(pendingRequests));
+            //localStorage.setItem('petaid_approvals', JSON.stringify(pendingRequests));
+            saveApprovals(pendingRequests);
             if (!pendingRequests || pendingRequests.length === 0) {
                 requestsTable.classList.add('hidden');
                 emptyQueueMsg.classList.remove('hidden');

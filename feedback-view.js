@@ -1,13 +1,10 @@
 // feedback-view.js - page script for feedback-view.html
 async function loadFeedbackRecords() {
-    // Work offline-first: use localStorage if available (no backend required).
     try {
-        const raw = localStorage.getItem('petaid_feedback');
-        if (raw) {
-            const arr = JSON.parse(raw);
-            if (Array.isArray(arr)) return arr;
-        }
-    } catch (e) { console.warn('local fallback failed', e); }
+        const arr = await loadFeedback();
+        if (arr.length > 0) return arr;
+    } catch (e) { console.warn('Feedback load failed', e); }
+    return [];
 }
 
 function computeMetrics(records) {

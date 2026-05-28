@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const sessionData = localStorage.getItem('petaid_active_session');
+    //const sessionData = localStorage.getItem('petaid_active_session');
+    const sessionData = getCurrentUser();
     if (sessionData) {
         window.location.href = "firstAid.html";
         return;
