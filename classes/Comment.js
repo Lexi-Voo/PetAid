@@ -27,15 +27,6 @@ class Comment {
         return this.#createdAt;
     }
 
-    editComment(newContent) {
-        if (!newContent || newContent.trim() === "") {
-            return false;
-        }
-
-        this.#content = newContent.trim();
-        return true;
-    }
-
     viewComment() {
         return {
             id: this.#id,

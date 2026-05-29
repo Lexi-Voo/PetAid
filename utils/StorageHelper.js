@@ -246,23 +246,6 @@ function saveForumPosts(posts) {
     });
 }
 
-function getForumPostsByCategory(category) {
-    const posts =
-        loadForumPosts();
-
-    if (category === "all") {
-        return posts.filter(
-            p => p.getStatus()
-        );
-    }
-
-    return posts.filter(
-        p =>
-            p.getStatus() &&
-            p.getCategory() === category
-    );
-}
-
 function getForumPostById(postId) {
     const posts = loadForumPosts();
 

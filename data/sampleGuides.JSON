@@ -6,22 +6,32 @@
     "steps": [
       {
         "stepNumber": 1,
+        "instruction": "Stay calm and restrain your dog gently to prevent biting.",
+        "imageURL": "assets/guides/step_g001_step1.jpg"
+      },
+      {
+        "stepNumber": 2,
         "instruction": "Open the dog's mouth carefully and look for the foreign object.",
         "imageURL": "assets/guides/step_g001_step2.jpg"
       },
       {
-        "stepNumber": 2,
+        "stepNumber": 3,
         "instruction": "If visible, try to remove the object with tweezers. Do not push it further in.",
         "imageURL": ""
       },
       {
-        "stepNumber": 3,
+        "stepNumber": 4,
         "instruction": "If the object cannot be removed, perform the Heimlich maneuver by placing your fist below the rib cage.",
         "imageURL": "assets/guides/step_g001_step4.jpg"
       },
       {
-        "stepNumber": 4,
+        "stepNumber": 5,
         "instruction": "Seek immediate veterinary attention even if the object is removed.",
+        "imageURL": ""
+      },
+      {
+        "stepNumber": 6,
+        "instruction": "great, admin wokrs",
         "imageURL": ""
       }
     ],
@@ -240,10 +250,23 @@
     "videos": []
   },
   {
+<<<<<<< HEAD
     "id": "g1779994769936",
     "title": "cooking",
     "category": "dog",
     "steps": [],
+=======
+    "id": "g1779524176718",
+    "title": "bleeding",
+    "category": "dog",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "instruction": "first, stop the bleeding usind a clean cloth",
+        "imageURL": ""
+      }
+    ],
+>>>>>>> cda9b1882b3585374770fda43e0b2c7078a9e772
     "videos": []
   }
 ]

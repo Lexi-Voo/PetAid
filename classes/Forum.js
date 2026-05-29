@@ -88,6 +88,18 @@ class Forum {
         return newPost;
     }
 
+    editPost(postId, newData) {
+        const post = this.getPostById(postId);
+
+        if (!post) {
+            return false;
+        }
+
+        post.editPost(newData);
+
+        return true;
+    }
+
     deletePost(postId) {
         const post = this.getPostById(postId);
 
