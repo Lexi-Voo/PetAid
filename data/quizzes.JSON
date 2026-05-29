@@ -3,7 +3,6 @@
     "id": "qz001",
     "title": "Dog First Aid Basics",
     "category": "dog",
-    "score": 0,
     "questions": [
       {
         "id": "qz001_q01",
@@ -60,13 +59,13 @@
         ],
         "correctAnswer": "Add more gauze on top without removing the first layer"
       }
-    ]
+    ],
+    "score": 0
   },
   {
     "id": "qz002",
     "title": "Dog Emergency Response",
     "category": "dog",
-    "score": 0,
     "questions": [
       {
         "id": "qz002_q01",
@@ -101,13 +100,13 @@
         ],
         "correctAnswer": "Organ damage"
       }
-    ]
+    ],
+    "score": 0
   },
   {
     "id": "qz003",
     "title": "Cat First Aid Basics",
     "category": "cat",
-    "score": 0,
     "questions": [
       {
         "id": "qz003_q01",
@@ -153,13 +152,13 @@
         ],
         "correctAnswer": "A sample of the toxic substance or its packaging"
       }
-    ]
+    ],
+    "score": 0
   },
   {
     "id": "qz004",
     "title": "Rabbit GI Stasis",
     "category": "rabbit",
-    "score": 0,
     "questions": [
       {
         "id": "qz004_q01",
@@ -194,13 +193,13 @@
         ],
         "correctAnswer": "Within 24 hours"
       }
-    ]
+    ],
+    "score": 0
   },
   {
     "id": "qz005",
     "title": "Hamster Wet Tail",
     "category": "hamster",
-    "score": 0,
     "questions": [
       {
         "id": "qz005_q01",
@@ -235,13 +234,14 @@
         ],
         "correctAnswer": "It requires antibiotics and is a serious condition"
       }
-    ]
+    ],
+    "score": 0
   },
   {
     "id": "qz1780062324103",
     "title": "newQuiz",
     "category": "cat",
-    "score": 0,
-    "questions": []
+    "questions": [],
+    "score": 0
   }
 ]

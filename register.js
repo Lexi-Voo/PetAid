@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await newOwnerInstance.register();
 
             showConfirmation("Registration successful! Logging you in...");         
-            setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
 
         } else if (role === 'veterinarian') {
             let maxReqId = 0;
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newVetInstance = new Veterinarian(newReqId, starterProfile, username, password, email, phone);
             await newVetInstance.register(assignedCertPath);
             showConfirmation("Registration submitted! Please wait for Admin approval.");  
-            setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);       
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);       
             registerForm.reset();
             certGroup.classList.add('hidden');
         }

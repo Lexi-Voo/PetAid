@@ -8,4 +8,8 @@ class PetOwner extends User {
         await saveAuthUsers(savedUsers); 
         this.login(); 
     }
+    takeQuiz(quiz, answers) {
+        if (!(quiz instanceof Quiz)) return null;
+        return quiz.submitQuiz(answers);
+    }
 }

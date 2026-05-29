@@ -60,9 +60,9 @@ function renderQuiz() {
     document.getElementById("quizTitle").textContent = data.title;
 
     // Shuffle the questions array before rendering
-    const shuffledQuestions = [...data.questions].sort(() => Math.random() - 0.5);
+    shuffledQuestions = currentQuiz.startQuiz();
 
-    renderQuestions(shuffledQuestions);
+    renderQuestions(shuffledQuestions.map(q => q.displayQuestion()));
 }
 
 function renderQuestions(questions) {
@@ -118,9 +118,15 @@ function renderQuestions(questions) {
 }
 
 function submitQuiz() {
-    const data = currentQuiz.viewQuiz();
+    const activeUser = getCurrentUser();
 
-    let answers = {};
+    if (!activeUser || !(activeUser instanceof PetOwner)) {
+        showConfirmation("Quizzes are limited to registered pet owners only.", true);
+        return;
+    }
+
+    const data = currentQuiz.viewQuiz();
+    const answers = {};
 
     data.questions.forEach(question => {
 
@@ -131,8 +137,7 @@ function submitQuiz() {
         }
     });
 
-    const result = currentQuiz.submitQuiz(answers);
-
+    const result = activeUser.takeQuiz(currentQuiz, answers);
     showConfirmation(`You scored ${result.score}/${result.total}`);
 }
 

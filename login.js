@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //const sessionData = localStorage.getItem('petaid_active_session');
     const sessionData = getCurrentUser();
     if (sessionData) {
-        window.location.href = "firstAid.html";
+        window.location.href = "index.html";
         return;
     }
     if (!loginForm) return;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (authResult.success) {
             showConfirmation('Login successful! Redirecting to home...');
             authResult.user.login(); 
-            setTimeout(() => { window.location.href = "firstAid.html"; }, 1200);
+            setTimeout(() => { window.location.href = "index.html"; }, 1200);
         } else {
             showConfirmation(authResult.message, true);
         }

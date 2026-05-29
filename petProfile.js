@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (petToggleBtn) {
         let isEditing = false;
-        petToggleBtn.addEventListener('click', () => {
+        petToggleBtn.addEventListener('click', async () => {
             const inputFields = editPetForm.querySelectorAll('input, select, textarea');
             if (!isEditing) {
                 nameCacheSnapshot = editPetName.value;

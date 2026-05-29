@@ -192,14 +192,9 @@ async function getForumPostById(postId) {
 // ============================================= Quiz =============================================
 async function loadQuizzes() {
     try {
-        const res = await fetch('data/sampleQuizzes.json?t=' + Date.now());
+        const res = await fetch('data/quizzes.json?t=' + Date.now());
         const parsed = await res.json();
-        return parsed.map(quizData => {
-            const questions = (quizData.questions || []).map(question =>
-                new QuizQuestion(question.id, question.questionText, question.options, question.correctAnswer)
-            );
-            return new Quiz(quizData.id, quizData.title, quizData.category, questions, quizData.score || 0);
-        });
+        return parsed.map(quizData => Quiz.fromJSON(quizData));
     } catch (err) {
         console.warn("Failed to load quizzes:", err);
         return [];
@@ -207,16 +202,7 @@ async function loadQuizzes() {
 }
 
 async function saveQuizzes(quizzes) {
-    const plainData = quizzes.map(quiz => ({
-        id: quiz.getId(),
-        title: quiz.getTitle(),
-        category: quiz.getCategory(),
-        score: quiz.getScore().score,
-        questions: quiz.getQuestions().map(q => ({
-            id: q.id, questionText: q.questionText,
-            options: q.options, correctAnswer: q.correctAnswer
-        }))
-    }));
+    const plainData = quizzes.map(quiz => quiz.toJSON());
     try {
         const res = await fetch('/api/save-quizzes', {
             method: 'POST',
