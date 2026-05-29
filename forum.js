@@ -197,7 +197,7 @@ function getUserProfilePic(userId) {
 function openPostDetail(postId) {
     currentOpenedPostId = postId;
 
-    const post = getForumPostById(postId);
+    const post = forum.getPostById(postId);
 
     if (!post) {
         return;
@@ -247,35 +247,35 @@ function renderComments(post) {
         return;
     }
 
-    container.innerHTML = comments.map(comment => `
-        <div class="comment-card">
-            <div class="comment-user-row">
-                <div class="comment-user">
-                    ${escapeHTML(getDisplayName(comment.getUserId()))}
+    container.innerHTML = comments.map(comment => {
+        const data = comment.viewComment();
+
+        return `
+            <div class="comment-card">
+                <div class="comment-user-row">
+                    <div class="comment-user">
+                        ${escapeHTML(getDisplayName(data.userId))}
+                    </div>
+
+                    ${getRoleBadge(getUserRole(data.userId))}
                 </div>
 
-                ${getRoleBadge(
-                    getUserRole(comment.getUserId())
-                )}
-            </div>
+                <div class="comment-date">
+                    ${formatDate(data.createdAt)}
+                </div>
 
-            <div class="comment-date">
-                ${formatDate(comment.getCreatedAt())}
-            </div>
+                <div class="comment-content">
+                    ${escapeHTML(data.content)}
+                </div>
 
-            <div class="comment-content">
-                ${escapeHTML(comment.getContent())}
-            </div>
-
-            <div class="comment-footer">
-                <div class="comment-actions">
-                    ${renderCommentActions(comment)}
+                <div class="comment-footer">
+                    <div class="comment-actions">
+                        ${renderCommentActions(comment)}
+                    </div>
                 </div>
             </div>
-
-        </div>
-
-    `).join("");
+        `;
+    }).join("");
 }
 
 function renderCommentActions(comment) {
@@ -317,13 +317,7 @@ function deleteComment(postId, commentId) {
         return;
     }
 
-    const posts =
-        forum.getPosts();
-
-    const post =
-        posts.find(
-            p => p.getId() === postId
-        );
+    const post = forum.getPostById(postId);
 
     if (!post) return;
 
@@ -347,7 +341,9 @@ function deleteComment(postId, commentId) {
 
     post.removeComment(commentId);
 
-    saveForumPosts(posts);
+    saveForumPosts(
+        forum.getPosts()
+    );
 
     renderComments(post);
 
@@ -404,6 +400,10 @@ function setupModal() {
             document
                 .getElementById("post-detail-modal")
                 .classList.remove("active");
+
+            currentOpenedPostId = null;
+
+            clearPostDetailModal();
         });
 
     document
@@ -475,11 +475,15 @@ function createPost() {
             return;
         }
 
-        post.editPost({
-            title,
-            content,
-            category
-        });
+        currentUser.editForumPost(
+            forum,
+            editingPostId,
+            {
+                title,
+                content,
+                category
+            }
+        );
 
         showConfirmation(
             "Post updated successfully!"
@@ -491,13 +495,12 @@ function createPost() {
     // CREATE MODE
     else {
 
-        forum.addPost(
-            generatePostId(),
-            currentUser.getId(),
+        currentUser.submitForumPost(forum, {
+            id: generatePostId(),
             category,
             title,
             content
-        );
+        });
 
         showConfirmation(
             "Forum post created successfully!"
@@ -511,10 +514,6 @@ function createPost() {
     closeModal();
 
     renderPosts(selectedCategory);
-
-    if (currentOpenedPostId) {
-        openPostDetail(currentOpenedPostId);
-    }
 }
 
 function clearModalFields() {
@@ -541,8 +540,47 @@ function clearModalFields() {
     ).value = "";
 }
 
+function clearPostDetailModal() {
+    document.getElementById(
+        "detail-post-title"
+    ).textContent = "";
+
+    document.getElementById(
+        "detail-post-user"
+    ).textContent = "";
+
+    document.getElementById(
+        "detail-post-date"
+    ).textContent = "";
+
+    document.getElementById(
+        "detail-post-content"
+    ).textContent = "";
+
+    document.getElementById(
+        "comments-container"
+    ).innerHTML = "";
+    
+    document.getElementById(
+        "comment-input"
+    ).value = "";
+}
+
 // SUBMIT COMMENT
 function submitComment() {
+    const currentUser =
+        getCurrentUser();
+
+    if (!currentUser) {
+
+        showConfirmation(
+            "Please login first.",
+            true
+        );
+
+        return;
+    }
+    
     const input =
         document.getElementById("comment-input");
 
@@ -559,37 +597,18 @@ function submitComment() {
         return;
     }
 
-    const posts = forum.getPosts();
-
-    const post = posts.find(
-        p => p.getId() === currentOpenedPostId
+    const post = forum.getPostById(
+        currentOpenedPostId
     );
 
     if (!post) {
         return;
     }
 
-    const currentUser =
-        getCurrentUser();
-
-    if (!currentUser) {
-
-        showConfirmation(
-            "Please login first.",
-            true
-        );
-
-        return;
-    }
-
-    const newComment = new Comment(
-        generateCommentId(),
-        currentUser.getId(),
-        content,
-        new Date()
-    );
-
-    post.addComment(newComment);
+    currentUser.addComment(post, {
+        id: generateCommentId(),
+        content
+    });
 
     saveForumPosts(forum.getPosts());
 
@@ -656,13 +675,7 @@ function deletePost(postId) {
     const currentUser =
         getCurrentUser();
 
-    const posts =
-        forum.getPosts();
-
-    const post =
-        posts.find(
-            p => p.getId() === postId
-        );
+    const post = forum.getPostById(postId);
 
     if (!post) return;
 
@@ -676,7 +689,7 @@ function deletePost(postId) {
         return;
     }
 
-    forum.deletePost(postId);
+    currentUser.deleteForumPost(forum, postId);
 
     saveForumPosts(forum.getPosts());
 

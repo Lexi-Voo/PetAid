@@ -48,21 +48,28 @@ class User {
         );
     }
 
-    editForumPost(post, newData) {
-        post.editPost(newData);
+    editForumPost(forum, postId, newData) {
+        return forum.editPost(postId, newData);
     }
 
-    deleteForumPost(post) {
-        post.deletePost();
+    deleteForumPost(forum, postId) {
+        return forum.deletePost(postId);
     }
 
     addComment(post, commentData) {
+        if (!post || !commentData.content?.trim()) {
+            return false;
+        }
+
         const comment = new Comment(
             commentData.id,
             this.getId(),
-            commentData.commentContent || commentData.content
+            commentData.content.trim()
         );
+
         post.addComment(comment);
+
+        return comment;
     }
 
     getDisplayName() {
