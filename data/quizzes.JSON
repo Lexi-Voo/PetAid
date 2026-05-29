@@ -104,6 +104,58 @@
     ]
   },
   {
+    "id": "qz003",
+    "title": "Cat First Aid Basics",
+    "category": "cat",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz003_q01",
+        "questionText": "How should you restrain a cat safely when it is choking?",
+        "options": [
+          "Hold the cat by the scruff of its neck",
+          "Wrap the cat in a towel, leaving the head exposed",
+          "Pin the cat to the floor with both hands",
+          "Place the cat in a box and close the lid"
+        ],
+        "correctAnswer": "Wrap the cat in a towel, leaving the head exposed"
+      },
+      {
+        "id": "qz003_q02",
+        "questionText": "If a cat ingests a toxic substance, what should you NOT do without veterinary instruction?",
+        "options": [
+          "Call the vet immediately",
+          "Collect a sample of the substance",
+          "Induce vomiting",
+          "Transport the cat to the clinic"
+        ],
+        "correctAnswer": "Induce vomiting"
+      },
+      {
+        "id": "qz003_q03",
+        "questionText": "If a choking cat is unconscious, what technique can help dislodge the object?",
+        "options": [
+          "Perform chest compressions",
+          "Hold it upside down by the hips and gently shake",
+          "Blow air into its nose",
+          "Squeeze the abdomen firmly"
+        ],
+        "correctAnswer": "Hold it upside down by the hips and gently shake"
+      },
+      {
+        "id": "qz003_q04",
+        "questionText": "What should you bring to the vet when a cat has been poisoned?",
+        "options": [
+          "The cat's food bowl",
+          "A sample of the toxic substance or its packaging",
+          "The cat's vaccination records",
+          "A photo of the cat before it was sick"
+        ],
+        "correctAnswer": "A sample of the toxic substance or its packaging"
+      }
+    ]
+  },
+  {
     "id": "qz004",
     "title": "Rabbit GI Stasis",
     "category": "rabbit",
@@ -184,5 +236,12 @@
         "correctAnswer": "It requires antibiotics and is a serious condition"
       }
     ]
+  },
+  {
+    "id": "qz1780062324103",
+    "title": "newQuiz",
+    "category": "cat",
+    "score": 0,
+    "questions": []
   }
 ]

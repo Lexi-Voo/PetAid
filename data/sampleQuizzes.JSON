@@ -1,235 +1,259 @@
 [
-    {
-        "id": "qz001",
-        "title": "Dog First Aid Basics",
-        "category": "dog",
-        "questions": [
-            {
-                "id": "qz001_q01",
-                "questionText": "What is the FIRST thing you should do when your dog is choking?",
-                "options": [
-                    "Perform the Heimlich maneuver immediately",
-                    "Stay calm and gently restrain your dog",
-                    "Give the dog water to wash the object down",
-                    "Hold the dog upside down by its legs"
-                ],
-                "correctAnswer": "Stay calm and gently restrain your dog"
-            },
-            {
-                "id": "qz001_q02",
-                "questionText": "How long should you apply direct pressure to a bleeding wound?",
-                "options": [
-                    "30 seconds",
-                    "At least 5 minutes without lifting the cloth",
-                    "1 minute, then check the wound",
-                    "Until the bleeding completely stops, no matter how long"
-                ],
-                "correctAnswer": "At least 5 minutes without lifting the cloth"
-            },
-            {
-                "id": "qz001_q03",
-                "questionText": "When treating a dog for heatstroke, which water temperature should you use?",
-                "options": [
-                    "Ice cold water to cool down fast",
-                    "Boiling hot water to stimulate circulation",
-                    "Cool (not cold) water",
-                    "Room temperature water mixed with salt"
-                ],
-                "correctAnswer": "Cool (not cold) water"
-            },
-            {
-                "id": "qz001_q04",
-                "questionText": "Where should you focus cool water when treating a dog with heatstroke?",
-                "options": [
-                    "Only on the paws and nose",
-                    "On the neck, armpits, and groin",
-                    "On the back and tail",
-                    "Completely submerge the dog in cool water"
-                ],
-                "correctAnswer": "On the neck, armpits, and groin"
-            },
-            {
-                "id": "qz001_q05",
-                "questionText": "If bleeding soaks through the cloth on a wound, what should you do?",
-                "options": [
-                    "Remove the cloth and apply a fresh one",
-                    "Add more gauze on top without removing the first layer",
-                    "Rinse the wound with water immediately",
-                    "Apply a tourniquet above the wound"
-                ],
-                "correctAnswer": "Add more gauze on top without removing the first layer"
-            }
-        ]
-    },
-    {
-        "id": "qz002",
-        "title": "Dog Emergency Response",
-        "category": "dog",
-        "questions": [
-            {
-                "id": "qz002_q01",
-                "questionText": "After successfully removing a choking object from your dog's throat, what should you do?",
-                "options": [
-                    "Let the dog rest at home — the danger has passed",
-                    "Give the dog a treat to calm it down",
-                    "Seek immediate veterinary attention",
-                    "Monitor the dog for 24 hours before deciding"
-                ],
-                "correctAnswer": "Seek immediate veterinary attention"
-            },
-            {
-                "id": "qz002_q02",
-                "questionText": "When using tweezers to remove a visible object from a choking dog's mouth, what must you avoid?",
-                "options": [
-                    "Using metal tweezers",
-                    "Pushing the object further in",
-                    "Letting the dog bite the tweezers",
-                    "Opening the mouth too wide"
-                ],
-                "correctAnswer": "Pushing the object further in"
-            },
-            {
-                "id": "qz002_q03",
-                "questionText": "What does heatstroke in a dog risk causing if not treated?",
-                "options": [
-                    "Temporary blindness",
-                    "Fur loss",
-                    "Organ damage",
-                    "Loss of appetite for 1-2 days"
-                ],
-                "correctAnswer": "Organ damage"
-            }
-        ]
-    },
-    {
-        "id": "qz003",
-        "title": "Cat First Aid Basics",
-        "category": "cat",
-        "questions": [
-            {
-                "id": "qz003_q01",
-                "questionText": "How should you restrain a cat safely when it is choking?",
-                "options": [
-                    "Hold the cat by the scruff of its neck",
-                    "Wrap the cat in a towel, leaving the head exposed",
-                    "Pin the cat to the floor with both hands",
-                    "Place the cat in a box and close the lid"
-                ],
-                "correctAnswer": "Wrap the cat in a towel, leaving the head exposed"
-            },
-            {
-                "id": "qz003_q02",
-                "questionText": "If a cat ingests a toxic substance, what should you NOT do without veterinary instruction?",
-                "options": [
-                    "Call the vet immediately",
-                    "Collect a sample of the substance",
-                    "Induce vomiting",
-                    "Transport the cat to the clinic"
-                ],
-                "correctAnswer": "Induce vomiting"
-            },
-            {
-                "id": "qz003_q03",
-                "questionText": "If a choking cat is unconscious, what technique can help dislodge the object?",
-                "options": [
-                    "Perform chest compressions",
-                    "Hold it upside down by the hips and gently shake",
-                    "Blow air into its nose",
-                    "Squeeze the abdomen firmly"
-                ],
-                "correctAnswer": "Hold it upside down by the hips and gently shake"
-            },
-            {
-                "id": "qz003_q04",
-                "questionText": "What should you bring to the vet when a cat has been poisoned?",
-                "options": [
-                    "The cat's food bowl",
-                    "A sample of the toxic substance or its packaging",
-                    "The cat's vaccination records",
-                    "A photo of the cat before it was sick"
-                ],
-                "correctAnswer": "A sample of the toxic substance or its packaging"
-            }
-        ]
-    },
-    {
-        "id": "qz004",
-        "title": "Rabbit GI Stasis",
-        "category": "rabbit",
-        "questions": [
-            {
-                "id": "qz004_q01",
-                "questionText": "Which of the following is a sign that your rabbit may have GI stasis?",
-                "options": [
-                    "Eating more than usual",
-                    "Running around actively",
-                    "Stopped eating, drinking, or producing droppings",
-                    "Drinking water excessively"
-                ],
-                "correctAnswer": "Stopped eating, drinking, or producing droppings"
-            },
-            {
-                "id": "qz004_q02",
-                "questionText": "What type of massage helps encourage gut movement in a rabbit with GI stasis?",
-                "options": [
-                    "Firm downward pressure on the spine",
-                    "Gentle circular motions on the abdomen",
-                    "Tapping lightly on the ribcage",
-                    "Squeezing the hind legs rhythmically"
-                ],
-                "correctAnswer": "Gentle circular motions on the abdomen"
-            },
-            {
-                "id": "qz004_q03",
-                "questionText": "How quickly can GI stasis become fatal in a rabbit if left untreated?",
-                "options": [
-                    "Within 1 week",
-                    "Within 24 hours",
-                    "Within 3 days",
-                    "It is rarely fatal if the rabbit is eating some food"
-                ],
-                "correctAnswer": "Within 24 hours"
-            }
-        ]
-    },
-    {
-        "id": "qz005",
-        "title": "Hamster Wet Tail",
-        "category": "hamster",
-        "questions": [
-            {
-                "id": "qz005_q01",
-                "questionText": "What is the first step when you suspect your hamster has wet tail?",
-                "options": [
-                    "Give the hamster antibiotics from a pet store",
-                    "Isolate the hamster from other hamsters",
-                    "Increase the hamster's cage temperature significantly",
-                    "Feed the hamster extra food to build strength"
-                ],
-                "correctAnswer": "Isolate the hamster from other hamsters"
-            },
-            {
-                "id": "qz005_q02",
-                "questionText": "How should you give water to a hamster with wet tail that won't drink?",
-                "options": [
-                    "Force-feed water using a large syringe",
-                    "Place water in the cage as normal",
-                    "Offer water using a small syringe dropper",
-                    "Mix water into its food pellets"
-                ],
-                "correctAnswer": "Offer water using a small syringe dropper"
-            },
-            {
-                "id": "qz005_q03",
-                "questionText": "Why does wet tail require immediate veterinary attention?",
-                "options": [
-                    "It is contagious to humans",
-                    "It requires antibiotics and is a serious condition",
-                    "Home remedies can cure it within a few days",
-                    "It only affects the hamster's fur, not internal organs"
-                ],
-                "correctAnswer": "It requires antibiotics and is a serious condition"
-            }
-        ]
-    }
+  {
+    "id": "qz001",
+    "title": "Dog First Aid Basics",
+    "category": "dog",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz001_q01",
+        "questionText": "What is the FIRST thing you should do when your dog is choking?",
+        "options": [
+          "Perform the Heimlich maneuver immediately",
+          "Stay calm and gently restrain your dog",
+          "Give the dog water to wash the object down",
+          "Hold the dog upside down by its legs"
+        ],
+        "correctAnswer": "Stay calm and gently restrain your dog"
+      },
+      {
+        "id": "qz001_q02",
+        "questionText": "How long should you apply direct pressure to a bleeding wound?",
+        "options": [
+          "30 seconds",
+          "At least 5 minutes without lifting the cloth",
+          "1 minute, then check the wound",
+          "Until the bleeding completely stops, no matter how long"
+        ],
+        "correctAnswer": "At least 5 minutes without lifting the cloth"
+      },
+      {
+        "id": "qz001_q03",
+        "questionText": "When treating a dog for heatstroke, which water temperature should you use?",
+        "options": [
+          "Ice cold water to cool down fast",
+          "Boiling hot water to stimulate circulation",
+          "Cool (not cold) water",
+          "Room temperature water mixed with salt"
+        ],
+        "correctAnswer": "Cool (not cold) water"
+      },
+      {
+        "id": "qz001_q04",
+        "questionText": "Where should you focus cool water when treating a dog with heatstroke?",
+        "options": [
+          "Only on the paws and nose",
+          "On the neck, armpits, and groin",
+          "On the back and tail",
+          "Completely submerge the dog in cool water"
+        ],
+        "correctAnswer": "On the neck, armpits, and groin"
+      },
+      {
+        "id": "qz001_q05",
+        "questionText": "If bleeding soaks through the cloth on a wound, what should you do?",
+        "options": [
+          "Remove the cloth and apply a fresh one",
+          "Add more gauze on top without removing the first layer",
+          "Rinse the wound with water immediately",
+          "Apply a tourniquet above the wound"
+        ],
+        "correctAnswer": "Add more gauze on top without removing the first layer"
+      }
+    ]
+  },
+  {
+    "id": "qz002",
+    "title": "Dog Emergency Response",
+    "category": "dog",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz002_q01",
+        "questionText": "After successfully removing a choking object from your dog's throat, what should you do?",
+        "options": [
+          "Let the dog rest at home — the danger has passed",
+          "Give the dog a treat to calm it down",
+          "Seek immediate veterinary attention",
+          "Monitor the dog for 24 hours before deciding"
+        ],
+        "correctAnswer": "Seek immediate veterinary attention"
+      },
+      {
+        "id": "qz002_q02",
+        "questionText": "When using tweezers to remove a visible object from a choking dog's mouth, what must you avoid?",
+        "options": [
+          "Using metal tweezers",
+          "Pushing the object further in",
+          "Letting the dog bite the tweezers",
+          "Opening the mouth too wide"
+        ],
+        "correctAnswer": "Pushing the object further in"
+      },
+      {
+        "id": "qz002_q03",
+        "questionText": "What does heatstroke in a dog risk causing if not treated?",
+        "options": [
+          "Temporary blindness",
+          "Fur loss",
+          "Organ damage",
+          "Loss of appetite for 1-2 days"
+        ],
+        "correctAnswer": "Organ damage"
+      }
+    ]
+  },
+  {
+    "id": "qz003",
+    "title": "Cat First Aid Basics",
+    "category": "cat",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz003_q01",
+        "questionText": "How should you restrain a cat safely when it is choking?",
+        "options": [
+          "Hold the cat by the scruff of its neck",
+          "Wrap the cat in a towel, leaving the head exposed",
+          "Pin the cat to the floor with both hands",
+          "Place the cat in a box and close the lid"
+        ],
+        "correctAnswer": "Wrap the cat in a towel, leaving the head exposed"
+      },
+      {
+        "id": "qz003_q02",
+        "questionText": "If a cat ingests a toxic substance, what should you NOT do without veterinary instruction?",
+        "options": [
+          "Call the vet immediately",
+          "Collect a sample of the substance",
+          "Induce vomiting",
+          "Transport the cat to the clinic"
+        ],
+        "correctAnswer": "Induce vomiting"
+      },
+      {
+        "id": "qz003_q03",
+        "questionText": "If a choking cat is unconscious, what technique can help dislodge the object?",
+        "options": [
+          "Perform chest compressions",
+          "Hold it upside down by the hips and gently shake",
+          "Blow air into its nose",
+          "Squeeze the abdomen firmly"
+        ],
+        "correctAnswer": "Hold it upside down by the hips and gently shake"
+      },
+      {
+        "id": "qz003_q04",
+        "questionText": "What should you bring to the vet when a cat has been poisoned?",
+        "options": [
+          "The cat's food bowl",
+          "A sample of the toxic substance or its packaging",
+          "The cat's vaccination records",
+          "A photo of the cat before it was sick"
+        ],
+        "correctAnswer": "A sample of the toxic substance or its packaging"
+      }
+    ]
+  },
+  {
+    "id": "qz004",
+    "title": "Rabbit GI Stasis",
+    "category": "rabbit",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz004_q01",
+        "questionText": "Which of the following is a sign that your rabbit may have GI stasis?",
+        "options": [
+          "Eating more than usual",
+          "Running around actively",
+          "Stopped eating, drinking, or producing droppings",
+          "Drinking water excessively"
+        ],
+        "correctAnswer": "Stopped eating, drinking, or producing droppings"
+      },
+      {
+        "id": "qz004_q02",
+        "questionText": "What type of massage helps encourage gut movement in a rabbit with GI stasis?",
+        "options": [
+          "Firm downward pressure on the spine",
+          "Gentle circular motions on the abdomen",
+          "Tapping lightly on the ribcage",
+          "Squeezing the hind legs rhythmically"
+        ],
+        "correctAnswer": "Gentle circular motions on the abdomen"
+      },
+      {
+        "id": "qz004_q03",
+        "questionText": "How quickly can GI stasis become fatal in a rabbit if left untreated?",
+        "options": [
+          "Within 1 week",
+          "Within 24 hours",
+          "Within 3 days",
+          "It is rarely fatal if the rabbit is eating some food"
+        ],
+        "correctAnswer": "Within 24 hours"
+      }
+    ]
+  },
+  {
+    "id": "qz005",
+    "title": "Hamster Wet Tail",
+    "category": "hamster",
+    "score": 0,
+    "questions": [
+      {
+        "id": "qz005_q01",
+        "questionText": "What is the first step when you suspect your hamster has wet tail?",
+        "options": [
+          "Give the hamster antibiotics from a pet store",
+          "Isolate the hamster from other hamsters",
+          "Increase the hamster's cage temperature significantly",
+          "Feed the hamster extra food to build strength"
+        ],
+        "correctAnswer": "Isolate the hamster from other hamsters"
+      },
+      {
+        "id": "qz005_q02",
+        "questionText": "How should you give water to a hamster with wet tail that won't drink?",
+        "options": [
+          "Force-feed water using a large syringe",
+          "Place water in the cage as normal",
+          "Offer water using a small syringe dropper",
+          "Mix water into its food pellets"
+        ],
+        "correctAnswer": "Offer water using a small syringe dropper"
+      },
+      {
+        "id": "qz005_q03",
+        "questionText": "Why does wet tail require immediate veterinary attention?",
+        "options": [
+          "It is contagious to humans",
+          "It requires antibiotics and is a serious condition",
+          "Home remedies can cure it within a few days",
+          "It only affects the hamster's fur, not internal organs"
+        ],
+        "correctAnswer": "It requires antibiotics and is a serious condition"
+      }
+    ]
+  },
+  {
+    "id": "qz1780062359955",
+    "title": "new",
+    "category": "cat",
+    "score": 0,
+    "questions": [
+      {
+        "id": "q_1780062393184",
+        "questionText": "This is a qyestion",
+        "options": [
+          "yes",
+          "no",
+          "very  god",
+          "not gos"
+        ],
+        "correctAnswer": "not gos"
+      }
+    ]
+  }
 ]

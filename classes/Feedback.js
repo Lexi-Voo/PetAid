@@ -59,7 +59,7 @@ class Feedback {
         if (!validation.valid) {
             return { success: false, errors: validation.errors };
         }
-        saveFeedback(this.toJSON());
+        await saveFeedback(this.toJSON());
         return { success: true, message: 'Feedback saved.' };
     }
 

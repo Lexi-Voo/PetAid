@@ -4,7 +4,7 @@ let currentGuideId = null;
 let admin = null;
 
 // ===== Initialization =====
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     renderNavbar("First Aid");
     renderFooter();
     checkAdminStatus();
@@ -20,7 +20,7 @@ function checkAdminStatus() {
 }
 
 // ===== Load Guide from URL params =====
-function loadGuide() {
+async function loadGuide() {
     const params = new URLSearchParams(window.location.search);
     currentGuideId = params.get("id");
 
@@ -29,7 +29,7 @@ function loadGuide() {
         return;
     }
 
-    currentGuide = getGuideById(currentGuideId);
+    currentGuide = await getGuideById(currentGuideId);
 
     if (!currentGuide) {
         document.getElementById("guideTitle").textContent = "Guide not found";
@@ -173,7 +173,7 @@ function closeEditGuideModal() {
     document.getElementById("editGuideModal").classList.remove("active");
 }
 
-function saveEditGuide() {
+async function saveEditGuide() {
     const title = document.getElementById("editGuideTitle").value.trim();
     const category = document.getElementById("editGuideCategory").value;
 
@@ -182,14 +182,14 @@ function saveEditGuide() {
         return;
     }
 
-    admin.manageGuide("edit", {
+    await admin.manageGuide("edit", {
         id: currentGuideId,
         title: title,
         category: category
     });
 
     // Reload the guide from storage to get updated data
-    currentGuide = getGuideById(currentGuideId);
+    currentGuide = await getGuideById(currentGuideId);
     closeEditGuideModal();
     renderGuide();
     showConfirmation("Guide updated successfully");
@@ -200,8 +200,8 @@ function openDeleteGuideModal() {
     showDeleteConfirm(
         "Delete Guide",
         "Are you sure you want to delete this entire guide? All steps and videos will be removed. This cannot be undone.",
-        function () {
-            admin.manageGuide("delete", { id: currentGuideId });
+        async function () {
+            await admin.manageGuide("delete", { id: currentGuideId });
             showConfirmation("Guide deleted successfully");
             setTimeout(() => {
                 window.location.href = "firstAid.html";
@@ -282,7 +282,7 @@ async function saveStep() {
     }
 
     if (editingStep) {
-        admin.manageStep("edit", currentGuideId, {
+        await admin.manageStep("edit", currentGuideId, {
             stepNumber: parseInt(editingStep),
             instruction: instruction,
             imageURL: imageURL
@@ -291,7 +291,7 @@ async function saveStep() {
     } else {
         const data = currentGuide.viewGuide();
         const nextNumber = data.steps.length + 1;
-        admin.manageStep("add", currentGuideId, {
+        await admin.manageStep("add", currentGuideId, {
             stepNumber: nextNumber,
             instruction: instruction,
             imageURL: imageURL
@@ -299,7 +299,7 @@ async function saveStep() {
         showConfirmation("Step added successfully");
     }
 
-    currentGuide = getGuideById(currentGuideId);
+    currentGuide = await getGuideById(currentGuideId);
     closeStepModal();
     renderGuide();
 }
@@ -309,9 +309,9 @@ function openDeleteStepModal(stepNumber) {
     showDeleteConfirm(
         "Delete Step",
         "Are you sure you want to delete Step " + stepNumber + "? Remaining steps will be renumbered.",
-        function () {
-            admin.manageStep("remove", currentGuideId, { stepNumber: stepNumber });
-            currentGuide = getGuideById(currentGuideId);
+        async function () {
+            await admin.manageStep("remove", currentGuideId, { stepNumber: stepNumber });
+            currentGuide = await getGuideById(currentGuideId);
             renderGuide();
             showConfirmation("Step deleted successfully");
         }
@@ -332,7 +332,7 @@ function closeVideoModal() {
     document.getElementById("videoModal").classList.remove("active");
 }
 
-function saveVideo() {
+async function saveVideo() {
     const title = document.getElementById("videoTitle").value.trim();
     const url = document.getElementById("videoURL").value.trim();
     const editingTitle = document.getElementById("editingVideoTitle").value;
@@ -343,21 +343,21 @@ function saveVideo() {
     }
 
     if (editingTitle) {
-        admin.manageVideo("edit", currentGuideId, {
+        await admin.manageVideo("edit", currentGuideId, {
             oldTitle: editingTitle,
             title: title,
             url: url
         });
         showConfirmation("Video updated successfully");
     } else {
-        admin.manageVideo("add", currentGuideId, {
+        await admin.manageVideo("add", currentGuideId, {
             title: title,
             url: url
         });
         showConfirmation("Video added successfully");
     }
 
-    currentGuide = getGuideById(currentGuideId);
+    currentGuide = await getGuideById(currentGuideId);
     closeVideoModal();
     renderGuide();
 }
@@ -367,9 +367,9 @@ function openDeleteVideoModal(videoTitle) {
     showDeleteConfirm(
         "Delete Video",
         'Are you sure you want to delete the video "' + videoTitle + '"?',
-        function () {
-            admin.manageVideo("remove", currentGuideId, { title: videoTitle });
-            currentGuide = getGuideById(currentGuideId);
+        async function () {
+            await admin.manageVideo("remove", currentGuideId, { title: videoTitle });
+            currentGuide = await getGuideById(currentGuideId);
             renderGuide();
             showConfirmation("Video deleted successfully");
         }

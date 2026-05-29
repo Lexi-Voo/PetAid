@@ -152,61 +152,36 @@
 
 		// Inline ClinicStorage (uses localStorage)
 		const STORAGE_KEY = 'petaid_clinics';
-		function loadClinics() {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (!raw) return [];
+		// Replace the existing loadClinics() with:
+		async function loadClinics() {
 			try {
-				const arr = JSON.parse(raw);
+				const res = await fetch('data/clinics.json?t=' + Date.now());
+				const arr = await res.json();
 				if (!Array.isArray(arr)) return [];
 				return arr.map(obj => ClinicDetails.fromJSON(obj)).filter(Boolean);
 			} catch (e) {
-				console.error('Failed to parse clinics from storage', e);
+				console.error('Failed to load clinics:', e);
 				return [];
 			}
 		}
-		function saveClinics(clinics) {
+		// Replace the existing saveClinics() with:
+		async function saveClinics(clinics) {
 			const arr = clinics.map(c => (c.toJSON ? c.toJSON() : c));
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+			await fetch('/api/save-clinics', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(arr)
+			});
+			console.log('Clinics saved to server');
 		}
-		async function saveClinicsToServer() {
-			try {
-				const clinics = loadClinics();
-				const payload = clinics.map(c => (c.toJSON ? c.toJSON() : c));
-				await fetch('/save-clinics', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(payload)
-				});
-				console.log('Clinics saved to server');
-			} catch (err) {
-				console.warn('Could not save clinics to server', err);
-			}
-		}
-		function addClinic(clinic) {
-			const clinics = loadClinics();
+		
+		async function addClinic(clinic) {
+			const clinics = await loadClinics();
 			clinics.push(clinic);
-			saveClinics(clinics);
-			// best-effort server save (no blocking)
-			saveClinicsToServer();
+			await saveClinics(clinics);
 			return clinics;
 		}
 
-		// If there are no clinics in localStorage, attempt to load from data/clinics.json
-		async function ensureClinicsLoaded() {
-			let clinics = loadClinics();
-			if (clinics.length > 0) return clinics;
-			try {
-				const res = await fetch('data/clinics.json');
-				if (!res.ok) return clinics;
-				const arr = await res.json();
-				if (!Array.isArray(arr)) return clinics;
-				clinics = arr.map(obj => ClinicDetails.fromJSON(obj)).filter(Boolean);
-				if (clinics.length > 0) saveClinics(clinics);
-			} catch (err) {
-				console.warn('Could not load data/clinics.json — using local storage or empty list', err);
-			}
-			return clinics;
-		}
         
 
 		const fallback = [
@@ -257,9 +232,8 @@
 			return marker;
 		}
 		function clearMarkers() { markers.forEach(m => map.removeLayer(m)); markers.length = 0; }
-		function renderClinics() { clearMarkers(); const clinics = loadClinics(); clinics.forEach(addMarkerForClinic); }
-		// Ensure clinics are loaded from file (if storage empty) then render
-		await ensureClinicsLoaded();
+		async function renderClinics() { clearMarkers(); const clinics = await loadClinics(); clinics.forEach(addMarkerForClinic); }
+		
 		renderClinics();
 
         
@@ -294,7 +268,7 @@
 		if (modalOverlay) modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); modalOverlay.setAttribute('aria-hidden','true'); } });
 		map.on('click', function(e) { if (!picking) return; const lat = e.latlng.lat.toFixed(6); const lng = e.latlng.lng.toFixed(6); const latEl = document.getElementById('c_lat'); const lngEl = document.getElementById('c_lng'); if (latEl) latEl.value = lat; if (lngEl) lngEl.value = lng; picking = false; if (pickLocationBtn) pickLocationBtn.textContent = 'Pick on map'; });
 
-		saveClinicBtn.addEventListener('click', () => {
+		saveClinicBtn.addEventListener('click', async () => {
 			const name = document.getElementById('c_name').value.trim();
 			const address = document.getElementById('c_address').value.trim();
 			const phone = document.getElementById('c_phone').value.trim();
@@ -303,7 +277,7 @@
 			const lng = parseFloat(document.getElementById('c_lng').value);
 			if (!name || Number.isNaN(lat) || Number.isNaN(lng)) { alert('Provide name and valid coordinates.'); return; }
 			const clinic = new ClinicDetails(name, address, phone, hours, lat, lng);
-			addClinic(clinic);
+			await addClinic(clinic);
 			addMarkerForClinic(clinic);
 			modalOverlay.classList.remove('active');
 			modalOverlay.setAttribute('aria-hidden','true');

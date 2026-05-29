@@ -5,7 +5,7 @@ let admin = null;
 let shuffledQuestions = [];
 
 // ===== Initialization =====
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     renderNavbar("Quizzes");
     renderFooter();
     checkAdminStatus();
@@ -34,7 +34,7 @@ function toggleAdmin() {
     renderQuiz();
 }
 
-function loadQuiz() {
+async function loadQuiz() {
     const params = new URLSearchParams(window.location.search);
     currentQuizId = params.get("id");
     if (!currentQuizId) {
@@ -42,7 +42,7 @@ function loadQuiz() {
         return;
     }
 
-    currentQuiz = getQuizById(currentQuizId);
+    currentQuiz = await getQuizById(currentQuizId);
     if (!currentQuiz) {
         document.getElementById("quizTitle").textContent = "Quiz not found";
         return;
@@ -148,7 +148,7 @@ function closeEditQuizModal() {
     document.getElementById("editQuizModal").classList.remove("active");
 }
 
-function saveEditQuiz() {
+async function saveEditQuiz() {
     const title = document.getElementById("editQuizTitle").value.trim();
     const category = document.getElementById("editQuizCategory").value;
 
@@ -157,8 +157,8 @@ function saveEditQuiz() {
         return;
     }
 
-    admin.manageQuiz("edit", {id: currentQuizId, title: title, category: category});
-    currentQuiz = getQuizById(currentQuizId);
+    await admin.manageQuiz("edit", {id: currentQuizId, title: title, category: category});
+    currentQuiz = await getQuizById(currentQuizId);
     closeEditQuizModal();
     renderQuiz();
     showConfirmation("Quiz updated successfully");
@@ -169,8 +169,8 @@ function openDeleteQuizModal() {
     showDeleteConfirm(
         "Delete Quiz",
         "Are you sure you want to delete this quiz?",
-        function () {
-            admin.manageQuiz("delete", {id: currentQuizId});
+        async function () {
+            await admin.manageQuiz("delete", {id: currentQuizId});
             showConfirmation("Quiz deleted successfully");
 
             setTimeout(() => {
@@ -222,7 +222,7 @@ function closeQuestionModal() {
     document.getElementById("editingQuestionId").value = "";
 }
 
-function saveQuestion() {
+async function saveQuestion() {
     const questionText = document.getElementById("questionText").value.trim();
 
     const options = [
@@ -243,7 +243,7 @@ function saveQuestion() {
     }
 
     if (editingQuestionId) {
-        admin.manageQuestion(
+        await admin.manageQuestion(
             "edit",
             currentQuizId,
             {
@@ -256,7 +256,7 @@ function saveQuestion() {
 
         showConfirmation("Question updated successfully");
     } else {
-        admin.manageQuestion(
+        await admin.manageQuestion(
             "add",
             currentQuizId,
             {
@@ -270,7 +270,7 @@ function saveQuestion() {
         showConfirmation("Question added successfully");
     }
 
-    currentQuiz = getQuizById(currentQuizId);
+    currentQuiz = await getQuizById(currentQuizId);
     shuffledQuestions = [];
     closeQuestionModal();
     renderQuiz();
@@ -281,9 +281,9 @@ function openDeleteQuestionModal(questionId) {
     showDeleteConfirm(
         "Delete Question",
         "Are you sure you want to delete this question?",
-        function () {
-            admin.manageQuestion("remove", currentQuizId, {id: questionId});
-            currentQuiz = getQuizById(currentQuizId);
+        async function () {
+            await admin.manageQuestion("remove", currentQuizId, {id: questionId});
+            currentQuiz = await getQuizById(currentQuizId);
             shuffledQuestions = [];
             renderQuiz();
             showConfirmation("Question deleted successfully");

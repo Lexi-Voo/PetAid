@@ -1,9 +1,46 @@
 [
   {
+    "id": "p1780062611551",
+    "userId": "4",
+    "category": "all-pet",
+    "title": "this test tests that no need for local storage. directly read from databse ?=Json",
+    "content": "yep",
+    "datePosted": "2026-05-29T13:50:11.551Z",
+    "comments": [],
+    "status": true
+  },
+  {
+    "id": "p1780060860724",
+    "userId": "3",
+    "category": "all-pet",
+    "title": "cool",
+    "content": "from vet",
+    "datePosted": "2026-05-29T13:21:00.724Z",
+    "comments": [
+      {
+        "id": "c1780062635735",
+        "userId": "4",
+        "content": "thss cool actually",
+        "createdAt": "2026-05-29T13:50:35.735Z"
+      }
+    ],
+    "status": true
+  },
+  {
+    "id": "p1780060777264",
+    "userId": "1",
+    "category": "dog",
+    "title": "teating",
+    "content": "this test tests that local storage works",
+    "datePosted": "2026-05-29T13:19:37.264Z",
+    "comments": [],
+    "status": true
+  },
+  {
     "id": "p1779993685423",
     "userId": "1",
     "category": "all-pet",
-    "title": "Good day to all",
+    "title": "Good day to alllll",
     "content": "just kidding",
     "datePosted": "2026-05-28T18:41:25.423Z",
     "comments": [],

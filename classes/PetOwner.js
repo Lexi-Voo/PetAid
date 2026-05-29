@@ -2,10 +2,10 @@ class PetOwner extends User {
     constructor(id, profile, username, password, email) {
         super(id, profile, username, password, email, "petowner");
     }
-    register() {
-        const savedUsers = loadAuthUsers(); 
+    async register() {
+        const savedUsers = await loadAuthUsers(); 
         savedUsers.push(this);
-        saveAuthUsers(savedUsers); 
+        await saveAuthUsers(savedUsers); 
         this.login(); 
     }
 }

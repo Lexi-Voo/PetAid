@@ -1,0 +1,41 @@
+[
+  {
+    "id": "fb_1779994939689",
+    "subject": "Site feedback",
+    "message": "great!",
+    "ratings": {
+      "forum": 5,
+      "quiz": 9,
+      "firstAid": 9,
+      "login": 9,
+      "map": 8
+    },
+    "submitted_at": "2026-05-28T19:02:19.689Z"
+  },
+  {
+    "id": "fb_1780055216813",
+    "subject": "Site feedback",
+    "message": "wow",
+    "ratings": {
+      "forum": 7,
+      "quiz": 7,
+      "firstAid": 4,
+      "login": 7,
+      "map": 7
+    },
+    "submitted_at": "2026-05-29T11:46:56.813Z"
+  },
+  {
+    "id": "fb_1780060902416",
+    "subject": "Site feedback",
+    "message": "average",
+    "ratings": {
+      "forum": 5,
+      "quiz": null,
+      "firstAid": 7,
+      "login": 5,
+      "map": 9
+    },
+    "submitted_at": "2026-05-29T13:21:42.416Z"
+  }
+]

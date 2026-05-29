@@ -1,416 +1,282 @@
-const STORAGE_KEY = "petaid_guides";
-
-function loadGuides() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return [];
-
-    const parsed = JSON.parse(data);
-    return parsed.map(guideData => FirstAidGuide.fromJSON(guideData));
+// ============================================= Guides =============================================
+async function loadGuides() {
+    try {
+        const res = await fetch('data/sampleGuides.JSON?t=' + Date.now());
+        const parsed = await res.json();
+        return parsed.map(guideData => FirstAidGuide.fromJSON(guideData));
+    } catch (err) {
+        console.warn("Failed to load guides:", err);
+        return [];
+    }
 }
 
-function saveGuides(guides) {
+async function saveGuides(guides) {
     const data = guides.map(guide => guide.toJSON());
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
-    fetch('/api/save-guides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Disk Sync:", data.message))
-    .catch(err => console.error("Could not sync to physical sampleGuides.JSON file:", err));
+    try {
+        const res = await fetch('/api/save-guides', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.error("Could not sync to sampleGuides.JSON:", err);
+    }
 }
 
-function getGuidesByCategory(category) {
-    const guides = loadGuides();
+async function getGuidesByCategory(category) {
+    const guides = await loadGuides();
     return guides.filter(guide => guide.getCategory() === category);
 }
 
-function getGuideById(id) {
-    const guides = loadGuides();
+async function getGuideById(id) {
+    const guides = await loadGuides();
     return guides.find(guide => guide.getId() === id) || null;
 }
 
-const USERS_KEY = "petaid_users";
-const APPROVALS_KEY = "petaid_approvals";
-const PETS_KEY = "petaid_pets";
-
-function loadAuthUsers() {
-    const rawDataString = localStorage.getItem('petaid_users') || '[]';
-    const rawObjectsArray = JSON.parse(rawDataString);
-
-    return rawObjectsArray.map(u => {
-        const profileInstance = new UserProfile(u.name || "", u.biography || "", u.profile_pic || "assets/profiles/profile.jpg");
-        const resolvedId = (u.user_id || "0").toString();
-        const role = (u.role || "petowner").toLowerCase();
-        if (role === 'admin') {
-            return new Admin(resolvedId, profileInstance, u.username, u.password, u.email);
-        } else if (role === 'veterinarian') {
-            const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email, u.phone || "");
-            vetInstance.cert_path = u.cert_path || "assets/certs/cert_1.jpg";
-            return vetInstance;
-        } else {
-            return new PetOwner(resolvedId, profileInstance, u.username, u.password, u.email);
-        }
-    });
+// ============================================= Users =============================================
+async function loadAuthUsers() {
+    try {
+        const res = await fetch('data/user.JSON?t=' + Date.now());
+        const rawObjectsArray = await res.json();
+        return rawObjectsArray.map(u => {
+            const profileInstance = new UserProfile(u.name || "", u.biography || "", u.profile_pic || "assets/profiles/profile.jpg");
+            const resolvedId = (u.user_id || "0").toString();
+            const role = (u.role || "petowner").toLowerCase();
+            if (role === 'admin') {
+                return new Admin(resolvedId, profileInstance, u.username, u.password, u.email);
+            } else if (role === 'veterinarian') {
+                const vetInstance = new Veterinarian(resolvedId, profileInstance, u.username, u.password, u.email, u.phone || "");
+                vetInstance.cert_path = u.cert_path || "assets/certs/cert_1.jpg";
+                return vetInstance;
+            } else {
+                return new PetOwner(resolvedId, profileInstance, u.username, u.password, u.email);
+            }
+        });
+    } catch (err) {
+        console.warn("Failed to load users:", err);
+        return [];
+    }
 }
 
-function saveAuthUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    fetch('/api/save-users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(users)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Disk Sync:", data.message))
-    .catch(err => console.error("Could not sync to physical user.JSON file:", err));
+async function saveAuthUsers(users) {
+    try {
+        const res = await fetch('/api/save-users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(users)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.error("Could not sync to user.JSON:", err);
+    }
 }
 
-function findAuthUserByEmail(email) {
-    const users = loadAuthUsers();
+async function findAuthUserByEmail(email) {
+    const users = await loadAuthUsers();
     return users.find(u => u.email && u.email.toLowerCase() === email.trim().toLowerCase()) || null;
 }
 
-function findAuthUserById(id) {
-    const users = loadAuthUsers();
+async function findAuthUserById(id) {
+    const users = await loadAuthUsers();
     return users.find(u => u.user_id === id) || null;
 }
 
-function loadApprovals() {
-    const data = localStorage.getItem(APPROVALS_KEY);
-    return data ? JSON.parse(data) : [];
+// ============================================= Approvals =============================================
+async function loadApprovals() {
+    try {
+        const res = await fetch('data/approvals.JSON?t=' + Date.now());
+        return await res.json();
+    } catch (err) {
+        console.warn("Failed to load approvals:", err);
+        return [];
+    }
 }
 
-function saveApprovals(approvals) {
-    localStorage.setItem(APPROVALS_KEY, JSON.stringify(approvals));
-    
-    fetch('/api/save-approvals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(approvals)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Disk Sync:", data.message))
-    .catch(err => console.error("Could not sync to physical approvals.JSON file:", err));
+async function saveApprovals(approvals) {
+    try {
+        const res = await fetch('/api/save-approvals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(approvals)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.error("Could not sync to approvals.JSON:", err);
+    }
 }
 
-function findApprovalByEmail(email) {
-    const approvals = loadApprovals();
+async function findApprovalByEmail(email) {
+    const approvals = await loadApprovals();
     return approvals.find(a => a.email && a.email.toLowerCase() === email.trim().toLowerCase()) || null;
 }
 
-function getPetsByOwnerId(ownerId) {
-    const allPets = loadPets(); 
+// ============================================= Pets =============================================
+async function loadPets() {
+    try {
+        const res = await fetch('data/pets.JSON?t=' + Date.now());
+        const parsedList = await res.json();
+        return parsedList.map(p => new Pet(p.pet_id, p.owner_id, p.name, p.category, p.pet_bio, p.pet_img));
+    } catch (err) {
+        console.warn("Failed to load pets:", err);
+        return [];
+    }
+}
+
+async function savePets(pets) {
+    try {
+        const res = await fetch('/api/save-pets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pets)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.error("Could not sync to pets.JSON:", err);
+    }
+}
+
+async function getPetsByOwnerId(ownerId) {
+    const allPets = await loadPets();
     return allPets.filter(pet => pet.getOwnerId().toString() === ownerId.toString());
 }
 
-function savePets(pets) {
-    localStorage.setItem(PETS_KEY, JSON.stringify(pets));
-    fetch('/api/save-pets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pets)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Disk Sync:", data.message))
-    .catch(err => console.error("Could not sync to physical pets.JSON file:", err));
-}
-
-async function initializeAllStorage() {
-    console.log("StorageHelper: Synchronizing system data configurations...");
-    if (!localStorage.getItem(USERS_KEY)) {
-        try {
-            const response = await fetch('data/user.JSON');
-            const initialUsers = await response.json();
-            localStorage.setItem(USERS_KEY, JSON.stringify(initialUsers));
-            console.log("StorageHelper: Successfully seeded active user registries.");
-        } catch (err) {
-            console.warn("StorageHelper: user.JSON fallback active.", err);
-        }
-    }
-
-    if (!localStorage.getItem(APPROVALS_KEY)) {
-        try {
-            const response = await fetch('data/approvals.JSON');
-            const initialApprovals = await response.json();
-            localStorage.setItem(APPROVALS_KEY, JSON.stringify(initialApprovals));
-            console.log("StorageHelper: Successfully seeded pending veterinarian verification queue.");
-        } catch (err) {
-            console.warn("StorageHelper: approvals.JSON fallback active.", err);
-        }
-    }
-
-    if (!localStorage.getItem(PETS_KEY)) {
-        try {
-            const response = await fetch('data/pets.JSON');
-            const initialPets = await response.json();
-            localStorage.setItem(PETS_KEY, JSON.stringify(initialPets));
-            console.log("StorageHelper: Successfully seeded initial pet metrics tracking dataset.");
-        } catch (err) {
-            console.warn("StorageHelper: pets.JSON fallback active.", err);
-        }
-    }
-
-    if (!localStorage.getItem(STORAGE_KEY)) {
-        try {
-            const response = await fetch('data/sampleGuides.JSON');
-            const initialGuides = await response.json();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialGuides));
-            console.log("StorageHelper: Successfully seeded first aid guide dataset.");
-        } catch (err) {
-            console.warn("StorageHelper: sampleGuides.JSON fallback active.", err);
-        }
-    }
-
-    // Add inside initializeAllStorage(), before the closing brace
-    if (!localStorage.getItem(FORUM_STORAGE_KEY)) {
-        try {
-            const response = await fetch('data/forum.JSON');
-            const initialForum = await response.json();
-            localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(initialForum));
-            console.log("StorageHelper: Forum dataset initialized.");
-        } catch (err) {
-            console.warn("StorageHelper: forum.JSON fallback active.", err);
-        }
-    }
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await initializeAllStorage();
-
-    await initializeQuizStorage();
-});
-
-const FORUM_STORAGE_KEY = "petaid_forum_posts";
-
-function loadForumPosts() {
-    const raw =
-        JSON.parse(
-            localStorage.getItem(FORUM_STORAGE_KEY)
-        ) || [];
-
-    return raw.map(postData => {
-
-        const comments =
-            (postData.comments || []).map(c =>
-                new Comment(
-                    c.id,
-                    c.userId,
-                    c.content,
-                    new Date(c.createdAt)
-                )
-            );
-
-        return new ForumPost(
-            postData.id,
-            postData.userId,
-            postData.category,
-            postData.title,
-            postData.content,
-            new Date(postData.datePosted),
-            comments,
-            postData.status
-        );
-    });
-}
-
-function saveForumPosts(posts) {
-    const plainPosts = posts.map(post => {
-
-        const data = post.viewPost();
-
-        return {
-            ...data,
-            comments: data.comments.map(c =>
-                c.viewComment()
-            )
-        };
-    });
-
-    localStorage.setItem(
-        FORUM_STORAGE_KEY,
-        JSON.stringify(plainPosts)
-    );
-
-    fetch('/api/save-forum-posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(plainPosts)
-    })
-    .then(res => res.json())
-    .then(data => console.log(data.message))
-    .catch(err => {
-        console.error("Forum save failed:", err);
-    });
-}
-
-function getForumPostById(postId) {
-    const posts = loadForumPosts();
-
-    return posts.find(
-        p => p.getId() === postId
-    );
-}
-
-// ============================================= Quiz Helper ===================================================================
-const QUIZ_STORAGE_KEY = "petaid_quizzes";
-
-function loadQuizzes() {
-    const data = localStorage.getItem(QUIZ_STORAGE_KEY);
-
-    if (!data) {
-        return [];
-    }
-
-    const parsed = JSON.parse(data);
-
-    return parsed.map(quizData => {
-
-        const questions = (quizData.questions || []).map(question =>
-            new QuizQuestion(
-                question.id,
-                question.questionText,
-                question.options,
-                question.correctAnswer
-            )
-        );
-
-        return new Quiz(
-            quizData.id,
-            quizData.title,
-            quizData.category,
-            questions,
-            quizData.score || 0
-        );
-    });
-}
-
-function saveQuizzes(quizzes) {
-    const plainData = quizzes.map(quiz => {
-        return {
-            id: quiz.getId(),
-            title: quiz.getTitle(),
-            category: quiz.getCategory(),
-            score: quiz.getScore().score,
-            questions: quiz.getQuestions().map(q => ({
-                id: q.id,
-                questionText: q.questionText,
-                options: q.options,
-                correctAnswer: q.correctAnswer
-            }))
-        };
-    });
-
-    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(plainData));
-
-    fetch('http://localhost:3000/api/save-quizzes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(plainData)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Disk Sync:", data.message))
-    .catch(err => console.error("Could not sync quizzes.JSON file:", err));
-}
-
-function getAllQuizzes() {
-    return loadQuizzes();
-}
-
-function getQuizzesByCategory(category) {
-    const quizzes = loadQuizzes();
-
-    return quizzes.filter(
-        quiz => quiz.getCategory() === category
-    );
-}
-
-function getQuizById(quizId) {
-    return loadQuizzes().find(
-        quiz => quiz.getId() === quizId
-    ) || null;
-}
-
-async function initializeQuizStorage() {
-    if (!localStorage.getItem(QUIZ_STORAGE_KEY)) {
-        try {
-            const response = await fetch("data/sampleQuizzes.json");
-
-            const initialQuizzes = await response.json();
-
-            localStorage.setItem(
-                QUIZ_STORAGE_KEY,
-                JSON.stringify(initialQuizzes)
-            );
-
-            console.log("StorageHelper: Quiz dataset initialized.");
-
-        } catch (err) {
-            console.warn("StorageHelper: sampleQuizzes.json fallback active.", err);
-        }
-    }
-}
-
-function loadPets() {
-    const rawData = localStorage.getItem('petaid_pets');
-    if (!rawData) return [];
-    
+// ============================================= Forum =============================================
+async function loadForumPosts() {
     try {
-        const parsedList = JSON.parse(rawData);
-        return parsedList.map(p => new Pet(p.pet_id, p.owner_id, p.name, p.category, p.pet_bio, p.pet_img));
-    } catch (e) {
-        console.error("Failed to parse pet records:", e);
+        const res = await fetch('data/forum.JSON?t=' + Date.now());
+        const raw = await res.json();
+        return raw.map(postData => {
+            const comments = (postData.comments || []).map(c =>
+                new Comment(c.id, c.userId, c.content, new Date(c.createdAt))
+            );
+            return new ForumPost(
+                postData.id, postData.userId, postData.category,
+                postData.title, postData.content,
+                new Date(postData.datePosted), comments, postData.status
+            );
+        });
+    } catch (err) {
+        console.warn("Failed to load forum posts:", err);
         return [];
     }
 }
 
-// Add to StorageHelper.js
+async function saveForumPosts(posts) {
+    const plainPosts = posts.map(post => {
+        const data = post.viewPost();
+        return { ...data, comments: data.comments.map(c => c.viewComment()) };
+    });
+    try {
+        const res = await fetch('/api/save-forum-posts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(plainPosts)
+        });
+        const result = await res.json();
+        console.log(result.message);
+    } catch (err) {
+        console.error("Forum save failed:", err);
+    }
+}
+
+async function getForumPostById(postId) {
+    const posts = await loadForumPosts();
+    return posts.find(p => p.getId() === postId);
+}
+
+// ============================================= Quiz =============================================
+async function loadQuizzes() {
+    try {
+        const res = await fetch('data/sampleQuizzes.json?t=' + Date.now());
+        const parsed = await res.json();
+        return parsed.map(quizData => {
+            const questions = (quizData.questions || []).map(question =>
+                new QuizQuestion(question.id, question.questionText, question.options, question.correctAnswer)
+            );
+            return new Quiz(quizData.id, quizData.title, quizData.category, questions, quizData.score || 0);
+        });
+    } catch (err) {
+        console.warn("Failed to load quizzes:", err);
+        return [];
+    }
+}
+
+async function saveQuizzes(quizzes) {
+    const plainData = quizzes.map(quiz => ({
+        id: quiz.getId(),
+        title: quiz.getTitle(),
+        category: quiz.getCategory(),
+        score: quiz.getScore().score,
+        questions: quiz.getQuestions().map(q => ({
+            id: q.id, questionText: q.questionText,
+            options: q.options, correctAnswer: q.correctAnswer
+        }))
+    }));
+    try {
+        const res = await fetch('/api/save-quizzes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(plainData)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.error("Could not sync quizzes:", err);
+    }
+}
+
+async function getAllQuizzes() {
+    return await loadQuizzes();
+}
+
+async function getQuizzesByCategory(category) {
+    const quizzes = await loadQuizzes();
+    return quizzes.filter(quiz => quiz.getCategory() === category);
+}
+
+async function getQuizById(quizId) {
+    const quizzes = await loadQuizzes();
+    return quizzes.find(quiz => quiz.getId() === quizId) || null;
+}
+
+// ============================================= Feedback =============================================
+async function saveFeedback(feedback) {
+    try {
+        const res = await fetch('/api/save-feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(feedback)
+        });
+        const result = await res.json();
+        console.log("Disk Sync:", result.message);
+    } catch (err) {
+        console.warn('Feedback server sync failed:', err);
+    }
+}
+
+async function loadFeedback() {
+    try {
+        const res = await fetch('data/feedback.JSON?t=' + Date.now());
+        const arr = await res.json();
+        if (Array.isArray(arr)) return arr;
+    } catch (e) {
+        console.warn('Server feedback fetch failed:', e);
+    }
+    return [];
+}
+
+// ============================================= Session (stays on localStorage) =====================
 function saveSession(user) {
     localStorage.setItem('petaid_active_session', JSON.stringify(user.toJSON()));
 }
 function clearSession() {
     localStorage.removeItem('petaid_active_session');
 }
-
 function updateSession(user) {
     localStorage.setItem('petaid_active_session', JSON.stringify(user.toJSON()));
-}
-
-function saveFeedback(feedback) {
-    const key = 'petaid_feedback';
-    const arr = JSON.parse(localStorage.getItem(key) || '[]');
-    arr.push(feedback);
-    localStorage.setItem(key, JSON.stringify(arr));
-    fetch('/api/save-feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(feedback)
-    }).catch(err => console.warn('Feedback server sync failed:', err));
-}
-
-async function loadFeedback() {
-    try {
-        const raw = localStorage.getItem('petaid_feedback');
-        if (raw) {
-            const arr = JSON.parse(raw);
-            if (Array.isArray(arr) && arr.length > 0) return arr;
-        }
-    } catch (e) {
-        console.warn('localStorage feedback read failed:', e);
-    }
-
-    try {
-        const res = await fetch('data/feedback.JSON');
-        const arr = await res.json();
-        if (Array.isArray(arr)) {
-            localStorage.setItem('petaid_feedback', JSON.stringify(arr));
-            return arr;
-        }
-    } catch (e) {
-        console.warn('Server feedback fetch failed:', e);
-    }
-
-    return [];
 }

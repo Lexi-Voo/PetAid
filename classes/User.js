@@ -29,8 +29,8 @@ class User {
         throw new Error("Method 'register()' must be implemented by concrete user subclasses.");
     }
 
-    browseGuide(category) {
-        return getGuidesByCategory(category);
+    async browseGuide(category) {
+        return await getGuidesByCategory(category);
     }
 
     submitForumPost(forum, postData) {
@@ -71,9 +71,9 @@ class User {
         return this.getUsername();
     }
 
-    static authenticate(inputUsername, inputPassword) {
-        const savedUsers = loadAuthUsers(); 
-        const savedApprovals = loadApprovals();
+    static async authenticate(inputUsername, inputPassword) {
+        const savedUsers = await loadAuthUsers(); 
+        const savedApprovals = await loadApprovals();
         const matchedUser = savedUsers.find(u => 
             (u.getUsername() && u.getUsername().toLowerCase() === inputUsername.toLowerCase()) ||
             (u.getEmail() && u.getEmail().toLowerCase() === inputUsername.toLowerCase())

@@ -10,9 +10,10 @@ class Veterinarian extends User {
 
     getPhone() { return this.#phone; }
     setPhone(phone) { this.#phone = phone; }
-    register(assignedCertPath) {
+
+    async register(assignedCertPath) {
         this.cert_path = assignedCertPath || "assets/certs/cert_1.jpg";
-        const savedApprovals = loadApprovals();
+        const savedApprovals = await loadApprovals();
         const newApprovalRequest = {
             "req_id": (savedApprovals.length + 1).toString(),
             "username": this.getUsername(),
@@ -26,7 +27,7 @@ class Veterinarian extends User {
         };
 
         savedApprovals.push(newApprovalRequest);
-        saveApprovals(savedApprovals);
+        await saveApprovals(savedApprovals);
     }
 
     toJSON() {

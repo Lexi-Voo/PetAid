@@ -8,11 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (!loginForm) return;
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
         const inputUsername = document.getElementById('email').value.trim(); 
         const inputPassword = document.getElementById('password').value.trim();
-        const authResult = User.authenticate(inputUsername, inputPassword);
+        const authResult = await User.authenticate(inputUsername, inputPassword);
 
         if (authResult.success) {
             showConfirmation('Login successful! Redirecting to home...');

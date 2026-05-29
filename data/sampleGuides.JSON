@@ -6,32 +6,22 @@
     "steps": [
       {
         "stepNumber": 1,
-        "instruction": "Stay calm and restrain your dog gently to prevent biting.",
-        "imageURL": "assets/guides/step_g001_step1.jpg"
-      },
-      {
-        "stepNumber": 2,
         "instruction": "Open the dog's mouth carefully and look for the foreign object.",
         "imageURL": "assets/guides/step_g001_step2.jpg"
       },
       {
-        "stepNumber": 3,
+        "stepNumber": 2,
         "instruction": "If visible, try to remove the object with tweezers. Do not push it further in.",
         "imageURL": ""
       },
       {
-        "stepNumber": 4,
+        "stepNumber": 3,
         "instruction": "If the object cannot be removed, perform the Heimlich maneuver by placing your fist below the rib cage.",
         "imageURL": "assets/guides/step_g001_step4.jpg"
       },
       {
-        "stepNumber": 5,
+        "stepNumber": 4,
         "instruction": "Seek immediate veterinary attention even if the object is removed.",
-        "imageURL": ""
-      },
-      {
-        "stepNumber": 6,
-        "instruction": "great, admin wokrs",
         "imageURL": ""
       }
     ],
@@ -247,26 +237,55 @@
         "imageURL": ""
       }
     ],
-    "videos": []
+    "videos": [
+      {
+        "title": "hamu",
+        "url": "https://youtu.be/dpvhjIjNZdg"
+      }
+    ]
   },
   {
-<<<<<<< HEAD
     "id": "g1779994769936",
     "title": "cooking",
     "category": "dog",
-    "steps": [],
-=======
-    "id": "g1779524176718",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "instruction": "wayy to go",
+        "imageURL": ""
+      }
+    ],
+    "videos": []
+  },
+  {
+    "id": "g1780024244774",
     "title": "bleeding",
     "category": "dog",
     "steps": [
       {
         "stepNumber": 1,
-        "instruction": "first, stop the bleeding usind a clean cloth",
+        "instruction": "bleeding",
+        "imageURL": "assets/guides/step_g1780024244774_step1.png"
+      },
+      {
+        "stepNumber": 2,
+        "instruction": "wowoww",
         "imageURL": ""
       }
     ],
->>>>>>> cda9b1882b3585374770fda43e0b2c7078a9e772
+    "videos": []
+  },
+  {
+    "id": "g1780055105474",
+    "title": "bleding",
+    "category": "cat",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "instruction": "ist step to tesst that without local storage still works",
+        "imageURL": "assets/guides/step_g1780055105474_step1.png"
+      }
+    ],
     "videos": []
   }
 ]

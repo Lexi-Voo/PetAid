@@ -100,7 +100,7 @@ class Forum {
         return true;
     }
 
-    deletePost(postId) {
+    async deletePost(postId) {
         const post = this.getPostById(postId);
 
         if (!post) {

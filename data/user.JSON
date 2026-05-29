@@ -28,8 +28,8 @@
     "role": "veterinarian",
     "cert_path": "assets/certs/cert_1.jpg",
     "phone": "",
-    "biography": "Approved Vet. Registered on 2026-05-19.",
-    "profile_pic": "assets/profiles/profile.jpg"
+    "biography": "Approved Vet. Registered on 2026-05-19.ff",
+    "profile_pic": "assets/profiles/user_3.png"
   },
   {
     "user_id": "4",
@@ -39,6 +39,30 @@
     "email": "jodylaw0714@gmail.com",
     "role": "petowner",
     "biography": " ",
+    "profile_pic": "assets/profiles/profile.jpg"
+  },
+  {
+    "user_id": "5",
+    "username": "jody",
+    "password": "test123",
+    "name": "jody",
+    "email": "jody@gmail.com",
+    "role": "veterinarian",
+    "cert_path": "assets/certs/cert_1.png",
+    "phone": "12345678",
+    "biography": "Approved Vet. Registered on 2026-05-21.",
+    "profile_pic": "assets/profiles/profile.jpg"
+  },
+  {
+    "user_id": "6",
+    "username": "vet",
+    "password": "vet",
+    "name": "vet",
+    "email": "vet@gmail.com",
+    "role": "veterinarian",
+    "cert_path": "assets/certs/cert_1.png",
+    "phone": "123454567",
+    "biography": "Approved Vet. Registered on 2026-05-21.",
     "profile_pic": "assets/profiles/profile.jpg"
   }
 ]

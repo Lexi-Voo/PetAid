@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const activeUser = getCurrentUser();
     if (!activeUser) {
         window.location.href = "login.html";
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = "profile.html";
         return;
     }
-    const allPets = loadPets();
+    const allPets = await loadPets();
     const currentPet = allPets.find(p => p.getPetId() === targetPetId);
     if (!currentPet || currentPet.getOwnerId().toString() !== activeUser.getId().toString()) {
         showConfirmation("Error: Pet record missing or unauthorized.", true);
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const petIndex = allPets.findIndex(p => p.getPetId() === targetPetId);
                     if (petIndex !== -1) {
                         allPets[petIndex].setPetImg(diskPath);
-                        savePets(allPets); 
+                        await savePets(allPets); 
                         
                         showConfirmation("Pet profile picture updated successfully!");
                         setTimeout(() => { window.location.reload(); }, 1000);
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         petBio: editPetBio.value.trim()
                     });
 
-                    savePets(allPets); 
+                    await savePets(allPets); 
                     populateUI(allPets[petIndex]);
                     showConfirmation("Pet details synced directly to storage changes!");
                 }

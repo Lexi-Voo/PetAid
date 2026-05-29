@@ -6,9 +6,9 @@ let editingPostId = null;
 
 // INITIALIZATION
 document.addEventListener("DOMContentLoaded", async function () {
-    await loadForumSampleDataIfNeeded();
+    
 
-    forum = loadForum();
+    forum = await loadForum();
 
     renderNavbar("Forum");
     renderFooter();
@@ -16,13 +16,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     setupCategoryFilter();
     setupModal();
 
-    renderPosts("all");
+    await renderPosts("all");
 });
 
 
 
-function loadForum() {
-    const raw = loadForumPosts(); // existing function
+async function loadForum() {
+    const raw = await loadForumPosts(); // existing function
 
     return new Forum(
         "pet-forum",
@@ -38,7 +38,7 @@ function setupCategoryFilter() {
         document.querySelectorAll("#forum-categories li");
 
     categoryItems.forEach(item => {
-        item.addEventListener("click", function () {
+        item.addEventListener("click", async function () {
             categoryItems.forEach(li =>
                 li.classList.remove("active")
             );
@@ -48,13 +48,14 @@ function setupCategoryFilter() {
             selectedCategory =
                 this.dataset.category;
 
-            renderPosts(selectedCategory);
+            await renderPosts(selectedCategory);
         });
     });
 }
 
 // RENDER POSTS
-function renderPosts(category = "all") {
+async function renderPosts(category = "all") {
+    await refreshUserCache();
     const container =
         document.getElementById("posts-container");
 
@@ -167,7 +168,8 @@ function getUserProfilePic(userId) {
         : "assets/profiles/profile.jpg";
 }
 
-function openPostDetail(postId) {
+async function openPostDetail(postId) {
+    await refreshUserCache();
     currentOpenedPostId = postId;
 
     const post = forum.getPostById(postId);
@@ -276,7 +278,7 @@ function renderCommentActions(comment) {
     `;
 }
 
-function deleteComment(postId, commentId) {
+async function deleteComment(postId, commentId) {
     const currentUser =
         getCurrentUser();
 
@@ -314,13 +316,13 @@ function deleteComment(postId, commentId) {
 
     post.removeComment(commentId);
 
-    saveForumPosts(
+    await saveForumPosts(
         forum.getPosts()
     );
 
     renderComments(post);
 
-    renderPosts(selectedCategory);
+    await renderPosts(selectedCategory);
 
     showConfirmation(
         "Comment deleted."
@@ -393,7 +395,7 @@ function closeModal() {
 }
 
 // CREATE POST + EDIT POST
-function createPost() {
+async function createPost() {
     const category =
         document.getElementById("post-category").value;
 
@@ -480,13 +482,13 @@ function createPost() {
         );
     }
 
-    saveForumPosts(
+    await saveForumPosts(
         forum.getPosts()
     );
 
     closeModal();
 
-    renderPosts(selectedCategory);
+    await renderPosts(selectedCategory);
 }
 
 function clearModalFields() {
@@ -540,7 +542,7 @@ function clearPostDetailModal() {
 }
 
 // SUBMIT COMMENT
-function submitComment() {
+async function submitComment() {
     const currentUser =
         getCurrentUser();
 
@@ -583,13 +585,13 @@ function submitComment() {
         content
     });
 
-    saveForumPosts(forum.getPosts());
+    await saveForumPosts(forum.getPosts());
 
     input.value = "";
 
     renderComments(post);
 
-    renderPosts(selectedCategory);
+    await renderPosts(selectedCategory);
 
     showConfirmation(
         "Comment added successfully!"
@@ -644,7 +646,7 @@ function renderPostActions(post) {
     `;
 }
 
-function deletePost(postId) {
+async function deletePost(postId) {
     const currentUser =
         getCurrentUser();
 
@@ -664,9 +666,9 @@ function deletePost(postId) {
 
     currentUser.deleteForumPost(forum, postId);
 
-    saveForumPosts(forum.getPosts());
+    await saveForumPosts(forum.getPosts());
 
-    renderPosts(selectedCategory);
+    await renderPosts(selectedCategory);
 
     showConfirmation(
         "Post deleted successfully."
@@ -723,90 +725,37 @@ function formatDate(date) {
     return formatted.toLocaleString();
 }
 
-function getUserById(userId) {
-
-    const users =
-        loadAuthUsers();
-
-    return users.find(
-        u => u.getId() === userId
-    );
-}
-
-function getDisplayName(userId) {
-
-    const user =
-        getUserById(userId);
-
-    return user
-        ? user.getDisplayName()
-        : "Unknown";
-}
-
-function getUserRole(userId) {
-
-    const user =
-        getUserById(userId);
-
-    return user
-        ? user.getRole()
-        : "petowner";
-}
-
 function getRoleBadge(role) {
-
     if (role === "veterinarian") {
-        return `
-            <span class="role-badge vet-badge">
-                Veterinarian
-            </span>
-        `;
+        return `<span class="role-badge vet-badge">Veterinarian</span>`;
     }
-
     if (role === "admin") {
-        return `
-            <span class="role-badge admin-badge">
-                Admin
-            </span>
-        `;
+        return `<span class="role-badge admin-badge">Admin</span>`;
     }
-
-    return `
-        <span class="role-badge owner-badge">
-            Pet Owner
-        </span>
-    `;
+    return `<span class="role-badge owner-badge">Pet Owner</span>`;
 }
 
 function formatCategory(category) {
-
     switch (category) {
-
-        case "all-pet":
-            return "All Pets";
-
-        case "dog":
-            return "Dog";
-
-        case "cat":
-            return "Cat";
-
-        case "rabbit":
-            return "Rabbit";
-
-        case "hamster":
-            return "Hamster";
-
-        default:
-            return category;
+        case "all-pet": return "All Pets";
+        case "dog": return "Dog";
+        case "cat": return "Cat";
+        case "rabbit": return "Rabbit";
+        case "hamster": return "Hamster";
+        default: return category;
     }
 }
 
 function escapeHTML(text) {
-    const div =
-        document.createElement("div");
-
+    const div = document.createElement("div");
     div.textContent = text;
-
     return div.innerHTML;
 }
+
+
+// User cache for synchronous lookups in template literals
+let _cachedUsers = [];
+async function refreshUserCache() { _cachedUsers = await loadAuthUsers(); }
+function getUserById(userId) { return _cachedUsers.find(u => u.getId() === userId); }
+function getDisplayName(userId) { const user = getUserById(userId); return user ? user.getDisplayName() : "Unknown"; }
+function getUserRole(userId) { const user = getUserById(userId); return user ? user.getRole() : "petowner"; }

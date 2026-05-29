@@ -14,5 +14,13 @@
     "category": "Dog",
     "pet_bio": "ascas",
     "pet_img": "assets/petprofile/dog.jpg"
+  },
+  {
+    "pet_id": "3",
+    "owner_id": "4",
+    "name": "lUna",
+    "category": "Dog",
+    "pet_bio": "very sweet",
+    "pet_img": "assets/petprofile/pet_3.jpg"
   }
 ]

@@ -23,7 +23,7 @@ function checkAdminStatus() {
 }
 
 // ===== Select Category =====
-function selectCategory(category) {
+async function selectCategory(category) {
     selectedCategory = category;
 
     document.querySelectorAll(".category-card").forEach(card => {
@@ -34,16 +34,16 @@ function selectCategory(category) {
         .querySelector(`[data-category="${category}"]`)
         .classList.add("selected");
 
-    renderQuizList(category);
+    await renderQuizList(category);
 }
 
 // ===== Render Quiz List =====
-function renderQuizList(category) {
+async function renderQuizList(category) {
     const section = document.getElementById("quizListSection");
     const title = document.getElementById("quizListTitle");
     const list = document.getElementById("quizList");
 
-    const quizzes = getQuizzesByCategory(category);
+    const quizzes = await getQuizzesByCategory(category);
 
     title.textContent = `${category} Quizzes`;
     section.classList.add("visible");
@@ -97,7 +97,7 @@ function closeQuizModal() {
 }
 
 // ===== Save Quiz =====
-function saveQuiz() {
+async function saveQuiz() {
     const title = document.getElementById("quizTitle").value.trim();
     const category = document.getElementById("quizCategory").value;
 
@@ -106,8 +106,8 @@ function saveQuiz() {
         return;
     }
 
-    admin.manageQuiz("create", {title, category});
+    await admin.manageQuiz("create", {title, category});
     showConfirmation("Quiz created successfully");
     closeQuizModal();
-    renderQuizList(selectedCategory);
+    await renderQuizList(selectedCategory);
 }

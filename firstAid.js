@@ -25,7 +25,7 @@ function checkAdminStatus() {
 
 
 // ===== Category Selection =====
-function selectCategory(category) {
+async function selectCategory(category) {
     selectedCategory = category;
 
     // Update selected card styling
@@ -34,16 +34,16 @@ function selectCategory(category) {
     });
     document.querySelector(`[data-category="${category}"]`).classList.add("selected");
 
-    renderGuideList(category);
+    await renderGuideList(category);
 }
 
 // ===== Render Guide List =====
-function renderGuideList(category) {
+async function renderGuideList(category) {
     const section = document.getElementById("guideListSection");
     const title = document.getElementById("guideListTitle");
     const list = document.getElementById("guideList");
 
-    const guides = getGuidesByCategory(category);
+    const guides = await getGuidesByCategory(category);
 
     title.textContent = category + " First Aid Guides";
     section.classList.add("visible");
@@ -102,7 +102,7 @@ function closeGuideModal() {
 // Removed — edit/delete now handled on guideView page only
 
 // ===== Save Guide (Create Only) =====
-function saveGuide() {
+async function saveGuide() {
     const title = document.getElementById("guideTitle").value.trim();
     const category = document.getElementById("guideCategory").value;
 
@@ -111,14 +111,14 @@ function saveGuide() {
         return;
     }
 
-    admin.manageGuide("create", {
+    await admin.manageGuide("create", {
         title: title,
         category: category
     });
     showConfirmation("Guide created successfully");
 
     closeGuideModal();
-    renderGuideList(selectedCategory);
+    await renderGuideList(selectedCategory);
 }
 
 // Navbar admin link injection removed — handled by renderNavbar() in Navbar.js

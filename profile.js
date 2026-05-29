@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const activeUser = getCurrentUser(); 
     if (!activeUser) {
         alert("Access Denied. Please log in first.");
@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (displayRoleText === "veterinarian") displayRoleText = "Veterinarian";
     displayRole.textContent = displayRoleText;
 
-    function renderUserPets() {
-        const myPets = getPetsByOwnerId(activeUser.getId());
+    async function renderUserPets() {
+        const myPets = await getPetsByOwnerId(activeUser.getId());
         if (myPets.length === 0) {
             petGridContainer.innerHTML = `<p style="color:#7f8c8d; font-style:italic;">No pets registered under this account yet.</p>`;
         } else {
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeUser.getRole() === 'petowner') {
         if(addPetPanel) addPetPanel.classList.remove('hidden');
         if(petsPanel) petsPanel.classList.remove('hidden');
-        renderUserPets();
+        await renderUserPets();
     } 
     else if (activeUser.getRole() === 'veterinarian') {
         if(vetCertPanel) vetCertPanel.classList.remove('hidden'); 
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (phoneToggleBtn && phoneInput) {
         let isPhoneEditing = false;
-        phoneToggleBtn.addEventListener('click', () => {
+        phoneToggleBtn.addEventListener('click', async () => {
             if (!isPhoneEditing) {
                 phoneSnapshotCache = phoneInput.value;
                 isPhoneEditing = true;
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const allUsers = loadAuthUsers();
+                const allUsers = await loadAuthUsers();
                 const userIndex = allUsers.findIndex(u => u.getId() === activeUser.getId());
                 if (userIndex !== -1) {
                     activeUser.getProfile().updateProfile({ phoneNumber: phoneInput.value.trim() });
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     allUsers[userIndex] = activeUser;
                     //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
                     updateSession(activeUser);
-                    saveAuthUsers(allUsers);
+                    await saveAuthUsers(allUsers);
                     showConfirmation("Contact number saved successfully!");
                 }
                 isPhoneEditing = false;
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (bioToggleBtn && biographyInput) {
         let isBioEditing = false;
-        bioToggleBtn.addEventListener('click', () => {
+        bioToggleBtn.addEventListener('click', async () => {
             if (!isBioEditing) {
                 bioSnapshotCache = biographyInput.value;
                 isBioEditing = true;
@@ -137,14 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 bioToggleBtn.className = "btn btn-save";
                 bioCancelBtn.classList.remove('hidden');
             } else {
-                const allUsers = loadAuthUsers();
+                const allUsers = await loadAuthUsers();
                 const userIndex = allUsers.findIndex(u => u.getId() === activeUser.getId());
                 if (userIndex !== -1) {
                     activeUser.getProfile().updateProfile({ biography: biographyInput.value.trim() });
                     allUsers[userIndex] = activeUser;
                     //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
                     updateSession(activeUser);
-                    saveAuthUsers(allUsers);
+                    await saveAuthUsers(allUsers);
                     showConfirmation("Biography saved successfully!");
                 }
                 isBioEditing = false;
@@ -182,14 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const diskPath = result.savedPath;
                     displayAvatar.src = diskPath;
 
-                    const allUsers = loadAuthUsers();
+                    const allUsers = await loadAuthUsers();
                     const userIndex = allUsers.findIndex(u => u.getId() === activeUser.getId());
                     if (userIndex !== -1) {
                         activeUser.getProfile().updateProfile({ profilePic: diskPath });
                         allUsers[userIndex] = activeUser; 
                         //localStorage.setItem('petaid_active_session', JSON.stringify(activeUser.toJSON()));
                         updateSession(activeUser);
-                        saveAuthUsers(allUsers);
+                        await saveAuthUsers(allUsers);
                         showConfirmation("Profile picture written to disk and saved successfully!");
                     }
                 } else {
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const pCategory = document.getElementById('petCategory').value;
                 const pBio = document.getElementById('petBio').value.trim();
-                const allPets = loadPets();
+                const allPets = await loadPets();
                 
                 let maxPetId = 0;
                 allPets.forEach(pet => {
@@ -248,10 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newPetInstance = new Pet(newPetId, activeUser.getId(), pName, pCategory, pBio, finalImgPath);
                 
                 allPets.push(newPetInstance);
-                savePets(allPets); 
+                await savePets(allPets); 
                 
                 petForm.reset();
-                renderUserPets();    
+                await renderUserPets();    
                 showConfirmation("New pet added successfully!");
                 isPetEditing = false;
                 fields.forEach(f => f.setAttribute('disabled', 'true'));

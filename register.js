@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-        const savedUsers = loadAuthUsers(); 
-        const savedApprovals = loadApprovals();
+        const savedUsers = await loadAuthUsers(); 
+        const savedApprovals = await loadApprovals();
 
         const usernameExists = savedUsers.some(u => u.getUsername().toLowerCase() === username.toLowerCase()) ||
                                savedApprovals.some(a => a.username && a.username.toLowerCase() === username.toLowerCase());
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newUserId = (maxUserId + 1).toString(); 
             const starterProfile = new UserProfile(name, " ", "assets/profiles/profile.jpg");
             const newOwnerInstance = new PetOwner(newUserId, starterProfile, username, password, email);
-            newOwnerInstance.register();
+            await newOwnerInstance.register();
 
             showConfirmation("Registration successful! Logging you in...");         
             setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const phone = phoneInputEl ? phoneInputEl.value.trim() : "";
             const starterProfile = new UserProfile(name, "Approved Vet. Registered on 2026-05-21.", "assets/profiles/profile.jpg");
             const newVetInstance = new Veterinarian(newReqId, starterProfile, username, password, email, phone);
-            newVetInstance.register(assignedCertPath);
+            await newVetInstance.register(assignedCertPath);
             showConfirmation("Registration submitted! Please wait for Admin approval.");  
             setTimeout(() => { window.location.href = "firstAid.html"; }, 1500);       
             registerForm.reset();

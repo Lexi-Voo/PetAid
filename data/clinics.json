@@ -22,5 +22,45 @@
     "OpeningHours": "09:00 - 17:00",
     "latitude": 1.595061,
     "longitude": 110.356576
+  },
+  {
+    "ClinicName": "Dkogo",
+    "Address": "lorong",
+    "PhoneNumber": "1234567",
+    "OpeningHours": "9pm",
+    "latitude": 1.559837,
+    "longitude": 110.345049
+  },
+  {
+    "ClinicName": "catto",
+    "Address": "lorign",
+    "PhoneNumber": "12345666",
+    "OpeningHours": "4pm",
+    "latitude": 1.564044,
+    "longitude": 110.342946
+  },
+  {
+    "ClinicName": "test",
+    "Address": "3445lorong",
+    "PhoneNumber": "34566",
+    "OpeningHours": "8pm",
+    "latitude": 1.556059,
+    "longitude": 110.350027
+  },
+  {
+    "ClinicName": "jalanClinic",
+    "Address": "Merdeka",
+    "PhoneNumber": "123456",
+    "OpeningHours": "7pm",
+    "latitude": 1.565811,
+    "longitude": 110.337667
+  },
+  {
+    "ClinicName": "Test2 to Confirm",
+    "Address": "that no need for localStorage anyore",
+    "PhoneNumber": "123456",
+    "OpeningHours": "12am",
+    "latitude": 1.560794,
+    "longitude": 110.333891
   }
 ]

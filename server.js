@@ -93,7 +93,7 @@ app.post('/api/save-pets', (req, res) => {
 });
 
 app.post('/api/save-quizzes', (req, res) => {
-    const filePath = path.join(__dirname, 'data', 'quizzes.JSON');
+    const filePath = path.join(__dirname, 'data', 'sampleQuizzes.JSON');
     try {
         fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
         res.json({ success: true, message: 'Physical quizzes.JSON updated successfully.'});
@@ -142,6 +142,16 @@ app.post('/api/save-feedback', (req, res) => {
     } catch (err) {
         console.error('Error writing to feedback.JSON:', err);
         res.status(500).json({ success: false, message: 'Failed to write to file.' });
+    }
+});
+
+app.post('/api/save-clinics', (req, res) => {
+    try {
+        const filePath = path.join(__dirname, 'data', 'clinics.json');
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        res.json({ success: true, message: 'Clinics saved to disk.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to save clinics.' });
     }
 });
 
