@@ -37,3 +37,5 @@ async function addClinic(clinic) {
 function clearClinics() {
     // No-op since we no longer use localStorage for clinics
 }
+
+export { loadClinics, saveClinics, addClinic, clearClinics };
