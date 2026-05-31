@@ -29,7 +29,6 @@ class User {
         throw new Error("Method 'register()' must be implemented by concrete user subclasses.");
     }
 
-
     submitForumPost(forum, postData) {
         return forum.addPost(
             postData.id,

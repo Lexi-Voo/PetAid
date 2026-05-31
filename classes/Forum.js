@@ -1,57 +1,12 @@
 class Forum {
-    #category;
-    #title;
-    #description;
     #posts;
 
-    constructor(category, title, description, posts = []) {
-        this.#category = category;
-        this.#title = title;
-        this.#description = description;
+    constructor(posts = []) {
         this.#posts = posts;
-    }
-
-    getCategory() {
-        return this.#category;
-    }
-
-    getTitle() {
-        return this.#title;
-    }
-
-    getDescription() {
-        return this.#description;
     }
 
     getPosts() {
         return this.#posts;
-    }
-
-    editForum(newData) {
-        if (newData.category !== undefined) {
-            this.#category = newData.category;
-        }
-
-        if (newData.title !== undefined) {
-            this.#title = newData.title;
-        }
-
-        if (newData.description !== undefined) {
-            this.#description = newData.description;
-        }
-    }
-
-    deleteForum() {
-        this.#posts = [];
-    }
-
-    viewForum() {
-        return {
-            category: this.#category,
-            title: this.#title,
-            description: this.#description,
-            posts: this.#posts
-        };
     }
 
     getPostById(postId) {
@@ -80,12 +35,12 @@ class Forum {
         );
 
         if (!newPost.validateContent()) {
-            return null;
+            return false;
         }
 
         this.#posts.unshift(newPost);
 
-        return newPost;
+        return true;
     }
 
     editPost(postId, newData) {
@@ -95,20 +50,33 @@ class Forum {
             return false;
         }
 
-        post.editPost(newData);
+        const current = post.viewPost();
 
-        return true;
-    }
+        const tempPost = new ForumPost(
+            current.id,
+            current.userId,
+            newData.category ?? current.category,
+            newData.title ?? current.title,
+            newData.content ?? current.content,
+            current.datePosted,
+            post.getComments()
+        );
 
-    async deletePost(postId) {
-        const post = this.getPostById(postId);
-
-        if (!post) {
+        if (!tempPost.validateContent()) {
             return false;
         }
 
-        post.deletePost();
-
+        post.editPost(newData);
         return true;
+    }
+
+    deletePost(postId) {
+        const originalLength = this.#posts.length;
+
+        this.#posts = this.#posts.filter(
+            post => post.getId() !== postId
+        );
+
+        return this.#posts.length < originalLength;
     }
 }

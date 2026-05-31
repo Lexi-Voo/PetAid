@@ -15,18 +15,6 @@ class Comment {
         return this.#id;
     }
 
-    getUserId() {
-        return this.#userId;
-    }
-
-    getContent() {
-        return this.#content;
-    }
-
-    getCreatedAt() {
-        return this.#createdAt;
-    }
-
     viewComment() {
         return {
             id: this.#id,
@@ -34,18 +22,5 @@ class Comment {
             content: this.#content,
             createdAt: this.#createdAt
         };
-    }
-
-    isOwnedBy(userId) {
-        return this.#userId === userId;
-    }
-
-    canDelete(user) {
-        if (!user) return false;
-
-        return (
-            user.getRole() === "admin" ||
-            user.getId() === this.#userId
-        );
     }
 }

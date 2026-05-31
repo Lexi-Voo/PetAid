@@ -1,86 +1,36 @@
 [
   {
-    "id": "p1780062611551",
-    "userId": "4",
-    "category": "all-pet",
-    "title": "this test tests that no need for local storage. directly read from databse ?=Json",
-    "content": "yep",
-    "datePosted": "2026-05-29T13:50:11.551Z",
-    "comments": [],
-    "status": true
-  },
-  {
-    "id": "p1780060860724",
-    "userId": "3",
-    "category": "all-pet",
-    "title": "cool",
-    "content": "from vet",
-    "datePosted": "2026-05-29T13:21:00.724Z",
-    "comments": [
-      {
-        "id": "c1780062635735",
-        "userId": "4",
-        "content": "thss cool actually",
-        "createdAt": "2026-05-29T13:50:35.735Z"
-      }
-    ],
-    "status": true
-  },
-  {
-    "id": "p1780060777264",
-    "userId": "1",
-    "category": "dog",
-    "title": "teating",
-    "content": "this test tests that local storage works",
-    "datePosted": "2026-05-29T13:19:37.264Z",
-    "comments": [],
-    "status": true
-  },
-  {
-    "id": "p1779993685423",
-    "userId": "1",
-    "category": "all-pet",
-    "title": "Good day to alllll",
-    "content": "just kidding",
-    "datePosted": "2026-05-28T18:41:25.423Z",
-    "comments": [],
-    "status": true
-  },
-  {
-    "id": "p1779766066938",
+    "id": "p1780244779873",
     "userId": "2",
     "category": "cat",
     "title": "Indoor cat suddenly scratching furniture aggressively",
     "content": "My indoor cat recently started scratching the sofa and curtains every day even though she has a scratching post. Any advice to stop this behavior?",
-    "datePosted": "2026-05-26T03:27:46.938Z",
-    "comments": [],
-    "status": true
+    "datePosted": "2026-05-31T16:26:19.873Z",
+    "comments": []
   },
   {
-    "id": "p1779765938786",
+    "id": "p1780244481284",
     "userId": "4",
     "category": "dog",
     "title": "My dog refuses to eat after vaccination",
     "content": "My 2 year old golden retriever got vaccinated yesterday and today he seems tired and refuses to eat. He still drinks water though. Is this normal or should I bring him back to the clinic?",
-    "datePosted": "2026-05-26T03:25:38.786Z",
+    "datePosted": "2026-05-31T16:21:21.284Z",
     "comments": [
       {
-        "id": "c1779765986216",
-        "userId": "3",
-        "content": "It is quite common for dogs to experience mild fatigue and reduced appetite for 24-48 hours after vaccination. Monitor for vomiting, breathing difficulty, or severe weakness. If symptoms worsen, visit your vet immediately.",
-        "createdAt": "2026-05-26T03:26:26.216Z"
+        "id": "c1780244588670",
+        "userId": "6",
+        "content": "It is quite common for dogs to experience mild fatigue and reduced appetite for 24-48 hours after vaccination. Monitor for vomiting, breathing difficulty or severe weakness. If symptoms worsen, visit your vet immediately.",
+        "createdAt": "2026-05-31T16:23:08.670Z"
       }
-    ],
-    "status": true
+    ]
   },
   {
-    "id": "p1779765839183",
+    "id": "p1780244225910",
     "userId": "1",
     "category": "all-pet",
     "title": "Welcome to the New PetAid Community Platform",
     "content": "We are excited to welcome everyone to the upgraded PetAid platform. You can now explore first aid guides, participate in quizzes, join community discussions, and locate nearby veterinary clinics more easily.\nPlease remember that all emergency guides are for educational purposes only and should not replace professional veterinary treatment. Always contact a veterinarian immediately during serious emergencies.\nThank you for being part of the PetAid community and helping create a safer environment for pets.",
-    "datePosted": "2026-05-26T03:23:59.183Z",
-    "comments": [],
-    "status": true
+    "datePosted": "2026-05-31T16:17:05.924Z",
+    "comments": []
   }
 ]

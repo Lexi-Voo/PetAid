@@ -157,7 +157,7 @@ async function loadForumPosts() {
             return new ForumPost(
                 postData.id, postData.userId, postData.category,
                 postData.title, postData.content,
-                new Date(postData.datePosted), comments, postData.status
+                new Date(postData.datePosted), comments
             );
         });
     } catch (err) {
@@ -167,26 +167,20 @@ async function loadForumPosts() {
 }
 
 async function saveForumPosts(posts) {
-    const plainPosts = posts.map(post => {
-        const data = post.viewPost();
-        return { ...data, comments: data.comments.map(c => c.viewComment()) };
-    });
+    const plainPosts = posts.map(post => post.viewPost());
+
     try {
         const res = await fetch('/api/save-forum-posts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(plainPosts)
         });
+
         const result = await res.json();
         console.log(result.message);
     } catch (err) {
         console.error("Forum save failed:", err);
     }
-}
-
-async function getForumPostById(postId) {
-    const posts = await loadForumPosts();
-    return posts.find(p => p.getId() === postId);
 }
 
 // ============================================= Quiz =============================================

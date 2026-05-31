@@ -128,6 +128,53 @@ class Admin extends User {
         return true;
     }
 
+    async moderateForum(action, data) {
+        const posts = await loadForumPosts();
+        const forum = new Forum(posts);
+
+        let result = null;
+
+        switch (action) {
+            case "add":
+                result = forum.addPost(data.id, data.userId, data.category, data.title, data.content);
+                break;
+
+            case "edit":
+                result = forum.editPost(data.postId, data);
+                break;
+
+            case "delete":
+                result = forum.deletePost(data.postId);
+                break;
+        }
+
+        await saveForumPosts(forum.getPosts());
+        return result;
+    }
+
+    async moderateComment(action, postId, data) {
+        const posts = await loadForumPosts();
+        const forum = new Forum(posts);
+        const post = forum.getPostById(postId);
+
+        if (!post) {
+            return false;
+        }
+
+        switch (action) {
+            case "add":
+                post.addComment(new Comment(data.id, data.userId, data.content));
+                break;
+
+            case "delete":
+                post.removeComment(data.commentId);
+                break;
+        }
+
+        await saveForumPosts(forum.getPosts());
+        return true;
+    }
+
     async approveVet(targetRequest, actionType) {
         if (!targetRequest) return false;
         if (actionType === 'approve') {

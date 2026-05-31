@@ -3,10 +3,10 @@ let selectedCategory = "all";
 let currentOpenedPostId = null;
 let forum = null;
 let editingPostId = null;
+let result = null;
 
 // INITIALIZATION
 document.addEventListener("DOMContentLoaded", async function () {
-    
 
     forum = await loadForum();
 
@@ -19,17 +19,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     await renderPosts("all");
 });
 
-
-
 async function loadForum() {
-    const raw = await loadForumPosts(); // existing function
+    const raw = await loadForumPosts();
 
-    return new Forum(
-        "pet-forum",
-        "Pet Forum",
-        "Community discussion",
-        raw
-    );
+    return new Forum(raw);
 }
 
 // CATEGORY FILTER
@@ -63,20 +56,13 @@ async function renderPosts(category = "all") {
 
     if (category !== "all") {
         posts = posts.filter(
-            p =>
-                p.getStatus() &&
-                p.getCategory() === category
-        );
-    }
-    else {
-        posts = posts.filter(
-            p => p.getStatus()
+            p => p.viewPost().category === category
         );
     }
 
     // newest first
-    posts.sort((a, b) =>
-        b.getDatePosted() - a.getDatePosted()
+    posts.sort(
+        (a,b) => b.getDatePosted() - a.getDatePosted()
     );
 
     if (posts.length === 0) {
@@ -259,7 +245,17 @@ function renderCommentActions(comment) {
 
     if (!currentUser) return "";
 
-    if (!comment.canDelete(currentUser))
+    const data =
+        comment.viewComment();
+
+    const canDelete =
+        currentUser &&
+        (
+            currentUser.getRole() === "admin" ||
+            currentUser.getId() === data.userId
+        );
+
+    if (!canDelete)
         return "";
 
     return `
@@ -303,8 +299,17 @@ async function deleteComment(postId, commentId) {
 
     if (!comment) return;
 
-    // permission check
-    if (!comment.canDelete(currentUser)) {
+    const data =
+        comment.viewComment();
+
+    const canDelete =
+        currentUser &&
+        (
+            currentUser.getRole() === "admin" ||
+            currentUser.getId() === data.userId
+        );
+
+    if (!canDelete) {
 
         showConfirmation(
             "Permission denied.",
@@ -314,13 +319,32 @@ async function deleteComment(postId, commentId) {
         return;
     }
 
-    post.removeComment(commentId);
+    if (currentUser.getRole() === "admin") {
+        result = await currentUser.moderateComment(
+            "delete",
+            postId,
+            {
+                commentId
+            }
+        );
 
-    await saveForumPosts(
-        forum.getPosts()
-    );
+        if (!result) {
+            showConfirmation("Failed to delete comment.", true);
+            return;
+        }
 
-    renderComments(post);
+        forum = await loadForum();
+    } else {
+        post.removeComment(commentId);
+
+        await saveForumPosts(
+            forum.getPosts()
+        );
+    }
+
+    const updatedPost = forum.getPostById(postId);
+
+    renderComments(updatedPost);
 
     await renderPosts(selectedCategory);
 
@@ -440,7 +464,14 @@ async function createPost() {
 
         if (!post) return;
 
-        if (!post.canEdit(currentUser)) {
+        const postData = post.viewPost();
+
+        const canEdit = currentUser && (
+            currentUser.getRole() === "admin" ||
+            currentUser.getId() === postData.userId
+        );
+
+        if (!canEdit) {
 
             showConfirmation(
                 "Permission denied.",
@@ -450,15 +481,32 @@ async function createPost() {
             return;
         }
 
-        currentUser.editForumPost(
-            forum,
-            editingPostId,
-            {
+        if (currentUser.getRole() === "admin") {
+            result = await currentUser.moderateForum("edit", {
+                postId: editingPostId,
                 title,
                 content,
                 category
-            }
-        );
+            });
+
+            forum = await loadForum();
+
+        } else {
+            result = await currentUser.editForumPost(
+                forum,
+                editingPostId,
+                {
+                    title,
+                    content,
+                    category
+                }
+            );
+        }
+
+        if (!result) {
+            showConfirmation("Failed to update post.", true);
+            return;
+        }
 
         showConfirmation(
             "Post updated successfully!"
@@ -470,21 +518,37 @@ async function createPost() {
     // CREATE MODE
     else {
 
-        currentUser.submitForumPost(forum, {
-            id: generatePostId(),
-            category,
-            title,
-            content
-        });
+        if (currentUser.getRole() === "admin") {
+            result = await currentUser.moderateForum("add", {
+                id: generatePostId(),
+                userId: currentUser.getId(),
+                category,
+                title,
+                content
+            });
+
+            forum = await loadForum();
+
+        } else {
+            result = await currentUser.submitForumPost(forum, {
+                id: generatePostId(),
+                category,
+                title,
+                content
+            });
+        }
+
+        if (!result) {
+            showConfirmation("Failed to create post.", true);
+            return;
+        }
 
         showConfirmation(
             "Forum post created successfully!"
         );
     }
 
-    await saveForumPosts(
-        forum.getPosts()
-    );
+    await saveForumPosts(forum.getPosts());
 
     closeModal();
 
@@ -504,7 +568,7 @@ function clearModalFields() {
 
     document.getElementById(
         "post-category"
-    ).value = "dog";
+    ).value = "all-pet";
 
     document.getElementById(
         "post-title"
@@ -580,16 +644,40 @@ async function submitComment() {
         return;
     }
 
-    currentUser.addComment(post, {
-        id: generateCommentId(),
-        content
-    });
+    if (currentUser.getRole() === "admin") {
+        result = await currentUser.moderateComment(
+            "add",
+            currentOpenedPostId,
+            {
+                id: generateCommentId(),
+                userId: currentUser.getId(),
+                content
+            }
+        );
 
-    await saveForumPosts(forum.getPosts());
+        forum = await loadForum();
+
+    } else {
+        result = await currentUser.addComment(post, {
+            id: generateCommentId(),
+            content
+        });
+
+        if (!result) {
+            showConfirmation("Failed to add comment.", true);
+            return;
+        }
+
+        await saveForumPosts(
+            forum.getPosts()
+        );
+    }
 
     input.value = "";
 
-    renderComments(post);
+    const updatedPost = forum.getPostById(currentOpenedPostId);
+
+    renderComments(updatedPost);
 
     await renderPosts(selectedCategory);
 
@@ -604,11 +692,17 @@ function renderPostActions(post) {
 
     if (!currentUser) return "";
 
-    const canEdit =
-        post.canEdit(currentUser);
+    const postData =
+        post.viewPost();
 
-    const canDelete =
-        post.canDelete(currentUser);
+    const canEdit =
+        currentUser &&
+        (
+            currentUser.getRole() === "admin" ||
+            currentUser.getId() === postData.userId
+        );
+
+    const canDelete = canEdit;
 
     if (!canEdit && !canDelete)
         return "";
@@ -650,29 +744,63 @@ async function deletePost(postId) {
     const currentUser =
         getCurrentUser();
 
+    if (!currentUser) {
+        showConfirmation(
+            "Please login first.",
+            true
+        );
+        return;
+    }
+
     const post = forum.getPostById(postId);
 
     if (!post) return;
 
-    if (!post.canDelete(currentUser)) {
+    const postData = post.viewPost();
 
+    const canDelete =
+        currentUser.getRole() === "admin" ||
+        currentUser.getId() === postData.userId;
+
+    if (!canDelete) {
         showConfirmation(
             "Permission denied.",
             true
         );
-
         return;
     }
 
-    currentUser.deleteForumPost(forum, postId);
+    if (currentUser.getRole() === "admin") {
+        result = await currentUser.moderateForum(
+            "delete",
+            {
+                postId
+            }
+        );
 
-    await saveForumPosts(forum.getPosts());
+        forum = await loadForum();
 
-    await renderPosts(selectedCategory);
+    } else {
+        result = await currentUser.deleteForumPost(
+            forum,
+            postId
+        );
+
+        if (!result) {
+            showConfirmation("Failed to delete post.", true);
+            return;
+        }
+
+        await saveForumPosts(
+            forum.getPosts()
+        );
+    }
 
     showConfirmation(
         "Post deleted successfully."
     );
+
+    await renderPosts(selectedCategory);
 }
 
 function openEditModal(postId) {
@@ -683,17 +811,19 @@ function openEditModal(postId) {
 
     editingPostId = postId;
 
+    const data = post.viewPost();
+
     document.getElementById(
         "post-category"
-    ).value = post.getCategory();
+    ).value = data.category;
 
     document.getElementById(
         "post-title"
-    ).value = post.getTitle();
+    ).value = data.title;
 
     document.getElementById(
         "post-content"
-    ).value = post.getContent();
+    ).value = data.content;
 
     document.getElementById(
         "modal-title"
