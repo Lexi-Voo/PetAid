@@ -13,11 +13,6 @@ class Feedback {
         this.#dateSubmitted = (dateSubmitted instanceof Date) ? dateSubmitted : new Date(dateSubmitted);
     }
 
-    getId() { return this.#id; }
-    getSubject() { return this.#subject; }
-    getMessage() { return this.#message; }
-    getRatings() { return Object.assign({}, this.#ratings); }
-    getDateSubmitted() { return this.#dateSubmitted; }
 
     // Validate inputs per simple rules: at least one rating or message provided; ratings must be 1-10 when present
     validateInput() {
@@ -44,11 +39,11 @@ class Feedback {
     // Return plain object view
     view() {
         return {
-            id: this.getId(),
-            subject: this.getSubject(),
-            message: this.getMessage(),
-            ratings: this.getRatings(),
-            submitted_at: this.getDateSubmitted().toISOString()
+            id: this.#id,
+            subject: this.#subject,
+            message: this.#message,
+            ratings: Object.assign({}, this.#ratings),
+            submitted_at: this.#dateSubmitted.toISOString()
         };
     }
 

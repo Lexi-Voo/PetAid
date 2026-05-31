@@ -29,10 +29,6 @@ class Quiz {
         return this.#id;
     }
 
-    getTitle() {
-        return this.#title;
-    }
-
     getCategory() {
         return this.#category;
     }

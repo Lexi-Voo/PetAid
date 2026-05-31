@@ -15,11 +15,7 @@ class UserProfile {
     getBiography() { return this.#biography; }
     getProfilePic() { return this.#profilePic; }
     getPhoneNumber() { return this.#phoneNumber; } 
-
-    setName(name) { this.#name = name; }
-    setBiography(bio) { this.#biography = bio; }
-    setProfilePic(pic) { this.#profilePic = pic; }
-    setPhoneNumber(phone) { this.#phoneNumber = phone; } 
+ 
     viewProfile() {
         return {
             name: this.getName(),
@@ -30,10 +26,10 @@ class UserProfile {
     }
 
     updateProfile(newData) {
-        if (newData.name !== undefined) this.setName(newData.name);
-        if (newData.biography !== undefined) this.setBiography(newData.biography);
-        if (newData.profilePic !== undefined) this.setProfilePic(newData.profilePic);
-        if (newData.phoneNumber !== undefined) this.setPhoneNumber(newData.phoneNumber);
+        if (newData.name !== undefined) this.#name = newData.name;
+        if (newData.biography !== undefined) this.#biography = newData.biography;
+        if (newData.profilePic !== undefined) this.#profilePic = newData.profilePic;
+        if (newData.phoneNumber !== undefined) this.#phoneNumber = newData.phoneNumber;
     }
 
     toObject() {

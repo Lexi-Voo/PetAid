@@ -22,5 +22,13 @@
     "category": "Dog",
     "pet_bio": "very sweet",
     "pet_img": "assets/petprofile/pet_3.jpg"
+  },
+  {
+    "pet_id": "4",
+    "owner_id": "2",
+    "name": "miri",
+    "category": "Cat",
+    "pet_bio": "very crazyyy",
+    "pet_img": "assets/petprofile/pet_4.png"
   }
 ]
