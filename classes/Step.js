@@ -13,13 +13,6 @@ class Step {
         return this.#stepNumber;
     }
 
-    getInstruction() {
-        return this.#instruction;
-    }
-
-    getImageURL() {
-        return this.#imageURL;
-    }
 
     viewStep() {
         return {

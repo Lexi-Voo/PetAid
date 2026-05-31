@@ -11,19 +11,12 @@ class Video {
         return this.#title;
     }
 
-    getURL() {
-        return this.#url;
-    }
 
     viewVideo() {
         return {
             title: this.#title,
             url: this.#url
         };
-    }
-
-    playVideo() {
-        window.open(this.#url, "_blank");
     }
 
     editVideo(newData) {

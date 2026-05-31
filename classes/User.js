@@ -29,9 +29,6 @@ class User {
         throw new Error("Method 'register()' must be implemented by concrete user subclasses.");
     }
 
-    async browseGuide(category) {
-        return await getGuidesByCategory(category);
-    }
 
     submitForumPost(forum, postData) {
         return forum.addPost(

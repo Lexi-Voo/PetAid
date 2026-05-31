@@ -22,16 +22,13 @@ class Pet {
     getPetBio() { return this.#petBio; }
     getPetImg() { return this.#petImg; }
 
-    setName(name) { this.#name = name; }
-    setCategory(cat) { this.#category = cat; }
-    setPetBio(bio) { this.#petBio = bio; }
     setPetImg(img) { this.#petImg = img; }
 
     updateDetails(newData) {
-        if (newData.name !== undefined) this.setName(newData.name);
-        if (newData.category !== undefined) this.setCategory(newData.category);
-        if (newData.petBio !== undefined) this.setPetBio(newData.petBio);
-        if (newData.petImg !== undefined) this.setPetImg(newData.petImg);
+        if (newData.name !== undefined) this.#name = newData.name;
+        if (newData.category !== undefined) this.#category = newData.category;
+        if (newData.petBio !== undefined) this.#petBio = newData.petBio;
+        if (newData.petImg !== undefined) this.#petImg = newData.petImg;
     }
 
     toJSON() {
