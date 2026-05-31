@@ -34,12 +34,26 @@ export class ClinicDetails {
     }
 
     UpdateDetails(newDetails) {
-        // newDetails should be an object, e.g., { PhoneNumber: '111-222-3333' }
-        if (newDetails.ClinicName) this.ClinicName = newDetails.ClinicName;
-        if (newDetails.Address) this.Address = newDetails.Address;
-        if (newDetails.PhoneNumber) this.PhoneNumber = newDetails.PhoneNumber;
-        if (newDetails.OpeningHours) this.OpeningHours = newDetails.OpeningHours;
-        
+        if (!newDetails || typeof newDetails !== 'object') return;
+
+        // Primary keys
+        if ('ClinicName' in newDetails && newDetails.ClinicName != null) this.ClinicName = newDetails.ClinicName;
+        if ('Address' in newDetails && newDetails.Address != null) this.Address = newDetails.Address;
+        if ('PhoneNumber' in newDetails && newDetails.PhoneNumber != null) this.PhoneNumber = newDetails.PhoneNumber;
+        if ('OpeningHours' in newDetails && newDetails.OpeningHours != null) this.OpeningHours = newDetails.OpeningHours;
+
+        // Alternate keys (compatibility)
+        if ('name' in newDetails && newDetails.name != null) this.ClinicName = newDetails.name;
+        if ('address' in newDetails && newDetails.address != null) this.Address = newDetails.address;
+        if ('phone' in newDetails && newDetails.phone != null) this.PhoneNumber = newDetails.phone;
+        if ('hours' in newDetails && newDetails.hours != null) this.OpeningHours = newDetails.hours;
+
+        // Latitude / longitude support (several possible key names)
+        const lat = newDetails.latitude ?? newDetails.lat ?? newDetails._latitude ?? newDetails.Latitude ?? null;
+        const lon = newDetails.longitude ?? newDetails.lng ?? newDetails._longitude ?? newDetails.Longitude ?? null;
+        if (lat != null && !Number.isNaN(Number(lat))) this._latitude = Number(lat);
+        if (lon != null && !Number.isNaN(Number(lon))) this._longitude = Number(lon);
+
         console.log(`Details for ${this.ClinicName} updated successfully.`);
     }
 

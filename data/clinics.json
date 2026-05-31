@@ -32,7 +32,7 @@
     "longitude": 110.345049
   },
   {
-    "ClinicName": "catto",
+    "ClinicName": "kitteno",
     "Address": "lorign",
     "PhoneNumber": "12345666",
     "OpeningHours": "4pm",
@@ -62,5 +62,21 @@
     "OpeningHours": "12am",
     "latitude": 1.560794,
     "longitude": 110.333891
+  },
+  {
+    "ClinicName": "Chickenwings",
+    "Address": "12313213",
+    "PhoneNumber": "13213213",
+    "OpeningHours": "11322132113213",
+    "latitude": 1.576049,
+    "longitude": 110.335996
+  },
+  {
+    "ClinicName": "adsadw",
+    "Address": "asdasdasd",
+    "PhoneNumber": "asdasd",
+    "OpeningHours": "123213",
+    "latitude": 1.583996,
+    "longitude": 110.34042
   }
 ]
