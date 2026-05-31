@@ -156,13 +156,14 @@ console.log('map-page: module loaded');
         }
 
         // Set reference location (updates distance calculations)
-        const wasAwaitingRef = mapObj.awaitingRefClick;
-        mapObj.setReference(e.latlng);
+        if (mapObj.awaitingRefClick) {
+            mapObj.setReference(e.latlng);
 
-        try {
-            const container = map.getContainer();
-            container.querySelectorAll('.set-ref-click').forEach(b => b.textContent = 'Set reference by clicking map');
-        } catch (err) { /* ignore */ }
+            try {
+                const container = map.getContainer();
+                container.querySelectorAll('.set-ref-click').forEach(b => b.textContent = 'Set reference by clicking map');
+            } catch (err) { /* ignore */ }
+        }
     });
 
     if (saveClinicBtn) saveClinicBtn.addEventListener('click', async () => {

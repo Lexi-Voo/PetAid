@@ -331,6 +331,7 @@ export class Map {
 
     /**
      * Find the preset and center a given Leaflet map on it.
+     * Also resets the reference point to the new center when applying a preset.
      * @param {Object} leafletMapInstance - Leaflet map instance
      * @param {string} presetIdOrName - preset id or name
      * @param {number} zoom - optional zoom level
@@ -341,6 +342,10 @@ export class Map {
         if (!preset) return null;
         if (leafletMapInstance && typeof leafletMapInstance.setView === 'function') {
             leafletMapInstance.setView([preset.latitude, preset.longitude], zoom);
+            // Reset reference point to the new preset location to ensure consistency
+            this.refLocation = L.latLng(preset.latitude, preset.longitude);
+            this.explicitRef = false; // Allow moveend to update reference naturally
+            this.renderClinics(); // Update markers with new reference point
         }
         console.log(`Applied preset "${preset.name}" to map.`);
         return preset;
