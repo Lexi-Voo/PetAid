@@ -6,41 +6,46 @@ console.log('map-page: module loaded');
 (async function(){
     console.log('map-page: IIFE start');
     try {
-    const fallback = [
-        { id: 'center', name: 'Map Center', latitude: 1.5575585937055665, longitude: 110.3425426087814 },
-        { id: 'nw', name: 'Northwest Corner', latitude: 1.6423989330919126, longitude: 110.12498090143737 },
-        { id: 'ne', name: 'Northeast Corner', latitude: 1.6423989330919126, longitude: 110.56010431612543 },
-        { id: 'sw', name: 'Southwest Corner', latitude: 1.4727182543192203, longitude: 110.12498090143737 },
-        { id: 'se', name: 'Southeast Corner', latitude: 1.4727182543192203, longitude: 110.56010431612543 }
-    ];
+    // Default start location for map center
+    const defaultCenter = { latitude: 1.5575585937055665, longitude: 110.3425426087814 };
 
-    let presets = fallback;
+    let clinics = [];
     try {
-        const res = await fetch('data/presets.json');
-        if (res.ok) presets = await res.json();
+        clinics = await loadClinics();
+        console.log('map-page: clinics loaded, count =', Array.isArray(clinics) ? clinics.length : 0);
     } catch (e) {
-        console.warn('Could not load data/presets.json — using fallback presets', e);
-    }
-    console.log('map-page: presets ready, count =', Array.isArray(presets) ? presets.length : typeof presets);
-
-    const select = document.getElementById('presetSelect');
-    if (select) {
-        presets.forEach(p => { const opt = document.createElement('option'); opt.value = p.id; opt.textContent = p.name; select.appendChild(opt); });
+        console.warn('Failed to load clinics', e);
     }
 
-    const start = presets[0] || fallback[0];
-    console.log('map-page: selected start', start && start.latitude && start.longitude ? `${start.latitude},${start.longitude}` : start);
-
-    const mapObj = new PetMap(start.latitude, start.longitude, []);
-    await mapObj.CreateLeafletMap('map', start, { zoom: 15, tileUrl: 'Tile/{z}/{x}/{y}.png', tileOptions: { minZoom: 14, maxZoom: 16, noWrap: true, attribution: 'Local tiles' } });
+    const mapObj = new PetMap(defaultCenter.latitude, defaultCenter.longitude, clinics);
+    await mapObj.CreateLeafletMap('map', { tileUrl: 'Tile/{z}/{x}/{y}.png', tileOptions: { minZoom: 14, maxZoom: 16, noWrap: true, attribution: 'Local tiles' } });
+    mapObj.DisplayMap(mapObj.leafletMap);
     const map = mapObj.leafletMap;
     console.log('map-page: map created');
     window.__petaid_map = map;
 
+    const select = document.getElementById('presetSelect');
+    if (select) {
+        const allOptions = mapObj.SearchLocation();
+        console.log('map-page: dropdown options count =', allOptions.length);
+        allOptions.forEach(opt => { 
+            const option = document.createElement('option'); 
+            option.value = opt.id; 
+            option.textContent = `${opt.name}`;
+            select.appendChild(option); 
+        });
+    }
+
     if (select) {
         select.addEventListener('change', () => {
-            const preset = presets.find(p => p.id === select.value);
-            if (preset) mapObj.ApplyPresetToLeaflet(map, preset.id ?? preset.name, 15);
+            if (!select.value) return;
+            // Navigate to selected clinic location
+            const allOptions = mapObj.SearchLocation();
+            const clinicOption = allOptions.find(o => o.id === select.value);
+            if (clinicOption) {
+                map.setView([clinicOption.latitude, clinicOption.longitude], 15);
+                console.log(`Navigated to clinic: ${clinicOption.name}`);
+            }
         });
     }
 
@@ -56,16 +61,6 @@ console.log('map-page: module loaded');
     try {
         const mapContainer = map.getContainer();
         mapContainer.addEventListener('click', async (evt) => {
-            // Set reference button (check BEFORE popup content guard)
-            const setBtn = evt.target.closest && evt.target.closest('.set-ref-click');
-            if (setBtn) {
-                evt.stopPropagation();
-                mapObj.awaitingRefClick = true;
-                setBtn.textContent = 'Click on map to set reference...';
-                return;
-            }
-
-            // Edit clinic button (admin only) (check BEFORE popup content guard)
             const editBtn = evt.target.closest && evt.target.closest('.edit-clinic');
             if (editBtn) {
                 evt.stopPropagation();
@@ -102,18 +97,21 @@ console.log('map-page: module loaded');
                 return;
             }
 
-            // Ignore clicks inside Leaflet popups to avoid interfering with popup behavior
             if (evt.target.closest && evt.target.closest('.leaflet-popup-content')) {
                 return;
             }
         });
-    } catch (err) { /* ignore if container not available */ }
+    } catch (err) {
+        console.error('Error setting up map click handlers:', err);
+    }
 
     const modalOverlay = document.getElementById('clinicModalOverlay');
     const pickLocationBtn = document.getElementById('pickLocationBtn');
     const saveClinicBtn = document.getElementById('saveClinicBtn');
     const cancelClinicBtn = document.getElementById('cancelClinicBtn');
     const showAddBtn = document.getElementById('showAddForm');
+    const yourLocationBtn = document.getElementById('yourLocationBtn');
+    const showNearbyVetsBtn = document.getElementById('showNearbyVetsBtn');
 
     try {
         const user = (typeof window.getCurrentUser === 'function') ? window.getCurrentUser() : null;
@@ -129,6 +127,29 @@ console.log('map-page: module loaded');
 
     if (showAddBtn) {
         showAddBtn.addEventListener('click', () => { modalOverlay.classList.add('active'); modalOverlay.setAttribute('aria-hidden','false'); });
+    }
+    if (yourLocationBtn) {
+        yourLocationBtn.addEventListener('click', () => {
+            const isPickingLocation = !mapObj.awaitingRefClick;
+            mapObj.awaitingRefClick = isPickingLocation;
+            yourLocationBtn.textContent = isPickingLocation ? 'Click map to set your location...' : 'Your Location';
+            console.log('map-page: location picking mode', isPickingLocation ? 'enabled' : 'disabled');
+        });
+    }
+    if (showNearbyVetsBtn) {
+        showNearbyVetsBtn.addEventListener('click', () => {
+            if (!mapObj.explicitRef) {
+                const mapCenter = map.getCenter();
+                mapObj.refLocation = mapCenter;
+                console.log('map-page: using map center as reference for nearby vets');
+            }
+            const nearby = mapObj.GetNearbyVets(2);
+            if (nearby.length > 0) {
+                alert(`Found ${nearby.length} nearby vets within 2km.`);
+            } else {
+                alert('No nearby vets found within 2km.');
+            }
+        });
     }
     if (cancelClinicBtn) cancelClinicBtn.addEventListener('click', () => { 
         modalOverlay.classList.remove('active'); 
@@ -155,14 +176,14 @@ console.log('map-page: module loaded');
             return;
         }
 
-        // Set reference location (updates distance calculations)
         if (mapObj.awaitingRefClick) {
             mapObj.setReference(e.latlng);
-
-            try {
-                const container = map.getContainer();
-                container.querySelectorAll('.set-ref-click').forEach(b => b.textContent = 'Set reference by clicking map');
-            } catch (err) { /* ignore */ }
+            mapObj.awaitingRefClick = false;
+            
+            if (yourLocationBtn) {
+                yourLocationBtn.textContent = '✓ Location set!';
+                setTimeout(() => { yourLocationBtn.textContent = 'Your Location'; }, 2000);
+            }
         }
     });
 

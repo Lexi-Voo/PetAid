@@ -78,5 +78,13 @@
     "OpeningHours": "123213",
     "latitude": 1.583996,
     "longitude": 110.34042
+  },
+  {
+    "ClinicName": "aaa",
+    "Address": "aaa",
+    "PhoneNumber": "12313",
+    "OpeningHours": "555",
+    "latitude": 1.598265,
+    "longitude": 110.335138
   }
 ]

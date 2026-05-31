@@ -1,4 +1,3 @@
-// feedback-view.js - page script for feedback-view.html
 async function loadFeedbackRecords() {
     try {
         const arr = await loadFeedback();
@@ -121,13 +120,9 @@ function niceLabel(key) {
         listEl.textContent = 'No feedback records found.';
     } else {
         listEl.innerHTML = records.map(r => {
-            const when = r.submitted_at || r.submittedAt || r.dateSubmitted || '';
-            const ratings = r.ratings ? r.ratings : { forum: r.forum, quiz: r.quiz, firstAid: r.firstAid, login: r.login, map: r.map };
-            const ratingsHtml = sections.map(s => `<span class="rating-badge">${niceLabel(s)} <span class="rating-value">${ratings[s] ?? '-'}</span></span>`).join('');
-            // Support both `message` (current `Feedback` model) and legacy `comments`/`comment` fields
-            const commentText = (r.message ?? r.comments ?? r.comment ?? '').toString();
-            const preview = commentText ? commentText.slice(0,200) : '';
-            return `<div class="feedback-row"><div class="feedback-meta"><time class="feedback-time">${when || '—'}</time><div class="feedback-ratings">${ratingsHtml}</div></div><div class="feedback-comment">${preview}</div></div>`;
+            // Convert plain object to Feedback instance and use View() method
+            const feedbackObj = Feedback.fromJSON(r);
+            return feedbackObj ? feedbackObj.View() : '<p>Invalid feedback record</p>';
         }).join('');
     }
 })();

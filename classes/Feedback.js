@@ -36,8 +36,7 @@ class Feedback {
         return { valid: errors.length === 0, errors };
     }
 
-    // Return plain object view
-    view() {
+    toJSON() {
         return {
             id: this.#id,
             subject: this.#subject,
@@ -47,7 +46,25 @@ class Feedback {
         };
     }
 
-    toJSON() { return this.view(); }
+    View() {
+        // Format rating labels (firstAid -> First Aid, etc.)
+        const niceLabel = (key) => {
+            if (key === 'firstAid') return 'First Aid';
+            return key.charAt(0).toUpperCase() + key.slice(1);
+        };
+
+        // Build ratings HTML
+        const ratingsHtml = Object.entries(this.#ratings)
+            .filter(([_, v]) => v !== null && v !== undefined)
+            .map(([k, v]) => `<span class="rating-badge">${niceLabel(k)} <span class="rating-value">${v}/10</span></span>`)
+            .join('');
+
+        // Build comment preview (first 200 chars)
+        const commentText = this.#message || '';
+        const preview = commentText.slice(0, 200);
+
+        return `<div class="feedback-row"><div class="feedback-meta"><time class="feedback-time">${this.#dateSubmitted.toLocaleString()}</time><div class="feedback-ratings">${ratingsHtml}</div></div><div class="feedback-comment">${preview}</div></div>`;
+    }
 
     async submit() {
         const validation = this.validateInput();
