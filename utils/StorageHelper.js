@@ -146,36 +146,27 @@ async function getPetsByOwnerId(ownerId) {
 }
 
 // ============================================= Forum =============================================
-async function loadForumPosts() {
+async function loadForum() {
     try {
         const res = await fetch('data/forum.JSON?t=' + Date.now());
         const raw = await res.json();
-        return raw.map(postData => {
-            const comments = (postData.comments || []).map(c =>
-                new Comment(c.id, c.userId, c.content, new Date(c.createdAt))
-            );
-            return new ForumPost(
-                postData.id, postData.userId, postData.category,
-                postData.title, postData.content,
-                new Date(postData.datePosted), comments
-            );
-        });
+        return Forum.fromJSON(raw);
     } catch (err) {
-        console.warn("Failed to load forum posts:", err);
-        return [];
+        console.warn("Failed to load forum:", err);
+        return new Forum();
     }
 }
 
-async function saveForumPosts(posts) {
-    const plainPosts = posts.map(post => post.viewPost());
-
+async function saveForum(forum) {
     try {
-        const res = await fetch('/api/save-forum-posts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(plainPosts)
-        });
-
+        const res = await fetch(
+            '/api/save-forum-posts',
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(forum.toJSON())
+            }
+        );
         const result = await res.json();
         console.log(result.message);
     } catch (err) {

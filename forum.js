@@ -19,12 +19,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     await renderPosts("all");
 });
 
-async function loadForum() {
-    const raw = await loadForumPosts();
-
-    return new Forum(raw);
-}
-
 // CATEGORY FILTER
 function setupCategoryFilter() {
     const categoryItems =
@@ -337,9 +331,7 @@ async function deleteComment(postId, commentId) {
     } else {
         post.removeComment(commentId);
 
-        await saveForumPosts(
-            forum.getPosts()
-        );
+        await saveForum(forum);
     }
 
     const updatedPost = forum.getPostById(postId);
@@ -548,7 +540,7 @@ async function createPost() {
         );
     }
 
-    await saveForumPosts(forum.getPosts());
+    await saveForum(forum);
 
     closeModal();
 
@@ -668,9 +660,7 @@ async function submitComment() {
             return;
         }
 
-        await saveForumPosts(
-            forum.getPosts()
-        );
+        await saveForum(forum);
     }
 
     input.value = "";
@@ -791,9 +781,7 @@ async function deletePost(postId) {
             return;
         }
 
-        await saveForumPosts(
-            forum.getPosts()
-        );
+        await saveForum(forum);
     }
 
     showConfirmation(

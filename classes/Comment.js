@@ -23,4 +23,13 @@ class Comment {
             createdAt: this.#createdAt
         };
     }
+
+    toJSON() {
+        return {
+            id: this.#id,
+            userId: this.#userId,
+            content: this.#content,
+            createdAt: this.#createdAt
+        };
+    }
 }

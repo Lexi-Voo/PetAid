@@ -129,8 +129,7 @@ class Admin extends User {
     }
 
     async moderateForum(action, data) {
-        const posts = await loadForumPosts();
-        const forum = new Forum(posts);
+        const forum = await loadForum();
 
         let result = null;
 
@@ -148,13 +147,12 @@ class Admin extends User {
                 break;
         }
 
-        await saveForumPosts(forum.getPosts());
+        await saveForum(forum);
         return result;
     }
 
     async moderateComment(action, postId, data) {
-        const posts = await loadForumPosts();
-        const forum = new Forum(posts);
+        const forum = await loadForum();
         const post = forum.getPostById(postId);
 
         if (!post) {
@@ -171,7 +169,7 @@ class Admin extends User {
                 break;
         }
 
-        await saveForumPosts(forum.getPosts());
+        await saveForum(forum);
         return true;
     }
 

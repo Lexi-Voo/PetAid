@@ -160,7 +160,7 @@ app.post('/api/save-clinics', (req, res) => {
 app.listen(3000, () => {
     console.log('====================================================');
     console.log('PetAid JSON Engine running!');
-    console.log('Open your browser to: http://localhost:3000/firstAid.html');
+    console.log('Open your browser to: http://localhost:3000/index.html');
     console.log('Press Ctrl + C in this terminal window to stop the server.');
     console.log('====================================================');
 });

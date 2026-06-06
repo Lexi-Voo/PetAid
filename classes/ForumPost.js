@@ -77,4 +77,18 @@ class ForumPost {
             this.#category.trim() !== ""
         );
     }
+
+    toJSON() {
+        return {
+            id: this.#id,
+            userId: this.#userId,
+            category: this.#category,
+            title: this.#title,
+            content: this.#content,
+            datePosted: this.#datePosted,
+            comments: this.#comments.map(
+                comment => comment.toJSON()
+            )
+        };
+    }
 }

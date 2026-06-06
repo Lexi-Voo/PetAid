@@ -79,4 +79,25 @@ class Forum {
 
         return this.#posts.length < originalLength;
     }
+
+    static fromJSON(data) {
+        if (!Array.isArray(data)) {
+            return new Forum();
+        }
+        const posts = data.map(postData => {
+            const comments = (postData.comments || []).map(
+                c => new Comment(c.id, c.userId, c.content, new Date(c.createdAt))
+            );
+
+            return new ForumPost(postData.id, postData.userId, postData.category, postData.title, postData.content, new Date(postData.datePosted), comments);
+        });
+
+        return new Forum(posts);
+    }
+
+    toJSON() {
+        return this.#posts.map(
+            post => post.toJSON()
+        );
+    }
 }
