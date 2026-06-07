@@ -93,7 +93,7 @@ app.post('/api/save-pets', (req, res) => {
 });
 
 app.post('/api/save-quizzes', (req, res) => {
-    const filePath = path.join(__dirname, 'data', 'sampleQuizzes.JSON');
+    const filePath = path.join(__dirname, 'data', 'quizzes.JSON');
     try {
         fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
         res.json({ success: true, message: 'Physical quizzes.JSON updated successfully.'});
