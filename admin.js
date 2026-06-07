@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetIndex = currentApprovalsList.findIndex(a => a.req_id === requestId);
             if (targetIndex === -1) return;
             const targetRequest = currentApprovalsList[targetIndex];
-            const statusResult = activeUser.approveVet(targetRequest, actionType);
+            const statusResult = await activeUser.approveVet(targetRequest, actionType);
             if (statusResult && statusResult.action === 'approved') {
                 showConfirmation(`Approved: ${targetRequest.name} migrated to system registry successfully.`);
             } else {
